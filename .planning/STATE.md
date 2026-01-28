@@ -55,6 +55,9 @@ Recent decisions affecting current work:
 - [01.1-02]: Protocol tests use mock implementations to verify structural subtyping
 - [01.1-02]: Test classes organized by module/class (TestColor, TestRenderConfig, etc.)
 - [01.1-02]: CI uploads coverage to Codecov but doesn't fail on upload errors
+- [02-01]: TokenInfo uses frozen dataclass with slots for immutability
+- [02-01]: Trailing empty lines from Pygments trimmed unless code ends with newline
+- [02-01]: Language aliases resolved before Pygments lookup
 - [02-02]: PygmentsTheme uses __slots__ for memory efficiency
 - [02-02]: Line number colors derived from foreground/background (Pygments doesn't provide these)
 - [02-02]: Token inheritance walks parent chain in theme before base theme
@@ -80,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-28T15:45:00Z
-Stopped at: Completed 02-02-PLAN.md (Theme System)
+Last session: 2026-01-28T15:45:35Z
+Stopped at: Completed 02-01-PLAN.md (Pygments Highlighter)
 Resume file: None
