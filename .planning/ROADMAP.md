@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Core types, protocols, configuration schema, and error handling
 - [x] **Phase 1.1: Testing Infrastructure** - Set up pytest, test fixtures, and CI for the foundation code (INSERTED)
-- [ ] **Phase 2: Syntax Highlighting** - Pygments tokenization, theme system, language detection
+- [x] **Phase 2: Syntax Highlighting** - Pygments tokenization, theme system, language detection
 - [ ] **Phase 3: Layout Engine** - Text measurement, canvas sizing, typography settings
 - [ ] **Phase 4: Rendering** - Cairo/Pango rendering, visual effects, multi-format output
 - [ ] **Phase 5: CLI & Orchestration** - Application facade, Typer CLI, config file loading
@@ -65,9 +65,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Pygments highlighter with position tracking and language detection
-- [ ] 02-02-PLAN.md — Theme system with Pygments wrapper and TOML support
-- [ ] 02-03-PLAN.md — Test suite for highlighting and theme modules
+- [x] 02-01-PLAN.md — Pygments highlighter with position tracking and language detection
+- [x] 02-02-PLAN.md — Theme system with Pygments wrapper and TOML support
+- [x] 02-03-PLAN.md — Test suite for highlighting and theme modules
 
 ### Phase 3: Layout Engine
 **Goal**: Calculate exact canvas dimensions and element positions before any rendering
@@ -137,7 +137,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete | 2026-01-28 |
 | 1.1 Testing Infrastructure | 2/2 | Complete | 2026-01-28 |
-| 2. Syntax Highlighting | 0/3 | Planned | - |
+| 2. Syntax Highlighting | 3/3 | Complete | 2026-01-28 |
 | 3. Layout Engine | 0/TBD | Not started | - |
 | 4. Rendering | 0/TBD | Not started | - |
 | 5. CLI & Orchestration | 0/TBD | Not started | - |

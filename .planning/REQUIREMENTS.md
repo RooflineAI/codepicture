@@ -94,12 +94,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OUT-01 | Phase 4 | Pending |
 | OUT-02 | Phase 4 | Pending |
 | OUT-03 | Phase 4 | Pending |
-| HIGH-01 | Phase 2 | Pending |
-| HIGH-02 | Phase 2 | Pending |
-| HIGH-03 | Phase 2 | Pending |
+| HIGH-01 | Phase 2 | Complete |
+| HIGH-02 | Phase 2 | Complete |
+| HIGH-03 | Phase 2 | Complete |
 | HIGH-04 | Phase 6 | Pending |
-| THEME-01 | Phase 2 | Pending |
-| THEME-02 | Phase 2 | Pending |
+| THEME-01 | Phase 2 | Complete |
+| THEME-02 | Phase 2 | Complete |
 | VIS-01 | Phase 4 | Pending |
 | VIS-02 | Phase 4 | Pending |
 | VIS-03 | Phase 4 | Pending |

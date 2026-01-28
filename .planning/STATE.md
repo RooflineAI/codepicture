@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Phase 2 - Syntax Highlighting (Complete)
+**Current focus:** Phase 3 - Layout Engine (Phase 2 complete)
 
 ## Current Position
 
-Phase: 2 of 7 (Syntax Highlighting)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-01-28 - Completed 02-03-PLAN.md (Tests)
+Phase: 3 of 7 (Layout Engine)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-01-28 - Completed Phase 2 (Syntax Highlighting)
 
-Progress: [#######---] 70%
+Progress: [#####-----] 50%
 
 ## Performance Metrics
 
