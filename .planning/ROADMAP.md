@@ -30,10 +30,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Protocol definitions exist for Canvas, Highlighter, Theme, and TextMeasurer
   3. Tab characters are normalized to configurable spaces during input processing
   4. Pydantic models enforce type constraints on all configuration values
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md — Core types, error hierarchy, and tab normalization
+- [ ] 01-02-PLAN.md — Protocol definitions and configuration system
 
 ### Phase 2: Syntax Highlighting
 **Goal**: Transform raw code into structured token streams with theme-mapped colors
@@ -116,7 +117,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/2 | Planned | - |
 | 2. Syntax Highlighting | 0/TBD | Not started | - |
 | 3. Layout Engine | 0/TBD | Not started | - |
 | 4. Rendering | 0/TBD | Not started | - |
