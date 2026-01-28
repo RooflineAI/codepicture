@@ -13,6 +13,8 @@ from .errors import (
     RenderError,
     ThemeError,
 )
+from .highlight import PygmentsHighlighter, TokenInfo
+from .theme import get_theme, list_themes
 
 __all__ = [
     "__version__",
@@ -25,4 +27,10 @@ __all__ = [
     "HighlightError",
     "RenderError",
     "ThemeError",
+    # Highlight
+    "PygmentsHighlighter",
+    "TokenInfo",
+    # Theme
+    "get_theme",
+    "list_themes",
 ]

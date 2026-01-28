@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
+    from codepicture.highlight.pygments_highlighter import TokenInfo
+
     from .types import Color, TextStyle
 
 
@@ -184,7 +186,7 @@ class Highlighter(Protocol):
     Provides tokenization of source code for syntax highlighting.
     """
 
-    def highlight(self, code: str, language: str) -> list[list[tuple[str, Any]]]:
+    def highlight(self, code: str, language: str) -> list[list["TokenInfo"]]:
         """Tokenize code by language.
 
         Args:
@@ -192,8 +194,8 @@ class Highlighter(Protocol):
             language: Language identifier (e.g., 'python', 'rust')
 
         Returns:
-            List of lines, where each line is a list of (text, token_type) tuples.
-            Token types are implementation-specific (e.g., Pygments token types).
+            List of lines, where each line is a list of TokenInfo objects
+            containing text, token_type, line, and column.
         """
         ...
 
