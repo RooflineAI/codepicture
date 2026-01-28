@@ -13,6 +13,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Core types, protocols, configuration schema, and error handling
+- [ ] **Phase 1.1: Testing Infrastructure** - Set up pytest, test fixtures, and CI for the foundation code (INSERTED)
 - [ ] **Phase 2: Syntax Highlighting** - Pygments tokenization, theme system, language detection
 - [ ] **Phase 3: Layout Engine** - Text measurement, canvas sizing, typography settings
 - [ ] **Phase 4: Rendering** - Cairo/Pango rendering, visual effects, multi-format output
@@ -35,6 +36,21 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md — Core types, error hierarchy, and tab normalization
 - [x] 01-02-PLAN.md — Protocol definitions and configuration system
+
+### Phase 1.1: Testing Infrastructure (INSERTED)
+**Goal**: Set up pytest, test fixtures, and CI for the foundation code
+**Depends on**: Phase 1
+**Requirements**: None (infrastructure)
+**Success Criteria** (what must be TRUE):
+  1. pytest is configured with appropriate plugins
+  2. Test fixtures exist for core types and config loading
+  3. CI pipeline runs tests on push
+  4. Coverage reporting is enabled
+**Plans**: 2 plans
+
+Plans:
+- [ ] 01.1-01-PLAN.md — Pytest infrastructure and shared fixtures
+- [ ] 01.1-02-PLAN.md — Test suite and GitHub Actions CI
 
 ### Phase 2: Syntax Highlighting
 **Goal**: Transform raw code into structured token streams with theme-mapped colors
@@ -113,11 +129,12 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
+Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete | 2026-01-28 |
+| 1.1 Testing Infrastructure | 0/2 | Not started | - |
 | 2. Syntax Highlighting | 0/TBD | Not started | - |
 | 3. Layout Engine | 0/TBD | Not started | - |
 | 4. Rendering | 0/TBD | Not started | - |
