@@ -13,7 +13,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Core types, protocols, configuration schema, and error handling
-- [ ] **Phase 1.1: Testing Infrastructure** - Set up pytest, test fixtures, and CI for the foundation code (INSERTED)
+- [x] **Phase 1.1: Testing Infrastructure** - Set up pytest, test fixtures, and CI for the foundation code (INSERTED)
 - [ ] **Phase 2: Syntax Highlighting** - Pygments tokenization, theme system, language detection
 - [ ] **Phase 3: Layout Engine** - Text measurement, canvas sizing, typography settings
 - [ ] **Phase 4: Rendering** - Cairo/Pango rendering, visual effects, multi-format output
@@ -49,8 +49,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01.1-01-PLAN.md — Pytest infrastructure and shared fixtures
-- [ ] 01.1-02-PLAN.md — Test suite and GitHub Actions CI
+- [x] 01.1-01-PLAN.md — Pytest infrastructure and shared fixtures
+- [x] 01.1-02-PLAN.md — Test suite and GitHub Actions CI
 
 ### Phase 2: Syntax Highlighting
 **Goal**: Transform raw code into structured token streams with theme-mapped colors
@@ -134,7 +134,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete | 2026-01-28 |
-| 1.1 Testing Infrastructure | 0/2 | Not started | - |
+| 1.1 Testing Infrastructure | 2/2 | Complete | 2026-01-28 |
 | 2. Syntax Highlighting | 0/TBD | Not started | - |
 | 3. Layout Engine | 0/TBD | Not started | - |
 | 4. Rendering | 0/TBD | Not started | - |
