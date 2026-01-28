@@ -56,3 +56,9 @@ padding = 60
 show_line_numbers = false
 ''')
     return config_file
+
+
+@pytest.fixture
+def fixtures_dir() -> Path:
+    """Path to test fixtures directory."""
+    return Path(__file__).parent / "fixtures"
