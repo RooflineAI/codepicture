@@ -24,7 +24,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **HIGH-01**: Syntax highlighting via Pygments tokenization
 - [ ] **HIGH-02**: Auto-detect language from file extension
 - [ ] **HIGH-03**: Explicit language override via --language flag
-- [ ] **HIGH-04**: Custom lexer support for domain-specific languages (MLIR)
+- [ ] **HIGH-04**: Custom lexer support for domain-specific languages (MLIR via Sublime syntax)
 
 ### Theming
 
@@ -88,34 +88,34 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | TBD | Pending |
-| CORE-02 | TBD | Pending |
-| CORE-03 | TBD | Pending |
-| OUT-01 | TBD | Pending |
-| OUT-02 | TBD | Pending |
-| OUT-03 | TBD | Pending |
-| HIGH-01 | TBD | Pending |
-| HIGH-02 | TBD | Pending |
-| HIGH-03 | TBD | Pending |
-| HIGH-04 | TBD | Pending |
-| THEME-01 | TBD | Pending |
-| THEME-02 | TBD | Pending |
-| VIS-01 | TBD | Pending |
-| VIS-02 | TBD | Pending |
-| VIS-03 | TBD | Pending |
-| VIS-04 | TBD | Pending |
-| VIS-05 | TBD | Pending |
-| VIS-06 | TBD | Pending |
-| TYPO-01 | TBD | Pending |
-| TYPO-02 | TBD | Pending |
-| TYPO-03 | TBD | Pending |
-| TYPO-04 | TBD | Pending |
+| CORE-01 | Phase 5 | Pending |
+| CORE-02 | Phase 1 | Pending |
+| CORE-03 | Phase 5 | Pending |
+| OUT-01 | Phase 4 | Pending |
+| OUT-02 | Phase 4 | Pending |
+| OUT-03 | Phase 4 | Pending |
+| HIGH-01 | Phase 2 | Pending |
+| HIGH-02 | Phase 2 | Pending |
+| HIGH-03 | Phase 2 | Pending |
+| HIGH-04 | Phase 6 | Pending |
+| THEME-01 | Phase 2 | Pending |
+| THEME-02 | Phase 2 | Pending |
+| VIS-01 | Phase 4 | Pending |
+| VIS-02 | Phase 4 | Pending |
+| VIS-03 | Phase 4 | Pending |
+| VIS-04 | Phase 4 | Pending |
+| VIS-05 | Phase 4 | Pending |
+| VIS-06 | Phase 4 | Pending |
+| TYPO-01 | Phase 3 | Pending |
+| TYPO-02 | Phase 3 | Pending |
+| TYPO-03 | Phase 3 | Pending |
+| TYPO-04 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 22 total
-- Mapped to phases: 0
-- Unmapped: 22 ⚠️
+- Mapped to phases: 22
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after initial definition*
+*Last updated: 2026-01-28 after roadmap creation*
