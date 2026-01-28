@@ -62,10 +62,12 @@ Plans:
   3. Language can be explicitly overridden via --language flag
   4. Catppuccin theme produces correct colors for all token types
   5. Built-in Pygments themes (Dracula, Monokai, One Dark) are selectable
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md — Pygments highlighter with position tracking and language detection
+- [ ] 02-02-PLAN.md — Theme system with Pygments wrapper and TOML support
+- [ ] 02-03-PLAN.md — Test suite for highlighting and theme modules
 
 ### Phase 3: Layout Engine
 **Goal**: Calculate exact canvas dimensions and element positions before any rendering
@@ -135,7 +137,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete | 2026-01-28 |
 | 1.1 Testing Infrastructure | 2/2 | Complete | 2026-01-28 |
-| 2. Syntax Highlighting | 0/TBD | Not started | - |
+| 2. Syntax Highlighting | 0/3 | Planned | - |
 | 3. Layout Engine | 0/TBD | Not started | - |
 | 4. Rendering | 0/TBD | Not started | - |
 | 5. CLI & Orchestration | 0/TBD | Not started | - |
