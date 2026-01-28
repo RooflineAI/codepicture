@@ -78,10 +78,12 @@ Plans:
   2. Font size is configurable and correctly scales text dimensions
   3. Line height is configurable and affects vertical spacing
   4. Canvas dimensions are computed exactly before surface creation
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — Font management and Pango-based text measurement
+- [ ] 03-02-PLAN.md — LayoutEngine with canvas dimension calculations
+- [ ] 03-03-PLAN.md — Test suite for layout module
 
 ### Phase 4: Rendering
 **Goal**: Produce polished images with window chrome, shadows, and all visual effects
@@ -138,7 +140,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1. Foundation | 2/2 | Complete | 2026-01-28 |
 | 1.1 Testing Infrastructure | 2/2 | Complete | 2026-01-28 |
 | 2. Syntax Highlighting | 3/3 | Complete | 2026-01-28 |
-| 3. Layout Engine | 0/TBD | Not started | - |
+| 3. Layout Engine | 0/3 | Not started | - |
 | 4. Rendering | 0/TBD | Not started | - |
 | 5. CLI & Orchestration | 0/TBD | Not started | - |
 | 6. MLIR Lexer | 0/TBD | Not started | - |
