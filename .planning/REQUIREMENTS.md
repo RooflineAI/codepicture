@@ -89,7 +89,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | CORE-01 | Phase 5 | Pending |
-| CORE-02 | Phase 1 | Pending |
+| CORE-02 | Phase 1 | Complete |
 | CORE-03 | Phase 5 | Pending |
 | OUT-01 | Phase 4 | Pending |
 | OUT-02 | Phase 4 | Pending |
@@ -109,7 +109,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TYPO-01 | Phase 3 | Pending |
 | TYPO-02 | Phase 3 | Pending |
 | TYPO-03 | Phase 3 | Pending |
-| TYPO-04 | Phase 1 | Pending |
+| TYPO-04 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 22 total

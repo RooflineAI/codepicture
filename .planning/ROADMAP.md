@@ -12,7 +12,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Core types, protocols, configuration schema, and error handling
+- [x] **Phase 1: Foundation** - Core types, protocols, configuration schema, and error handling
 - [ ] **Phase 2: Syntax Highlighting** - Pygments tokenization, theme system, language detection
 - [ ] **Phase 3: Layout Engine** - Text measurement, canvas sizing, typography settings
 - [ ] **Phase 4: Rendering** - Cairo/Pango rendering, visual effects, multi-format output
@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Core types, error hierarchy, and tab normalization
-- [ ] 01-02-PLAN.md — Protocol definitions and configuration system
+- [x] 01-02-PLAN.md — Protocol definitions and configuration system
 
 ### Phase 2: Syntax Highlighting
 **Goal**: Transform raw code into structured token streams with theme-mapped colors
@@ -117,7 +117,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/2 | In progress | - |
+| 1. Foundation | 2/2 | Complete | 2026-01-28 |
 | 2. Syntax Highlighting | 0/TBD | Not started | - |
 | 3. Layout Engine | 0/TBD | Not started | - |
 | 4. Rendering | 0/TBD | Not started | - |
