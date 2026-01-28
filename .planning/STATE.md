@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 Phase: 2 of 7 (Syntax Highlighting)
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2026-01-28 - Completed Phase 1.1
+Last activity: 2026-01-28 - Completed quick task 001: Flatten tests folder structure
 
 Progress: [####------] 33%
 
@@ -62,6 +62,12 @@ None yet.
 ### Blockers/Concerns
 
 None yet.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 001 | Flatten tests folder structure | 2026-01-28 | 83d866c | [001-flatten-tests-folder-structure](./quick/001-flatten-tests-folder-structure/) |
 
 ### Roadmap Evolution
 
