@@ -6,7 +6,7 @@ One command turns code into a slide-ready image.
 __version__ = "0.1.0"
 
 from .config import RenderConfig, load_config
-from .core.types import LayoutMetrics
+from .core.types import LayoutMetrics, OutputFormat, RenderResult
 from .errors import (
     CodepictureError,
     ConfigError,
@@ -43,6 +43,9 @@ __all__ = [
     "LayoutEngine",
     "LayoutMetrics",
     "PangoTextMeasurer",
+    # Core Types
+    "OutputFormat",
+    "RenderResult",
     # Render
     "CairoCanvas",
     # Theme

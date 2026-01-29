@@ -13,6 +13,7 @@ from .types import (
     OutputFormat,
     Position,
     Rect,
+    RenderResult,
     TextStyle,
     WindowStyle,
 )
@@ -30,6 +31,7 @@ __all__ = [
     "OutputFormat",
     "Position",
     "Rect",
+    "RenderResult",
     "TextStyle",
     "WindowStyle",
 ]

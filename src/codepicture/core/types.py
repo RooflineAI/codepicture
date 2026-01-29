@@ -168,3 +168,20 @@ class LayoutMetrics:
     line_height_px: float
     char_width: float
     baseline_offset: float
+
+
+@dataclass(frozen=True, slots=True)
+class RenderResult:
+    """Result of rendering operation.
+
+    Attributes:
+        data: Raw image bytes (PNG, SVG, or PDF)
+        format: Output format
+        width: Final image width in pixels
+        height: Final image height in pixels
+    """
+
+    data: bytes
+    format: OutputFormat
+    width: int
+    height: int
