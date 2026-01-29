@@ -95,3 +95,44 @@ def sample_tokens():
         [TokenInfo("def ", "Token.Keyword", 0, 0), TokenInfo("foo():", "Token.Name.Function", 0, 4)],
         [TokenInfo("    ", "Token.Text", 1, 0), TokenInfo("pass", "Token.Keyword", 1, 4)],
     ]
+
+
+@pytest.fixture
+def minimal_render_config():
+    """Minimal render config (no chrome, no shadow)."""
+    from codepicture.config import RenderConfig
+    return RenderConfig(
+        window_controls=False,
+        shadow=False,
+        show_line_numbers=False,
+    )
+
+
+@pytest.fixture
+def render_tokens():
+    """Sample tokenized lines for render testing (uses real Pygments tokens)."""
+    from codepicture.highlight import TokenInfo
+    from pygments.token import Token
+    return [
+        [
+            TokenInfo("def", Token.Keyword, 0, 0),
+            TokenInfo(" ", Token.Text, 0, 3),
+            TokenInfo("hello", Token.Name.Function, 0, 4),
+            TokenInfo("():", Token.Punctuation, 0, 9),
+        ],
+        [
+            TokenInfo("    ", Token.Text, 1, 0),
+            TokenInfo("pass", Token.Keyword, 1, 4),
+        ],
+    ]
+
+
+@pytest.fixture
+def render_metrics(minimal_render_config, render_tokens):
+    """Sample layout metrics for render testing."""
+    from codepicture.layout import LayoutEngine, PangoTextMeasurer
+    from codepicture.fonts import register_bundled_fonts
+    register_bundled_fonts()
+    measurer = PangoTextMeasurer()
+    engine = LayoutEngine(measurer, minimal_render_config)
+    return engine.calculate_metrics(render_tokens)
