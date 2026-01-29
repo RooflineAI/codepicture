@@ -115,10 +115,13 @@ Plans:
   2. TOML config file at ~/.config/codepicture/config.toml is loaded if present
   3. CLI flags override config file settings (e.g., --theme overrides config theme)
   4. Help text explains all available options
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md — Config loader modification and Typer dependency
+- [ ] 05-02-PLAN.md — CLI orchestrator and Typer app
+- [ ] 05-03-PLAN.md — Entry points (__main__.py and console script)
+- [ ] 05-04-PLAN.md — CLI test suite
 
 ### Phase 6: MLIR Lexer
 **Goal**: Provide first-class syntax highlighting for MLIR code via Sublime syntax integration
@@ -146,7 +149,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Syntax Highlighting | 3/3 | Complete | 2026-01-28 |
 | 3. Layout Engine | 3/3 | Complete | 2026-01-29 |
 | 4. Rendering | 5/5 | Complete | 2026-01-29 |
-| 5. CLI & Orchestration | 0/TBD | Not started | - |
+| 5. CLI & Orchestration | 0/4 | Not started | - |
 | 6. MLIR Lexer | 0/TBD | Not started | - |
 
 ---
