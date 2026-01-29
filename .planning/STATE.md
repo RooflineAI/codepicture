@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 5 of 7 (CLI & Orchestration)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-01-29 - Completed 05-02-PLAN.md (CLI Module)
+Last activity: 2026-01-29 - Completed 05-03-PLAN.md (Entry Points)
 
-Progress: [#################---] 85%
+Progress: [##################--] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
-- Average duration: 2.9 min
-- Total execution time: 0.82 hours
+- Total plans completed: 18
+- Average duration: 2.8 min
+- Total execution time: 0.85 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [#################---] 85%
 | 2. Syntax Highlighting | 3/3 | 9 min | 3 min |
 | 3. Layout Engine | 3/3 | 12 min | 4 min |
 | 4. Rendering | 5/5 | 15 min | 3 min |
-| 5. CLI & Orchestration | 2/4 | 4 min | 2 min |
+| 5. CLI & Orchestration | 3/4 | 6 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-03 (4 min), 04-04 (3 min), 04-05 (4 min), 05-01 (2 min), 05-02 (2 min)
+- Last 5 plans: 04-04 (3 min), 04-05 (4 min), 05-01 (2 min), 05-02 (2 min), 05-03 (2 min)
 - Trend: Stable at 2-4 min per plan
 
 *Updated after each plan completion*
@@ -96,6 +96,7 @@ Recent decisions affecting current work:
 - [05-02]: CLI builds override dict from non-None flag values
 - [05-02]: Stdin input requires --language flag (cannot auto-detect)
 - [05-02]: Output format inferred from extension, overridable with -f/--format
+- [05-03]: Entry point imports app from cli module and calls it
 
 ### Pending Todos
 
@@ -117,6 +118,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29T10:51:30Z
-Stopped at: Completed 05-02-PLAN.md (CLI Module)
+Last session: 2026-01-29T11:02:00Z
+Stopped at: Completed 05-03-PLAN.md (Entry Points)
 Resume file: None
