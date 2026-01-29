@@ -9,6 +9,7 @@ from .chrome import (
     draw_title_bar,
     draw_traffic_lights,
 )
+from .renderer import Renderer
 from .shadow import (
     SHADOW_BLUR_RADIUS,
     SHADOW_COLOR,
@@ -20,6 +21,7 @@ from .shadow import (
 
 __all__ = [
     "CairoCanvas",
+    "Renderer",
     "TITLE_BAR_HEIGHT",
     "draw_title_bar",
     "draw_traffic_lights",

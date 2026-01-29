@@ -18,7 +18,7 @@ from .errors import (
 from .fonts import register_bundled_fonts, resolve_font_family
 from .highlight import PygmentsHighlighter, TokenInfo
 from .layout import LayoutEngine, PangoTextMeasurer
-from .render import CairoCanvas
+from .render import CairoCanvas, Renderer
 from .theme import get_theme, list_themes
 
 __all__ = [
@@ -48,6 +48,7 @@ __all__ = [
     "RenderResult",
     # Render
     "CairoCanvas",
+    "Renderer",
     # Theme
     "get_theme",
     "list_themes",
