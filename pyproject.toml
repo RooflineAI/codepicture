@@ -10,6 +10,7 @@ dependencies = [
     "catppuccin[pygments]>=2.5",
     "pycairo>=1.25",
     "manimpango>=0.6.1",
+    "pillow>=10.0",
 ]
 
 [build-system]
