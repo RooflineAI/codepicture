@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Phase 4 - Rendering
+**Current focus:** Phase 4 - Rendering (COMPLETE)
 
 ## Current Position
 
 Phase: 4 of 7 (Rendering)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-01-29 - Completed 04-03-PLAN.md (Shadow Post-Processing)
+Plan: 4 of 4 in current phase
+Status: Phase complete
+Last activity: 2026-01-29 - Completed 04-04-PLAN.md (Renderer)
 
-Progress: [#########-] 87%
+Progress: [##########] 93%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 3.0 min
-- Total execution time: 0.65 hours
+- Total execution time: 0.70 hours
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: [#########-] 87%
 | 1.1 Testing Infrastructure | 2/2 | 5 min | 2.5 min |
 | 2. Syntax Highlighting | 3/3 | 9 min | 3 min |
 | 3. Layout Engine | 3/3 | 12 min | 4 min |
-| 4. Rendering | 3/4 | 8 min | 2.7 min |
+| 4. Rendering | 4/4 | 11 min | 2.75 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (6 min), 03-02 (4 min), 03-03 (2 min), 04-01 (2 min), 04-03 (4 min)
-- Trend: Stable at 2-6 min per plan
+- Last 5 plans: 03-02 (4 min), 03-03 (2 min), 04-01 (2 min), 04-03 (4 min), 04-04 (3 min)
+- Trend: Stable at 2-4 min per plan
 
 *Updated after each plan completion*
 
@@ -81,6 +81,9 @@ Recent decisions affecting current work:
 - [04-02]: Title text color auto-detected from background brightness
 - [04-03]: Cairo BGRA converted via Pillow RGBa mode to handle pre-multiplied alpha
 - [04-03]: Shadow margin = blur*2 + max(offset) = 125px total expansion
+- [04-04]: RenderResult dataclass holds output bytes plus format and dimensions
+- [04-04]: Renderer accesses canvas._surface directly for shadow processing
+- [04-04]: OutputFormat added to top-level package exports
 
 ### Pending Todos
 
@@ -102,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29T09:39:59Z
-Stopped at: Completed 04-03-PLAN.md (Shadow Post-Processing)
+Last session: 2026-01-29T09:43:19Z
+Stopped at: Completed 04-04-PLAN.md (Renderer)
 Resume file: None
