@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Phase 4 - Rendering (COMPLETE with tests)
+**Current focus:** Phase 5 - CLI & Orchestration (next up)
 
 ## Current Position
 
@@ -87,6 +87,7 @@ Recent decisions affecting current work:
 - [04-05]: Separate render_tokens fixture uses real Pygments Token types
 - [04-05]: Use autouse=True fixture for font registration in renderer tests
 - [04-05]: New fixtures (render_tokens, render_metrics) for render testing
+- [04-gap]: Removed shadow_blur/offset config fields (shadow is on/off only per CONTEXT.md)
 
 ### Pending Todos
 
@@ -108,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29T09:50:57Z
-Stopped at: Completed 04-05-PLAN.md (Render Tests)
+Last session: 2026-01-29T10:15:00Z
+Stopped at: Phase 4 complete - all plans executed and verified
 Resume file: None

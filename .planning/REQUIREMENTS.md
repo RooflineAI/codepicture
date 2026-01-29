@@ -34,7 +34,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Visual Styling
 
 - [ ] **VIS-01**: macOS-style window controls (red/yellow/green traffic lights)
-- [ ] **VIS-02**: Drop shadow effect with configurable blur/offset
+- [ ] **VIS-02**: Drop shadow effect (on/off toggle, fixed macOS style)
 - [ ] **VIS-03**: Line numbers in gutter
 - [ ] **VIS-04**: Configurable padding around code
 - [ ] **VIS-05**: Configurable corner radius
@@ -91,21 +91,21 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CORE-01 | Phase 5 | Pending |
 | CORE-02 | Phase 1 | Complete |
 | CORE-03 | Phase 5 | Pending |
-| OUT-01 | Phase 4 | Pending |
-| OUT-02 | Phase 4 | Pending |
-| OUT-03 | Phase 4 | Pending |
+| OUT-01 | Phase 4 | Complete |
+| OUT-02 | Phase 4 | Complete |
+| OUT-03 | Phase 4 | Complete |
 | HIGH-01 | Phase 2 | Complete |
 | HIGH-02 | Phase 2 | Complete |
 | HIGH-03 | Phase 2 | Complete |
 | HIGH-04 | Phase 6 | Pending |
 | THEME-01 | Phase 2 | Complete |
 | THEME-02 | Phase 2 | Complete |
-| VIS-01 | Phase 4 | Pending |
-| VIS-02 | Phase 4 | Pending |
-| VIS-03 | Phase 4 | Pending |
-| VIS-04 | Phase 4 | Pending |
-| VIS-05 | Phase 4 | Pending |
-| VIS-06 | Phase 4 | Pending |
+| VIS-01 | Phase 4 | Complete |
+| VIS-02 | Phase 4 | Complete |
+| VIS-03 | Phase 4 | Complete |
+| VIS-04 | Phase 4 | Complete |
+| VIS-05 | Phase 4 | Complete |
+| VIS-06 | Phase 4 | Complete |
 | TYPO-01 | Phase 3 | Complete |
 | TYPO-02 | Phase 3 | Complete |
 | TYPO-03 | Phase 3 | Complete |
@@ -118,4 +118,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-29 after Phase 3 completion*
+*Last updated: 2026-01-29 after Phase 4 completion*

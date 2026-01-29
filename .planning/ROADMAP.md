@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1.1: Testing Infrastructure** - Set up pytest, test fixtures, and CI for the foundation code (INSERTED)
 - [x] **Phase 2: Syntax Highlighting** - Pygments tokenization, theme system, language detection
 - [x] **Phase 3: Layout Engine** - Text measurement, canvas sizing, typography settings
-- [ ] **Phase 4: Rendering** - Cairo/Pango rendering, visual effects, multi-format output
+- [x] **Phase 4: Rendering** - Cairo/Pango rendering, visual effects, multi-format output
 - [ ] **Phase 5: CLI & Orchestration** - Application facade, Typer CLI, config file loading
 - [ ] **Phase 6: MLIR Lexer** - Custom Sublime syntax-based lexer for MLIR with dialect support
 
@@ -100,11 +100,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — CairoCanvas for PNG/SVG/PDF rendering
-- [ ] 04-02-PLAN.md — Window chrome (title bar, traffic lights)
-- [ ] 04-03-PLAN.md — Shadow post-processing with Pillow
-- [ ] 04-04-PLAN.md — Renderer orchestration
-- [ ] 04-05-PLAN.md — Render module test suite
+- [x] 04-01-PLAN.md — CairoCanvas for PNG/SVG/PDF rendering
+- [x] 04-02-PLAN.md — Window chrome (title bar, traffic lights)
+- [x] 04-03-PLAN.md — Shadow post-processing with Pillow
+- [x] 04-04-PLAN.md — Renderer orchestration
+- [x] 04-05-PLAN.md — Render module test suite
 
 ### Phase 5: CLI & Orchestration
 **Goal**: Deliver a working command-line tool that users can install and run
@@ -145,7 +145,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1.1 Testing Infrastructure | 2/2 | Complete | 2026-01-28 |
 | 2. Syntax Highlighting | 3/3 | Complete | 2026-01-28 |
 | 3. Layout Engine | 3/3 | Complete | 2026-01-29 |
-| 4. Rendering | 0/5 | Not started | - |
+| 4. Rendering | 5/5 | Complete | 2026-01-29 |
 | 5. CLI & Orchestration | 0/TBD | Not started | - |
 | 6. MLIR Lexer | 0/TBD | Not started | - |
 
