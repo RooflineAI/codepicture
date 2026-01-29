@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Phase 3 - Layout Engine (COMPLETE)
+**Current focus:** Phase 4 - Rendering
 
 ## Current Position
 
-Phase: 3 of 7 (Layout Engine) - COMPLETE
-Plan: 3 of 3 in current phase (all complete)
-Status: Phase complete
-Last activity: 2026-01-29 - Completed 03-03-PLAN.md (Layout Tests)
+Phase: 4 of 7 (Rendering)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-01-29 - Completed 04-01-PLAN.md (CairoCanvas)
 
-Progress: [########--] 70%
+Progress: [########--] 73%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 3.0 min
-- Total execution time: 0.50 hours
+- Total execution time: 0.55 hours
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: [########--] 70%
 | 1.1 Testing Infrastructure | 2/2 | 5 min | 2.5 min |
 | 2. Syntax Highlighting | 3/3 | 9 min | 3 min |
 | 3. Layout Engine | 3/3 | 12 min | 4 min |
+| 4. Rendering | 1/4 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (3 min), 02-03 (3 min), 03-01 (6 min), 03-02 (4 min), 03-03 (2 min)
+- Last 5 plans: 02-03 (3 min), 03-01 (6 min), 03-02 (4 min), 03-03 (2 min), 04-01 (2 min)
 - Trend: Stable at 2-6 min per plan
 
 *Updated after each plan completion*
@@ -74,6 +75,9 @@ Recent decisions affecting current work:
 - [03-02]: Gutter width measured using actual digit characters for accuracy
 - [03-03]: Empty string measurement returns (0, 0) per Cairo text_extents behavior
 - [03-03]: Layout fixtures use lazy imports inside fixture functions
+- [04-01]: PNG surfaces created at 2x scale with logical coordinate drawing
+- [04-01]: SVG/PDF surfaces write to BytesIO for in-memory generation
+- [04-01]: apply_shadow is no-op stub (Plan 04-03 implements real shadow)
 
 ### Pending Todos
 
@@ -95,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29T02:49:22Z
-Stopped at: Completed 03-03-PLAN.md (Layout Tests) - Phase 3 complete
+Last session: 2026-01-29T09:32:19Z
+Stopped at: Completed 04-01-PLAN.md (CairoCanvas)
 Resume file: None
