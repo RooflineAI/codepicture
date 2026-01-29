@@ -6,16 +6,18 @@ One command turns code into a slide-ready image.
 __version__ = "0.1.0"
 
 from .config import RenderConfig, load_config
+from .core.types import LayoutMetrics
 from .errors import (
     CodepictureError,
     ConfigError,
     HighlightError,
+    LayoutError,
     RenderError,
     ThemeError,
 )
 from .fonts import register_bundled_fonts, resolve_font_family
 from .highlight import PygmentsHighlighter, TokenInfo
-from .layout import PangoTextMeasurer
+from .layout import LayoutEngine, PangoTextMeasurer
 from .theme import get_theme, list_themes
 
 __all__ = [
@@ -27,6 +29,7 @@ __all__ = [
     "CodepictureError",
     "ConfigError",
     "HighlightError",
+    "LayoutError",
     "RenderError",
     "ThemeError",
     # Fonts
@@ -36,6 +39,8 @@ __all__ = [
     "PygmentsHighlighter",
     "TokenInfo",
     # Layout
+    "LayoutEngine",
+    "LayoutMetrics",
     "PangoTextMeasurer",
     # Theme
     "get_theme",

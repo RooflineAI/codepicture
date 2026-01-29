@@ -3,6 +3,7 @@
 Provides text measurement and canvas dimension calculations.
 """
 
+from .engine import LayoutEngine
 from .measurer import PangoTextMeasurer
 
-__all__ = ["PangoTextMeasurer"]
+__all__ = ["LayoutEngine", "PangoTextMeasurer"]
