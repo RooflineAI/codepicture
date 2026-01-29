@@ -13,7 +13,9 @@ from .errors import (
     RenderError,
     ThemeError,
 )
+from .fonts import register_bundled_fonts, resolve_font_family
 from .highlight import PygmentsHighlighter, TokenInfo
+from .layout import PangoTextMeasurer
 from .theme import get_theme, list_themes
 
 __all__ = [
@@ -27,9 +29,14 @@ __all__ = [
     "HighlightError",
     "RenderError",
     "ThemeError",
+    # Fonts
+    "register_bundled_fonts",
+    "resolve_font_family",
     # Highlight
     "PygmentsHighlighter",
     "TokenInfo",
+    # Layout
+    "PangoTextMeasurer",
     # Theme
     "get_theme",
     "list_themes",
