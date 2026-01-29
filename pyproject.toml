@@ -11,6 +11,7 @@ dependencies = [
     "pycairo>=1.25",
     "manimpango>=0.6.1",
     "pillow>=10.0",
+    "typer>=0.21.1",
 ]
 
 [build-system]
