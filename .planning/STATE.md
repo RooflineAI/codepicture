@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 5 of 7 (CLI & Orchestration)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-01-29 - Completed 05-01-PLAN.md (CLI Foundation)
+Last activity: 2026-01-29 - Completed 05-02-PLAN.md (CLI Module)
 
-Progress: [################----] 80%
+Progress: [#################---] 85%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
-- Average duration: 3.0 min
-- Total execution time: 0.80 hours
+- Total plans completed: 17
+- Average duration: 2.9 min
+- Total execution time: 0.82 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [################----] 80%
 | 2. Syntax Highlighting | 3/3 | 9 min | 3 min |
 | 3. Layout Engine | 3/3 | 12 min | 4 min |
 | 4. Rendering | 5/5 | 15 min | 3 min |
-| 5. CLI & Orchestration | 1/4 | 2 min | 2 min |
+| 5. CLI & Orchestration | 2/4 | 4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (2 min), 04-03 (4 min), 04-04 (3 min), 04-05 (4 min), 05-01 (2 min)
+- Last 5 plans: 04-03 (4 min), 04-04 (3 min), 04-05 (4 min), 05-01 (2 min), 05-02 (2 min)
 - Trend: Stable at 2-4 min per plan
 
 *Updated after each plan completion*
@@ -92,6 +92,10 @@ Recent decisions affecting current work:
 - [05-01]: Config loader uses replace semantics (first-found config wins, no merge)
 - [05-01]: Simplified load_config API with config_path parameter for explicit --config override
 - [05-01]: DEFAULT_LOCAL_CONFIG_PATH is codepicture.toml (not .codepicture.toml)
+- [05-02]: Orchestrator is pure function taking already-loaded config (CLI handles loading)
+- [05-02]: CLI builds override dict from non-None flag values
+- [05-02]: Stdin input requires --language flag (cannot auto-detect)
+- [05-02]: Output format inferred from extension, overridable with -f/--format
 
 ### Pending Todos
 
@@ -113,6 +117,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29T10:47:18Z
-Stopped at: Completed 05-01-PLAN.md (CLI Foundation)
+Last session: 2026-01-29T10:51:30Z
+Stopped at: Completed 05-02-PLAN.md (CLI Module)
 Resume file: None
