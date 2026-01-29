@@ -9,6 +9,7 @@ from .protocols import (
 from .types import (
     Color,
     Dimensions,
+    LayoutMetrics,
     OutputFormat,
     Position,
     Rect,
@@ -25,6 +26,7 @@ __all__ = [
     # Types
     "Color",
     "Dimensions",
+    "LayoutMetrics",
     "OutputFormat",
     "Position",
     "Rect",

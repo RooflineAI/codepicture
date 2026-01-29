@@ -54,3 +54,14 @@ class HighlightError(CodepictureError):
     """
 
     pass
+
+
+class LayoutError(CodepictureError):
+    """Raised when layout calculation fails.
+
+    Common causes:
+    - Empty input (no code to render)
+    - Invalid configuration values
+    """
+
+    pass

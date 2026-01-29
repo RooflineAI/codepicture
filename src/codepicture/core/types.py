@@ -136,3 +136,35 @@ class TextStyle:
     bold: bool = False
     italic: bool = False
     underline: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class LayoutMetrics:
+    """Complete layout measurements for rendering.
+
+    All dimensions are in pixels. Positions are relative to canvas origin (0, 0).
+    """
+
+    # Canvas dimensions
+    canvas_width: int
+    canvas_height: int
+
+    # Content area (inside padding)
+    content_x: float
+    content_y: float
+    content_width: float
+    content_height: float
+
+    # Gutter (line numbers) - 0 if line numbers disabled
+    gutter_width: float
+    gutter_x: float
+
+    # Code area (after gutter + gap)
+    code_x: float
+    code_y: float
+    code_width: float
+
+    # Typography metrics
+    line_height_px: float
+    char_width: float
+    baseline_offset: float
