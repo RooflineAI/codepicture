@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Phase 3 - Layout Engine (Phase 2 complete)
+**Current focus:** Phase 3 - Layout Engine (Plan 1 complete)
 
 ## Current Position
 
 Phase: 3 of 7 (Layout Engine)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-01-28 - Completed Phase 2 (Syntax Highlighting)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-29 - Completed 03-01-PLAN.md (Font Management & Text Measurement)
 
-Progress: [#####-----] 50%
+Progress: [######----] 55%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 2.7 min
-- Total execution time: 0.31 hours
+- Total plans completed: 8
+- Average duration: 3.0 min
+- Total execution time: 0.40 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [#####-----] 50%
 | 1. Foundation | 2/2 | 5 min | 2.5 min |
 | 1.1 Testing Infrastructure | 2/2 | 5 min | 2.5 min |
 | 2. Syntax Highlighting | 3/3 | 9 min | 3 min |
+| 3. Layout Engine | 1/3 | 6 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 01.1-01 (2 min), 01.1-02 (3 min), 02-01 (3 min), 02-02 (3 min), 02-03 (3 min)
-- Trend: Stable
+- Last 5 plans: 01.1-02 (3 min), 02-01 (3 min), 02-02 (3 min), 02-03 (3 min), 03-01 (6 min)
+- Trend: Slight increase (PyGObject fix added time)
 
 *Updated after each plan completion*
 
@@ -64,6 +65,10 @@ Recent decisions affecting current work:
 - [02-02]: Default theme is catppuccin-mocha per CONTEXT.md
 - [02-03]: Integration tests verify highlighter -> theme.get_style() -> TextStyle chain
 - [02-03]: Sample code fixtures in tests/fixtures/ for multi-language testing
+- [03-01]: Use Cairo text API instead of PyGObject Pango (library linking issue on macOS)
+- [03-01]: Bundle JetBrains Mono Regular only (Bold can be added later)
+- [03-01]: Font registration uses ManimPango for cross-platform compatibility
+- [03-01]: Text measurer uses font caching to avoid repeated font selection
 
 ### Pending Todos
 
@@ -85,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-28T15:51:42Z
-Stopped at: Completed 02-03-PLAN.md (Tests)
+Last session: 2026-01-29T02:38:31Z
+Stopped at: Completed 03-01-PLAN.md (Font Management & Text Measurement)
 Resume file: None
