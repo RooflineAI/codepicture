@@ -9,9 +9,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Core
 
-- [ ] **CORE-01**: CLI accepts source file path and outputs image to specified path
-- [ ] **CORE-02**: TOML config file support (~/.config/codepicture/config.toml)
-- [ ] **CORE-03**: CLI flags override config file settings
+- [x] **CORE-01**: CLI accepts source file path and outputs image to specified path
+- [x] **CORE-02**: TOML config file support (~/.config/codepicture/config.toml)
+- [x] **CORE-03**: CLI flags override config file settings
 
 ### Output Formats
 
@@ -88,9 +88,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | Phase 5 | Pending |
+| CORE-01 | Phase 5 | Complete |
 | CORE-02 | Phase 1 | Complete |
-| CORE-03 | Phase 5 | Pending |
+| CORE-03 | Phase 5 | Complete |
 | OUT-01 | Phase 4 | Complete |
 | OUT-02 | Phase 4 | Complete |
 | OUT-03 | Phase 4 | Complete |
@@ -118,4 +118,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-29 after Phase 4 completion*
+*Last updated: 2026-01-29 after Phase 5 completion*

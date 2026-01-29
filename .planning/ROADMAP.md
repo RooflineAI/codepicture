@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Syntax Highlighting** - Pygments tokenization, theme system, language detection
 - [x] **Phase 3: Layout Engine** - Text measurement, canvas sizing, typography settings
 - [x] **Phase 4: Rendering** - Cairo/Pango rendering, visual effects, multi-format output
-- [ ] **Phase 5: CLI & Orchestration** - Application facade, Typer CLI, config file loading
+- [x] **Phase 5: CLI & Orchestration** - Application facade, Typer CLI, config file loading
 - [ ] **Phase 6: MLIR Lexer** - Custom Sublime syntax-based lexer for MLIR with dialect support
 
 ## Phase Details
@@ -118,10 +118,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Config loader modification and Typer dependency
-- [ ] 05-02-PLAN.md — CLI orchestrator and Typer app
-- [ ] 05-03-PLAN.md — Entry points (__main__.py and console script)
-- [ ] 05-04-PLAN.md — CLI test suite
+- [x] 05-01-PLAN.md — Config loader modification and Typer dependency
+- [x] 05-02-PLAN.md — CLI orchestrator and Typer app
+- [x] 05-03-PLAN.md — Entry points (__main__.py and console script)
+- [x] 05-04-PLAN.md — CLI test suite
 
 ### Phase 6: MLIR Lexer
 **Goal**: Provide first-class syntax highlighting for MLIR code via Sublime syntax integration
@@ -149,7 +149,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Syntax Highlighting | 3/3 | Complete | 2026-01-28 |
 | 3. Layout Engine | 3/3 | Complete | 2026-01-29 |
 | 4. Rendering | 5/5 | Complete | 2026-01-29 |
-| 5. CLI & Orchestration | 0/4 | Not started | - |
+| 5. CLI & Orchestration | 4/4 | Complete | 2026-01-29 |
 | 6. MLIR Lexer | 0/TBD | Not started | - |
 
 ---

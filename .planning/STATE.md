@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Phase 5 - CLI & Orchestration (complete)
+**Current focus:** Phase 6 - MLIR Lexer (next up)
 
 ## Current Position
 
