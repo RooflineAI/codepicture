@@ -27,9 +27,6 @@ class TestRenderConfig:
         assert config.window_style == WindowStyle.MACOS
         assert config.window_title is None
         assert config.shadow is True
-        assert config.shadow_blur == 50
-        assert config.shadow_offset_x == 0
-        assert config.shadow_offset_y == 0
         assert config.background_color is None
 
     def test_font_size_range_min(self):
@@ -188,16 +185,3 @@ class TestRenderConfig:
         config = RenderConfig(corner_radius=25)
         assert config.corner_radius == 25
 
-    def test_shadow_blur_range(self):
-        """shadow_blur must be 0-200."""
-        with pytest.raises(ValidationError):
-            RenderConfig(shadow_blur=-1)
-        with pytest.raises(ValidationError):
-            RenderConfig(shadow_blur=201)
-
-    def test_shadow_offset_range(self):
-        """shadow offsets must be -100 to 100."""
-        with pytest.raises(ValidationError):
-            RenderConfig(shadow_offset_x=-101)
-        with pytest.raises(ValidationError):
-            RenderConfig(shadow_offset_y=101)

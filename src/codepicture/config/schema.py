@@ -52,11 +52,8 @@ class RenderConfig(BaseModel):
     window_style: WindowStyle = WindowStyle.MACOS
     window_title: str | None = None
 
-    # Shadow
+    # Shadow (on/off only - style is fixed macOS aesthetic per CONTEXT.md)
     shadow: bool = True
-    shadow_blur: Annotated[int, Field(ge=0, le=200)] = 50
-    shadow_offset_x: Annotated[int, Field(ge=-100, le=100)] = 0
-    shadow_offset_y: Annotated[int, Field(ge=-100, le=100)] = 0
 
     # Background
     background_color: str | None = None  # hex color or None (use theme background)
