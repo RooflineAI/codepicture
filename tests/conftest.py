@@ -62,3 +62,36 @@ show_line_numbers = false
 def fixtures_dir() -> Path:
     """Path to test fixtures directory."""
     return Path(__file__).parent / "fixtures"
+
+
+@pytest.fixture
+def render_config():
+    """Default render configuration for tests."""
+    from codepicture.config import RenderConfig
+    return RenderConfig()
+
+
+@pytest.fixture
+def pango_measurer():
+    """Pango-based text measurer for layout tests."""
+    from codepicture import PangoTextMeasurer
+    from codepicture.fonts import register_bundled_fonts
+    register_bundled_fonts()
+    return PangoTextMeasurer()
+
+
+@pytest.fixture
+def layout_engine(pango_measurer, render_config):
+    """Layout engine with default config for tests."""
+    from codepicture import LayoutEngine
+    return LayoutEngine(pango_measurer, render_config)
+
+
+@pytest.fixture
+def sample_tokens():
+    """Sample tokenized lines for layout tests."""
+    from codepicture.highlight import TokenInfo
+    return [
+        [TokenInfo("def ", "Token.Keyword", 0, 0), TokenInfo("foo():", "Token.Name.Function", 0, 4)],
+        [TokenInfo("    ", "Token.Text", 1, 0), TokenInfo("pass", "Token.Keyword", 1, 4)],
+    ]
