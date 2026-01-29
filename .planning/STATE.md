@@ -78,6 +78,7 @@ Recent decisions affecting current work:
 - [04-01]: PNG surfaces created at 2x scale with logical coordinate drawing
 - [04-01]: SVG/PDF surfaces write to BytesIO for in-memory generation
 - [04-01]: apply_shadow is no-op stub (Plan 04-03 implements real shadow)
+- [04-02]: Title text color auto-detected from background brightness
 - [04-03]: Cairo BGRA converted via Pillow RGBa mode to handle pre-multiplied alpha
 - [04-03]: Shadow margin = blur*2 + max(offset) = 125px total expansion
 
