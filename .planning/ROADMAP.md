@@ -97,10 +97,14 @@ Plans:
   5. Drop shadow renders with configurable blur and offset
   6. Line numbers appear in a gutter alongside code
   7. Padding, corner radius, and background color are all configurable
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — CairoCanvas for PNG/SVG/PDF rendering
+- [ ] 04-02-PLAN.md — Window chrome (title bar, traffic lights)
+- [ ] 04-03-PLAN.md — Shadow post-processing with Pillow
+- [ ] 04-04-PLAN.md — Renderer orchestration
+- [ ] 04-05-PLAN.md — Render module test suite
 
 ### Phase 5: CLI & Orchestration
 **Goal**: Deliver a working command-line tool that users can install and run
@@ -141,7 +145,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1.1 Testing Infrastructure | 2/2 | Complete | 2026-01-28 |
 | 2. Syntax Highlighting | 3/3 | Complete | 2026-01-28 |
 | 3. Layout Engine | 3/3 | Complete | 2026-01-29 |
-| 4. Rendering | 0/TBD | Not started | - |
+| 4. Rendering | 0/5 | Not started | - |
 | 5. CLI & Orchestration | 0/TBD | Not started | - |
 | 6. MLIR Lexer | 0/TBD | Not started | - |
 
