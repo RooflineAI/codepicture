@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Core types, protocols, configuration schema, and error handling
 - [x] **Phase 1.1: Testing Infrastructure** - Set up pytest, test fixtures, and CI for the foundation code (INSERTED)
 - [x] **Phase 2: Syntax Highlighting** - Pygments tokenization, theme system, language detection
-- [ ] **Phase 3: Layout Engine** - Text measurement, canvas sizing, typography settings
+- [x] **Phase 3: Layout Engine** - Text measurement, canvas sizing, typography settings
 - [ ] **Phase 4: Rendering** - Cairo/Pango rendering, visual effects, multi-format output
 - [ ] **Phase 5: CLI & Orchestration** - Application facade, Typer CLI, config file loading
 - [ ] **Phase 6: MLIR Lexer** - Custom Sublime syntax-based lexer for MLIR with dialect support
@@ -81,9 +81,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Font management and Pango-based text measurement
-- [ ] 03-02-PLAN.md — LayoutEngine with canvas dimension calculations
-- [ ] 03-03-PLAN.md — Test suite for layout module
+- [x] 03-01-PLAN.md — Font management and Pango-based text measurement
+- [x] 03-02-PLAN.md — LayoutEngine with canvas dimension calculations
+- [x] 03-03-PLAN.md — Test suite for layout module
 
 ### Phase 4: Rendering
 **Goal**: Produce polished images with window chrome, shadows, and all visual effects
@@ -140,7 +140,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1. Foundation | 2/2 | Complete | 2026-01-28 |
 | 1.1 Testing Infrastructure | 2/2 | Complete | 2026-01-28 |
 | 2. Syntax Highlighting | 3/3 | Complete | 2026-01-28 |
-| 3. Layout Engine | 0/3 | Not started | - |
+| 3. Layout Engine | 3/3 | Complete | 2026-01-29 |
 | 4. Rendering | 0/TBD | Not started | - |
 | 5. CLI & Orchestration | 0/TBD | Not started | - |
 | 6. MLIR Lexer | 0/TBD | Not started | - |
