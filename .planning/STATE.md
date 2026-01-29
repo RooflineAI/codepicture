@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Phase 4 - Rendering (COMPLETE)
+**Current focus:** Phase 4 - Rendering (COMPLETE with tests)
 
 ## Current Position
 
 Phase: 4 of 7 (Rendering)
-Plan: 4 of 4 in current phase
+Plan: 5 of 5 in current phase
 Status: Phase complete
-Last activity: 2026-01-29 - Completed 04-04-PLAN.md (Renderer)
+Last activity: 2026-01-29 - Completed 04-05-PLAN.md (Render Tests)
 
-Progress: [##########] 93%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
-- Average duration: 3.0 min
-- Total execution time: 0.70 hours
+- Total plans completed: 15
+- Average duration: 3.1 min
+- Total execution time: 0.77 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [##########] 93%
 | 1.1 Testing Infrastructure | 2/2 | 5 min | 2.5 min |
 | 2. Syntax Highlighting | 3/3 | 9 min | 3 min |
 | 3. Layout Engine | 3/3 | 12 min | 4 min |
-| 4. Rendering | 4/4 | 11 min | 2.75 min |
+| 4. Rendering | 5/5 | 15 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (4 min), 03-03 (2 min), 04-01 (2 min), 04-03 (4 min), 04-04 (3 min)
+- Last 5 plans: 03-03 (2 min), 04-01 (2 min), 04-03 (4 min), 04-04 (3 min), 04-05 (4 min)
 - Trend: Stable at 2-4 min per plan
 
 *Updated after each plan completion*
@@ -84,6 +84,9 @@ Recent decisions affecting current work:
 - [04-04]: RenderResult dataclass holds output bytes plus format and dimensions
 - [04-04]: Renderer accesses canvas._surface directly for shadow processing
 - [04-04]: OutputFormat added to top-level package exports
+- [04-05]: Separate render_tokens fixture uses real Pygments Token types
+- [04-05]: Use autouse=True fixture for font registration in renderer tests
+- [04-05]: New fixtures (render_tokens, render_metrics) for render testing
 
 ### Pending Todos
 
@@ -105,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29T09:43:19Z
-Stopped at: Completed 04-04-PLAN.md (Renderer)
+Last session: 2026-01-29T09:50:57Z
+Stopped at: Completed 04-05-PLAN.md (Render Tests)
 Resume file: None
