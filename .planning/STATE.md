@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 4 of 7 (Rendering)
-Plan: 1 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-01-29 - Completed 04-01-PLAN.md (CairoCanvas)
+Last activity: 2026-01-29 - Completed 04-03-PLAN.md (Shadow Post-Processing)
 
-Progress: [########--] 73%
+Progress: [#########-] 87%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 13
 - Average duration: 3.0 min
-- Total execution time: 0.55 hours
+- Total execution time: 0.65 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [########--] 73%
 | 1.1 Testing Infrastructure | 2/2 | 5 min | 2.5 min |
 | 2. Syntax Highlighting | 3/3 | 9 min | 3 min |
 | 3. Layout Engine | 3/3 | 12 min | 4 min |
-| 4. Rendering | 1/4 | 2 min | 2 min |
+| 4. Rendering | 3/4 | 8 min | 2.7 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (3 min), 03-01 (6 min), 03-02 (4 min), 03-03 (2 min), 04-01 (2 min)
+- Last 5 plans: 03-01 (6 min), 03-02 (4 min), 03-03 (2 min), 04-01 (2 min), 04-03 (4 min)
 - Trend: Stable at 2-6 min per plan
 
 *Updated after each plan completion*
@@ -78,6 +78,8 @@ Recent decisions affecting current work:
 - [04-01]: PNG surfaces created at 2x scale with logical coordinate drawing
 - [04-01]: SVG/PDF surfaces write to BytesIO for in-memory generation
 - [04-01]: apply_shadow is no-op stub (Plan 04-03 implements real shadow)
+- [04-03]: Cairo BGRA converted via Pillow RGBa mode to handle pre-multiplied alpha
+- [04-03]: Shadow margin = blur*2 + max(offset) = 125px total expansion
 
 ### Pending Todos
 
@@ -99,6 +101,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29T09:32:19Z
-Stopped at: Completed 04-01-PLAN.md (CairoCanvas)
+Last session: 2026-01-29T09:39:59Z
+Stopped at: Completed 04-03-PLAN.md (Shadow Post-Processing)
 Resume file: None
