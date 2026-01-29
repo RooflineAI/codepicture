@@ -124,18 +124,19 @@ Plans:
 - [x] 05-04-PLAN.md — CLI test suite
 
 ### Phase 6: MLIR Lexer
-**Goal**: Provide first-class syntax highlighting for MLIR code via Sublime syntax integration
+**Goal**: Provide first-class syntax highlighting for MLIR code via custom Pygments lexer
 **Depends on**: Phase 2
 **Requirements**: HIGH-04
 **Success Criteria** (what must be TRUE):
-  1. MLIR code is highlighted using a Sublime syntax definition file
+  1. MLIR code is highlighted using a custom Pygments RegexLexer
   2. Common MLIR constructs (operations, types, attributes, regions) render with appropriate colors
-  3. Sublime syntax file integrates with the highlighting pipeline via custom lexer support
+  3. Custom lexer integrates with the highlighting pipeline via Pygments entry point
   4. Unknown MLIR constructs fall back gracefully without breaking rendering
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — MlirLexer implementation and entry point registration
+- [ ] 06-02-PLAN.md — MLIR lexer test suite
 
 ## Progress
 
@@ -150,7 +151,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 3. Layout Engine | 3/3 | Complete | 2026-01-29 |
 | 4. Rendering | 5/5 | Complete | 2026-01-29 |
 | 5. CLI & Orchestration | 4/4 | Complete | 2026-01-29 |
-| 6. MLIR Lexer | 0/TBD | Not started | - |
+| 6. MLIR Lexer | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-28*
