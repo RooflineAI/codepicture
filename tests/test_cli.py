@@ -179,3 +179,78 @@ class TestCliVerbose:
         assert result.exit_code == 0
         # Verbose output should mention reading/loading/rendering
         assert "Reading" in result.output or "Loading" in result.output or "Rendering" in result.output
+
+
+# =============================================================================
+# Integration Tests - subprocess
+# =============================================================================
+
+class TestCliIntegration:
+    """Integration tests using subprocess for true end-to-end testing."""
+
+    def test_cli_help_subprocess(self):
+        """CLI help works via subprocess."""
+        result = subprocess.run(
+            [sys.executable, "-m", "codepicture", "--help"],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0
+        assert "Generate a beautiful image" in result.stdout
+
+    def test_cli_version_subprocess(self):
+        """CLI version works via subprocess."""
+        result = subprocess.run(
+            [sys.executable, "-m", "codepicture", "--version"],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0
+        assert __version__ in result.stdout
+
+    def test_cli_generate_subprocess(self, tmp_path: Path):
+        """End-to-end image generation via subprocess."""
+        # Create input file
+        input_file = tmp_path / "test.py"
+        input_file.write_text('print("hello")')
+        output_file = tmp_path / "output.png"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "codepicture", str(input_file), "-o", str(output_file)],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0, f"CLI failed: {result.stderr}"
+        assert output_file.exists()
+        # Check PNG magic bytes
+        assert output_file.read_bytes()[:8] == b'\x89PNG\r\n\x1a\n'
+
+    def test_cli_error_subprocess(self, tmp_path: Path):
+        """CLI error handling via subprocess."""
+        output_file = tmp_path / "output.png"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "codepicture", "nonexistent.py", "-o", str(output_file)],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode != 0
+        # Error should be on stderr
+        assert "error" in result.stderr.lower() or "not found" in result.stderr.lower()
+
+    def test_cli_silent_on_success(self, tmp_path: Path):
+        """CLI is silent on success (no stdout)."""
+        input_file = tmp_path / "test.py"
+        input_file.write_text('print("hello")')
+        output_file = tmp_path / "output.png"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "codepicture", str(input_file), "-o", str(output_file)],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0
+        assert result.stdout == ""  # Silent on success
