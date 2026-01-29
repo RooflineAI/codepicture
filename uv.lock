@@ -31,8 +31,11 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "catppuccin", extra = ["pygments"] },
+    { name = "manimpango" },
+    { name = "pycairo" },
     { name = "pydantic" },
     { name = "pygments" },
+    { name = "pygobject" },
 ]
 
 [package.dev-dependencies]
@@ -45,8 +48,11 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "catppuccin", extras = ["pygments"], specifier = ">=2.5" },
+    { name = "manimpango", specifier = ">=0.6.1" },
+    { name = "pycairo", specifier = ">=1.25" },
     { name = "pydantic", specifier = ">=2.5" },
     { name = "pygments", specifier = ">=2.19" },
+    { name = "pygobject", specifier = ">=3.46" },
 ]
 
 [package.metadata.requires-dev]
@@ -136,6 +142,22 @@ wheels = [
 ]
 
 [[package]]
+name = "manimpango"
+version = "0.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/55/d360e73eb4d04b102cef399ddebcba486a9b6c1977a26fe710beffd52e95/manimpango-0.6.1.tar.gz", hash = "sha256:59a00bbf8e99dab5f94341087c88e609fe946e79724627429cf59da84cbd40bf", size = 4080834, upload-time = "2025-10-23T06:04:48.564Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/23/ee/01cd6b3087a5ead9483add3023f46c135bddd7773d506b771b44bbe0830b/manimpango-0.6.1-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:79aafe6373cb31dcdd1ee505407ec2bea18e74aed877f93dcd27ec9d88584472", size = 7751685, upload-time = "2025-10-23T06:04:28.457Z" },
+    { url = "https://files.pythonhosted.org/packages/70/93/905ac20a9190655870131940dadb5121645cf8a23e6ea0f04be7f4604f2e/manimpango-0.6.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:1049bda27ca504d24b48bec21756f4d8a3310ea7bc690167c54d05e97b8f7639", size = 7062629, upload-time = "2025-10-23T06:04:30.059Z" },
+    { url = "https://files.pythonhosted.org/packages/76/88/b2de7d2d3a0331cf79992f8c6da0f0abd873d4ec9f024cad5992f1cf7a6d/manimpango-0.6.1-cp313-cp313-win32.whl", hash = "sha256:8da8238147b96737b36725b0fc386dc1dd7901516dfd7e73b2e7d34cd5d934f1", size = 3626705, upload-time = "2025-10-23T06:04:31.527Z" },
+    { url = "https://files.pythonhosted.org/packages/3b/ed/a7a57491b26e8fb85ac0be9c39b53a6690f3c39beaf06d3715cb6916932b/manimpango-0.6.1-cp313-cp313-win_amd64.whl", hash = "sha256:e90d6b926d0e673ce624963d44cc28c55a368b6074108ab885a43305baeae26c", size = 4203874, upload-time = "2025-10-23T06:04:32.981Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/c0/318410215b409465a237c126a3e1f612c432d33b037b2f997870df327434/manimpango-0.6.1-cp314-cp314-macosx_10_15_x86_64.whl", hash = "sha256:318d14087901ee27ed6d0cfef0335aed57db217f8de831c8ca4e4c52b7805b45", size = 7751895, upload-time = "2025-10-23T06:04:34.874Z" },
+    { url = "https://files.pythonhosted.org/packages/d1/83/f0a05e3e6312ca9673bc8b470c6a743cf2d0bd7f08b218efc993226e72e4/manimpango-0.6.1-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:ffe2f8353857f0ca9a16894430d871051da450bc2d19beb969cf8b57b032f580", size = 7063387, upload-time = "2025-10-23T06:04:36.877Z" },
+    { url = "https://files.pythonhosted.org/packages/13/76/0748323341647e8c338bd7af6fb527ffdc43d676003b57743740bdfcffcc/manimpango-0.6.1-cp314-cp314-win32.whl", hash = "sha256:c294ab801c8ffc217342dfeff7aeca97cbea86cd8b4e6e8c9a8d7da020b820e1", size = 3737933, upload-time = "2025-10-23T06:04:38.775Z" },
+    { url = "https://files.pythonhosted.org/packages/2b/e9/42b995549cfd137780045e44b3bfba2cb1247b18bd2fb9f97079048e78ac/manimpango-0.6.1-cp314-cp314-win_amd64.whl", hash = "sha256:d8b0ee675eb30bbb67097cecb2be469847c3ccf574291f2bd43360caeb5f62ed", size = 4357908, upload-time = "2025-10-23T06:04:40.641Z" },
+]
+
+[[package]]
 name = "packaging"
 version = "26.0"
 source = { registry = "https://pypi.org/simple" }
@@ -151,6 +173,22 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe6ef3fa267035b518369d9511ffab804f839851d2779/pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3", size = 69412, upload-time = "2025-05-15T12:30:07.975Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
+]
+
+[[package]]
+name = "pycairo"
+version = "1.29.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/22/d9/1728840a22a4ef8a8f479b9156aa2943cd98c3907accd3849fb0d5f82bfd/pycairo-1.29.0.tar.gz", hash = "sha256:f3f7fde97325cae80224c09f12564ef58d0d0f655da0e3b040f5807bd5bd3142", size = 665871, upload-time = "2025-11-11T19:13:01.584Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f0/21/3f477dc318dd4e84a5ae6301e67284199d7e5a2384f3063714041086b65d/pycairo-1.29.0-cp313-cp313-win32.whl", hash = "sha256:3eb382a4141591807073274522f7aecab9e8fa2f14feafd11ac03a13a58141d7", size = 750949, upload-time = "2025-11-11T19:12:12.198Z" },
+    { url = "https://files.pythonhosted.org/packages/43/34/7d27a333c558d6ac16dbc12a35061d389735e99e494ee4effa4ec6d99bed/pycairo-1.29.0-cp313-cp313-win_amd64.whl", hash = "sha256:91114e4b3fbf4287c2b0788f83e1f566ce031bda49cf1c3c3c19c3e986e95c38", size = 844149, upload-time = "2025-11-11T19:12:19.171Z" },
+    { url = "https://files.pythonhosted.org/packages/15/43/e782131e23df69e5c8e631a016ed84f94bbc4981bf6411079f57af730a23/pycairo-1.29.0-cp313-cp313-win_arm64.whl", hash = "sha256:09b7f69a5ff6881e151354ea092137b97b0b1f0b2ab4eb81c92a02cc4a08e335", size = 693595, upload-time = "2025-11-11T19:12:23.445Z" },
+    { url = "https://files.pythonhosted.org/packages/2d/fa/87eaeeb9d53344c769839d7b2854db7ff2cd596211e00dd1b702eeb1838f/pycairo-1.29.0-cp314-cp314-win32.whl", hash = "sha256:69e2a7968a3fbb839736257bae153f547bca787113cc8d21e9e08ca4526e0b6b", size = 767198, upload-time = "2025-11-11T19:12:42.336Z" },
+    { url = "https://files.pythonhosted.org/packages/3c/90/3564d0f64d0a00926ab863dc3c4a129b1065133128e96900772e1c4421f8/pycairo-1.29.0-cp314-cp314-win_amd64.whl", hash = "sha256:e91243437a21cc4c67c401eff4433eadc45745275fa3ade1a0d877e50ffb90da", size = 871579, upload-time = "2025-11-11T19:12:48.982Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/91/93632b6ba12ad69c61991e3208bde88486fdfc152be8cfdd13444e9bc650/pycairo-1.29.0-cp314-cp314-win_arm64.whl", hash = "sha256:b72200ea0e5f73ae4c788cd2028a750062221385eb0e6d8f1ecc714d0b4fdf82", size = 719537, upload-time = "2025-11-11T19:12:55.016Z" },
+    { url = "https://files.pythonhosted.org/packages/93/23/37053c039f8d3b9b5017af9bc64d27b680c48a898d48b72e6d6583cf0155/pycairo-1.29.0-cp314-cp314t-win_amd64.whl", hash = "sha256:5e45fce6185f553e79e4ef1722b8e98e6cde9900dbc48cb2637a9ccba86f627a", size = 874015, upload-time = "2025-11-11T19:12:28.47Z" },
+    { url = "https://files.pythonhosted.org/packages/d7/54/123f6239685f5f3f2edc123f1e38d2eefacebee18cf3c532d2f4bd51d0ef/pycairo-1.29.0-cp314-cp314t-win_arm64.whl", hash = "sha256:caba0837a4b40d47c8dfb0f24cccc12c7831e3dd450837f2a356c75f21ce5a15", size = 721404, upload-time = "2025-11-11T19:12:36.919Z" },
 ]
 
 [[package]]
@@ -229,6 +267,15 @@ sdist = { url = "https://files.pythonhosted.org/packages/b0/77/a5b8c569bf593b014
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b", size = 1225217, upload-time = "2025-06-21T13:39:07.939Z" },
 ]
+
+[[package]]
+name = "pygobject"
+version = "3.54.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pycairo" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d3/a5/68f883df1d8442e3b267cb92105a4b2f0de819bd64ac9981c2d680d3f49f/pygobject-3.54.5.tar.gz", hash = "sha256:b6656f6348f5245606cf15ea48c384c7f05156c75ead206c1b246c80a22fb585", size = 1274658, upload-time = "2025-10-18T13:45:03.121Z" }
 
 [[package]]
 name = "pytest"

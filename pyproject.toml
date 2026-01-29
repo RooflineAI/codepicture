@@ -8,6 +8,9 @@ dependencies = [
     "pydantic>=2.5",
     "pygments>=2.19",
     "catppuccin[pygments]>=2.5",
+    "pygobject>=3.46",
+    "pycairo>=1.25",
+    "manimpango>=0.6.1",
 ]
 
 [build-system]
@@ -16,6 +19,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/codepicture"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/codepicture/fonts/JetBrainsMono-Regular.ttf" = "codepicture/fonts/JetBrainsMono-Regular.ttf"
 
 [dependency-groups]
 dev = [
