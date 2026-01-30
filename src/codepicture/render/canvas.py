@@ -60,7 +60,7 @@ class CairoCanvas:
     SVG and PDF surfaces write to BytesIO buffers.
     """
 
-    __slots__ = ("_surface", "_ctx", "_format", "_buffer", "_scale", "_width", "_height")
+    __slots__ = ("_surface", "_ctx", "_format", "_buffer", "_scale", "_width", "_height", "_current_font")
 
     def __init__(
         self,
@@ -90,6 +90,7 @@ class CairoCanvas:
         self._scale = scale
         self._width = width
         self._height = height
+        self._current_font: tuple[str, int] | None = None
 
     @classmethod
     def create(
@@ -230,13 +231,16 @@ class CairoCanvas:
         # Resolve font family (falls back to bundled font if not found)
         font_name = resolve_font_family(font_family)
 
-        # Set up font
-        self._ctx.select_font_face(
-            font_name,
-            cairo.FONT_SLANT_NORMAL,
-            cairo.FONT_WEIGHT_NORMAL,
-        )
-        self._ctx.set_font_size(font_size)
+        # Set up font (cached to avoid redundant calls)
+        font_key = (font_name, font_size)
+        if self._current_font != font_key:
+            self._ctx.select_font_face(
+                font_name,
+                cairo.FONT_SLANT_NORMAL,
+                cairo.FONT_WEIGHT_NORMAL,
+            )
+            self._ctx.set_font_size(font_size)
+            self._current_font = font_key
 
         # Set color and draw
         self._ctx.set_source_rgba(
@@ -271,13 +275,16 @@ class CairoCanvas:
         # Resolve font family
         font_name = resolve_font_family(font_family)
 
-        # Set up font
-        self._ctx.select_font_face(
-            font_name,
-            cairo.FONT_SLANT_NORMAL,
-            cairo.FONT_WEIGHT_NORMAL,
-        )
-        self._ctx.set_font_size(font_size)
+        # Set up font (cached to avoid redundant calls)
+        font_key = (font_name, font_size)
+        if self._current_font != font_key:
+            self._ctx.select_font_face(
+                font_name,
+                cairo.FONT_SLANT_NORMAL,
+                cairo.FONT_WEIGHT_NORMAL,
+            )
+            self._ctx.set_font_size(font_size)
+            self._current_font = font_key
 
         # Get text extents for width
         text_extents = self._ctx.text_extents(text)
