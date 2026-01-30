@@ -12,9 +12,9 @@ from rich.console import Console
 
 from codepicture import __version__, load_config, list_themes
 from codepicture.core.types import OutputFormat
-from codepicture.errors import CodepictureError
+from codepicture.errors import CodepictureError, InputError, RenderTimeoutError
 
-from .orchestrator import generate_image
+from .orchestrator import generate_image_with_timeout
 
 
 app = typer.Typer(
@@ -25,6 +25,10 @@ app = typer.Typer(
 )
 
 err_console = Console(stderr=True)
+
+EXIT_SUCCESS = 0
+EXIT_ERROR = 1
+EXIT_TIMEOUT = 2
 
 
 def version_callback(value: bool) -> None:
@@ -72,11 +76,15 @@ def read_input(input_path: str, language: str | None) -> tuple[str, str | None]:
 
     path = Path(input_path)
     if not path.exists():
-        raise typer.BadParameter(
-            f"file not found: {input_path}",
-            param_hint="'INPUT_FILE'"
+        raise InputError(f"File not found: {input_path}", input_path=input_path)
+    if not path.is_file():
+        raise InputError(f"Not a file: {input_path}", input_path=input_path)
+    try:
+        return path.read_text(), path.name
+    except PermissionError:
+        raise InputError(
+            f"Permission denied: {input_path}", input_path=input_path
         )
-    return path.read_text(), path.name
 
 
 @app.command()
@@ -161,6 +169,11 @@ def main(
         bool | None,
         typer.Option("--shadow/--no-shadow", help="Enable drop shadow")
     ] = None,
+    # Timeout
+    timeout: Annotated[
+        float,
+        typer.Option("--timeout", help="Rendering timeout in seconds (0 to disable)")
+    ] = 30.0,
     # Meta options
     verbose: Annotated[
         bool,
@@ -186,6 +199,8 @@ def main(
     ] = False,
 ) -> None:
     """Generate a beautiful image from source code."""
+    effective_timeout = None if timeout == 0 else timeout
+
     try:
         # Read input
         if verbose:
@@ -239,22 +254,29 @@ def main(
 
         # Generate image
         if verbose:
-            err_console.print(f"[dim]Rendering to {output}...[/dim]")
+            err_console.print(
+                f"[dim]Rendering to {output} "
+                f"(timeout: {effective_timeout or 'disabled'}s)...[/dim]"
+            )
 
-        generate_image(
+        generate_image_with_timeout(
             code=code,
             output_path=output,
             config=config,
             language=language,
             filename=filename,
+            timeout=effective_timeout,
         )
 
         if verbose:
             err_console.print("[green]Done![/green]")
 
+    except RenderTimeoutError as e:
+        err_console.print(f"[red]Error:[/red] {e}")
+        raise typer.Exit(EXIT_TIMEOUT)
     except CodepictureError as e:
         err_console.print(f"[red]Error:[/red] {e}")
-        raise typer.Exit(1)
+        raise typer.Exit(EXIT_ERROR)
     except Exception as e:
-        err_console.print(f"[red]Error:[/red] {e}")
-        raise typer.Exit(1)
+        err_console.print(f"[red]Error:[/red] Unexpected error: {e}")
+        raise typer.Exit(EXIT_ERROR)
