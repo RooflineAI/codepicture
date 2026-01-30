@@ -1,0 +1,93 @@
+"""Visual regression tests for codepicture rendering output.
+
+Compares rendered images against stored reference snapshots.
+Covers 5 core languages x 3 output formats (PNG, SVG, PDF) plus
+config variant combinations for feature toggles.
+"""
+
+from __future__ import annotations
+
+from io import BytesIO
+from pathlib import Path
+
+import pytest
+from PIL import Image
+
+from codepicture.config import RenderConfig
+
+from .conftest import compare_images, pdf_to_png, render_fixture, svg_to_png
+
+# ---------------------------------------------------------------------------
+# Language x Format matrix (15 combinations)
+# ---------------------------------------------------------------------------
+
+LANGUAGES = [
+    ("python", "python_visual.py"),
+    ("rust", "rust_visual.rs"),
+    ("cpp", "cpp_visual.cpp"),
+    ("javascript", "javascript_visual.js"),
+    ("mlir", "mlir_visual.mlir"),
+]
+
+FORMATS = ["png", "svg", "pdf"]
+
+
+def _render_to_image(
+    fixture_path: Path, language: str, output_format: str
+) -> Image.Image:
+    """Render a fixture and return the result as a Pillow RGBA Image."""
+    config = RenderConfig(output_format=output_format)
+    data, _ext = render_fixture(fixture_path, config, language=language)
+
+    if output_format == "png":
+        return Image.open(BytesIO(data)).convert("RGBA")
+    elif output_format == "svg":
+        return svg_to_png(data)
+    elif output_format == "pdf":
+        return pdf_to_png(data)
+    else:
+        raise ValueError(f"Unknown format: {output_format}")
+
+
+# ---------------------------------------------------------------------------
+# Core visual regression tests: 5 languages x 3 formats
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.timeout(30)
+@pytest.mark.parametrize(
+    "language,fixture_file",
+    LANGUAGES,
+    ids=[lang for lang, _ in LANGUAGES],
+)
+@pytest.mark.parametrize("output_format", FORMATS)
+def test_visual_regression(
+    language: str,
+    fixture_file: str,
+    output_format: str,
+    snapshot_update: bool,
+    visual_fixtures_dir: Path,
+    references_dir: Path,
+    diff_output_dir: Path,
+) -> None:
+    """Compare rendered output against reference snapshot.
+
+    Parametrized over LANGUAGES x FORMATS for 15 total combinations.
+    """
+    fixture_path = visual_fixtures_dir / fixture_file
+    test_name = f"{language}_{output_format}_default"
+    reference_path = references_dir / f"{test_name}.png"
+
+    actual = _render_to_image(fixture_path, language, output_format)
+
+    if snapshot_update or not reference_path.exists():
+        actual.save(reference_path)
+        pytest.skip(f"Reference image {'updated' if snapshot_update else 'created'}: {reference_path.name}")
+
+    passed, mismatch_pct = compare_images(
+        actual, reference_path, diff_output_dir, test_name
+    )
+    assert passed, (
+        f"Visual regression failed for {test_name}: "
+        f"{mismatch_pct:.4f}% pixels differ (threshold: 0.001%)"
+    )
