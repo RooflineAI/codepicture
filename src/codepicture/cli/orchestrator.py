@@ -6,6 +6,7 @@ Separates business logic from CLI argument handling for testability.
 import concurrent.futures
 import os
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 
@@ -18,7 +19,7 @@ from codepicture import (
     register_bundled_fonts,
     get_theme,
 )
-from codepicture.errors import RenderTimeoutError
+from codepicture.errors import HighlightError, RenderTimeoutError
 
 
 def generate_image(
@@ -53,8 +54,16 @@ def generate_image(
         # Fallback to text if no filename and no language
         language = "text"
 
-    # 3. Tokenize code
-    tokens = highlighter.highlight(code, language)
+    # 3. Tokenize code (fall back to plain text on unknown language)
+    try:
+        tokens = highlighter.highlight(code, language)
+    except HighlightError:
+        print(
+            f"Warning: Unknown language '{language}', rendering as plain text.",
+            file=sys.stderr,
+        )
+        language = "text"
+        tokens = highlighter.highlight(code, language)
 
     # 4. Load theme
     theme = get_theme(config.theme)
