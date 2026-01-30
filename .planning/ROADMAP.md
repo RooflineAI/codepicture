@@ -41,7 +41,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 **Depends on**: Nothing (first v1.1 phase, trivial to add)
 **Requirements**: SAFE-04, SAFE-05
 **Success Criteria** (what must be TRUE):
-  1. Running `pytest` with a test that would hang indefinitely is killed after the global timeout (30s default)
+  1. Running `pytest` with a test that would hang indefinitely is killed after the global timeout (5s default)
   2. A GitHub Actions CI run that exceeds 10 minutes is automatically cancelled
   3. Existing 260+ tests continue to pass with pytest-timeout enabled
 **Plans**: 2 plans
