@@ -1,0 +1,2 @@
+# Visual regression reference images tracked via Git LFS
+tests/visual/references/*.png filter=lfs diff=lfs merge=lfs -text
