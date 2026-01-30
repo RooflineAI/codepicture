@@ -63,8 +63,8 @@
 | SAFE-01 | Phase 8 | Pending |
 | SAFE-02 | Phase 9 | Pending |
 | SAFE-03 | Phase 9 | Pending |
-| SAFE-04 | Phase 7 | Pending |
-| SAFE-05 | Phase 7 | Pending |
+| SAFE-04 | Phase 7 | Complete |
+| SAFE-05 | Phase 7 | Complete |
 | VRT-01 | Phase 10 | Pending |
 | VRT-02 | Phase 10 | Pending |
 | VRT-03 | Phase 10 | Pending |

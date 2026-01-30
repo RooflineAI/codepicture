@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-30)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** v1.1 Reliability & Testing — Phase 7 (Safety Nets)
+**Current focus:** v1.1 Reliability & Testing — Phase 8 (MLIR Hang Fix)
 
 ## Current Position
 
-Phase: 7 of 11 (Safety Nets)
-Plan: 2 of 2 in current phase
-Status: Phase 7 complete
-Last activity: 2026-01-30 — Completed 07-01-PLAN.md (pytest-timeout + slow markers)
+Phase: 8 of 11 (MLIR Hang Fix)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-01-30 — Phase 7 (Safety Nets) complete
 
-Progress: [######################..................] 55% (23/42 plans estimated)
+Progress: [#######################.................] 57% (v1.0 complete, Phase 7 done)
 
 ## Performance Metrics
 
@@ -59,5 +59,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-30
-Stopped at: Phase 7 complete (both 07-01 and 07-02 done)
+Stopped at: Phase 7 complete, ready to plan Phase 8
 Resume file: None
