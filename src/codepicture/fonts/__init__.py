@@ -4,6 +4,7 @@ Provides font registration and fallback utilities using ManimPango.
 Bundles JetBrains Mono for consistent rendering across systems.
 """
 
+import functools
 import logging
 from importlib.resources import as_file, files
 
@@ -52,6 +53,7 @@ def register_bundled_fonts() -> bool:
         return False
 
 
+@functools.lru_cache(maxsize=16)
 def resolve_font_family(requested: str, default: str = "JetBrains Mono") -> str:
     """Resolve a font family name, falling back to default if not available.
 

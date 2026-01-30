@@ -69,6 +69,10 @@ class MlirLexer(RegexLexer):
             (r"\b(true|false|unit)\b", Keyword.Constant),
             # Affine expression operators
             (r"\b(floordiv|ceildiv|mod|symbol)\b", Operator.Word),
+            # Ellipsis (variadic argument marker)
+            (r"\.\.\.", Punctuation),
+            # General identifiers (catch-all for bare words)
+            (r"[a-zA-Z_][\w]*", Name),
             # Strings
             (r'"', String.Double, "string"),
             # Arrow operator
