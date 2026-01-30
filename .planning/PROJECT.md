@@ -37,7 +37,10 @@ One command turns code into a slide-ready image: `codepicture snippet.py -o slid
 
 ### Active
 
-(None — planning next milestone)
+- [ ] Fix rendering hang on test.mlir (and any other files that fail)
+- [ ] Run codepicture against real-world source files and fix rendering issues
+- [ ] Build visual regression test suite for core languages (Python, Rust, C++, JS, MLIR)
+- [ ] Profile and optimize rendering performance
 
 ### Out of Scope
 
@@ -50,6 +53,18 @@ One command turns code into a slide-ready image: `codepicture snippet.py -o slid
 - Real-time preview — batch processing only
 - Animations / GIFs — static images only, different tool category
 - Cloud accounts / web service — CLI-first, no infrastructure complexity
+
+## Current Milestone: v1.1 Reliability & Testing
+
+**Goal:** Harden codepicture for real-world usage — fix rendering bugs, build visual regression tests, and optimize performance.
+
+**Target work:**
+- Investigate and fix rendering hang on `test.mlir` (could be lexer backtracking, rendering pipeline bug, or shadow blur issue)
+- Run against diverse real source files across core languages and fix issues
+- Build automated visual regression test suite with reference images
+- Profile rendering pipeline and address bottlenecks
+
+**Known issue:** `test.mlir` causes codepicture to hang indefinitely. User will provide additional MLIR examples for testing.
 
 ## Context
 
@@ -84,4 +99,4 @@ Intended trajectory: personal use → startup internal tool → open source.
 | Fixed shadow style (on/off) | Reduces config complexity, macOS-standard look | ✓ Good — clean visual result |
 
 ---
-*Last updated: 2026-01-30 after v1.0 milestone*
+*Last updated: 2026-01-30 after v1.1 milestone started*

@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-30)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Planning next milestone
+**Current focus:** v1.1 Reliability & Testing
 
 ## Current Position
 
-Phase: All v1.0 phases complete (1-6)
-Plan: N/A
-Status: Ready to plan
-Last activity: 2026-01-30 — v1.0 milestone complete
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-01-30 — Milestone v1.1 started
 
-Progress: [####################] 100% (v1.0 MVP shipped)
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -50,7 +50,7 @@ None yet.
 
 ### Blockers/Concerns
 
-None yet.
+- `test.mlir` causes rendering hang — first priority for v1.1
 
 ### Quick Tasks Completed
 
@@ -66,5 +66,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-30
-Stopped at: v1.0 milestone completed and archived
+Stopped at: v1.1 milestone initialization
 Resume file: None
