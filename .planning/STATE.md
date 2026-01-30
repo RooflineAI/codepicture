@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-30)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** v1.1 Reliability & Testing — Phase 8 (MLIR Hang Fix)
+**Current focus:** v1.1 Reliability & Testing — Phase 8 complete, ready for Phase 9
 
 ## Current Position
 
-Phase: 8 of 11 (MLIR Hang Fix)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-01-30 — Completed 08-01-PLAN.md
+Phase: 8 of 11 (MLIR Hang Fix) - COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-01-30 — Completed 08-02-PLAN.md
 
-Progress: [########################................] 61% (v1.0 complete, Phase 7 done, 08-01 done)
+Progress: [#########################...............] 64% (v1.0 complete, Phases 7-8 done)
 
 ## Performance Metrics
 
@@ -40,7 +40,7 @@ Progress: [########################................] 61% (v1.0 complete, Phase 7
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 7. Safety Nets | 2/2 | - | - |
-| 8. MLIR Hang Fix | 1/2 | 2 min | 2 min |
+| 8. MLIR Hang Fix | 2/2 | 4 min | 2 min |
 
 *Updated after each plan completion*
 
@@ -60,8 +60,7 @@ None.
 
 ### Blockers/Concerns
 
-- `test.mlir` rendering hang RESOLVED (0.22s render time after 08-01 fixes)
-- Phase 8 plan 02 (MLIR test corpus) still pending
+- `test.mlir` rendering hang RESOLVED and regression-tested (08-01 fix + 08-02 tests)
 
 ### Roadmap Evolution
 
@@ -71,5 +70,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-30
-Stopped at: Completed 08-01-PLAN.md
+Stopped at: Completed 08-02-PLAN.md (Phase 8 complete)
 Resume file: None
