@@ -52,8 +52,14 @@ class MlirLexer(RegexLexer):
             (r"\b[su]?i[0-9]+\b", Keyword.Type),
             # Container types
             (r"\b(memref|tensor|vector|complex|tuple)\b", Keyword.Type),
+            # Hexadecimal numbers (before dialect.op to avoid mismatches)
+            (r"0x[0-9a-fA-F]+", Number.Hex),
+            # Floating-point numbers (before dialect.op to avoid 3.14 matching)
+            (r"[0-9]+\.[0-9]*([eE][+-]?[0-9]+)?", Number.Float),
+            # Integers
+            (r"[0-9]+", Number.Integer),
             # Operations in dialect.op format: arith.constant, func.call
-            (r"[\w]+\.[\w\.\$\-]+", Name.Builtin),
+            (r"[a-zA-Z_][\w]*\.[\w\.\$\-]+", Name.Builtin),
             # Reserved keywords
             (
                 r"\b(affine_map|affine_set|dense|opaque|sparse|func|return|module)\b",
@@ -63,12 +69,6 @@ class MlirLexer(RegexLexer):
             (r"\b(true|false|unit)\b", Keyword.Constant),
             # Affine expression operators
             (r"\b(floordiv|ceildiv|mod|symbol)\b", Operator.Word),
-            # Hexadecimal numbers
-            (r"0x[0-9a-fA-F]+", Number.Hex),
-            # Floating-point numbers
-            (r"[0-9]+\.[0-9]*([eE][+-]?[0-9]+)?", Number.Float),
-            # Integers
-            (r"[0-9]+", Number.Integer),
             # Strings
             (r'"', String.Double, "string"),
             # Arrow operator
