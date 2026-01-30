@@ -91,3 +91,62 @@ def test_visual_regression(
         f"Visual regression failed for {test_name}: "
         f"{mismatch_pct:.4f}% pixels differ (threshold: 0.001%)"
     )
+
+
+# ---------------------------------------------------------------------------
+# Config variant tests (Python fixture only, PNG format)
+# ---------------------------------------------------------------------------
+
+CONFIG_VARIANTS = [
+    ("shadow-off", {"shadow": False}),
+    ("chrome-off", {"window_controls": False}),
+    ("lines-off", {"show_line_numbers": False}),
+    ("shadow-off_chrome-off", {"shadow": False, "window_controls": False}),
+    (
+        "shadow-off_chrome-off_lines-off",
+        {"shadow": False, "window_controls": False, "show_line_numbers": False},
+    ),
+]
+
+
+@pytest.mark.timeout(30)
+@pytest.mark.parametrize(
+    "variant_name,overrides",
+    CONFIG_VARIANTS,
+    ids=[name for name, _ in CONFIG_VARIANTS],
+)
+def test_visual_config_variant(
+    variant_name: str,
+    overrides: dict,
+    snapshot_update: bool,
+    visual_fixtures_dir: Path,
+    references_dir: Path,
+    diff_output_dir: Path,
+) -> None:
+    """Compare config variant rendering against reference snapshot.
+
+    Tests feature toggle combinations (shadow, chrome, line numbers)
+    using the Python fixture in PNG format only.
+    """
+    fixture_path = visual_fixtures_dir / "python_visual.py"
+    test_name = f"python_png_{variant_name}"
+    reference_path = references_dir / f"{test_name}.png"
+
+    config = RenderConfig(output_format="png", **overrides)
+    data, _ext = render_fixture(fixture_path, config, language="python")
+    actual = Image.open(BytesIO(data)).convert("RGBA")
+
+    if snapshot_update or not reference_path.exists():
+        actual.save(reference_path)
+        pytest.skip(
+            f"Reference image {'updated' if snapshot_update else 'created'}: "
+            f"{reference_path.name}"
+        )
+
+    passed, mismatch_pct = compare_images(
+        actual, reference_path, diff_output_dir, test_name
+    )
+    assert passed, (
+        f"Visual regression failed for {test_name}: "
+        f"{mismatch_pct:.4f}% pixels differ (threshold: 0.001%)"
+    )
