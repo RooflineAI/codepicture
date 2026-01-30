@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 6 of 7 (MLIR Lexer)
-Plan: 1 of 1 in current phase
+Plan: 2 of 2 in current phase
 Status: Phase complete
-Last activity: 2026-01-30 - Completed 06-01-PLAN.md (MLIR Lexer)
+Last activity: 2026-01-30 - Completed 06-02-PLAN.md (MLIR Lexer Tests)
 
 Progress: [####################] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
-- Average duration: 2.7 min
-- Total execution time: 0.90 hours
+- Total plans completed: 21
+- Average duration: 2.6 min
+- Total execution time: 0.93 hours
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: [####################] 100%
 | 3. Layout Engine | 3/3 | 12 min | 4 min |
 | 4. Rendering | 5/5 | 15 min | 3 min |
 | 5. CLI & Orchestration | 4/4 | 9 min | 2.25 min |
-| 6. MLIR Lexer | 1/1 | 1 min | 1 min |
+| 6. MLIR Lexer | 2/2 | 3 min | 1.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (2 min), 05-02 (2 min), 05-03 (2 min), 05-04 (3 min), 06-01 (1 min)
+- Last 5 plans: 05-02 (2 min), 05-03 (2 min), 05-04 (3 min), 06-01 (1 min), 06-02 (2 min)
 - Trend: Stable at 1-3 min per plan
 
 *Updated after each plan completion*
@@ -51,6 +51,8 @@ Recent decisions affecting current work:
 - [Roadmap]: MLIR lexer uses Pygments RegexLexer with entry-point registration
 - [06-01]: RegexLexer with ordered token patterns for MLIR syntax
 - [06-01]: Entry point registration via pyproject.toml for Pygments discovery
+- [06-02]: Float/hex patterns before dialect.op to prevent false matches
+- [06-02]: Dialect.op regex requires leading letter to avoid matching numbers
 - [01-01]: Color uses frozen dataclass with slots for immutability
 - [01-01]: ConfigError includes optional field attribute
 - [01-02]: TYPE_CHECKING guard for protocol type imports (avoids circular imports)
@@ -124,6 +126,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-30T08:06:43Z
-Stopped at: Completed 06-01-PLAN.md (MLIR Lexer) - Phase 6 complete
+Last session: 2026-01-30T08:11:20Z
+Stopped at: Completed 06-02-PLAN.md (MLIR Lexer Tests) - Phase 6 complete
 Resume file: None
