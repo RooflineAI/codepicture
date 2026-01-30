@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Phase 6 - MLIR Lexer (next up)
+**Current focus:** Phase 6 - MLIR Lexer (complete)
 
 ## Current Position
 
-Phase: 5 of 7 (CLI & Orchestration)
-Plan: 4 of 4 in current phase
+Phase: 6 of 7 (MLIR Lexer)
+Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-29 - Completed 05-04-PLAN.md (CLI Tests)
+Last activity: 2026-01-30 - Completed 06-01-PLAN.md (MLIR Lexer)
 
-Progress: [###################-] 95%
+Progress: [####################] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
-- Average duration: 2.8 min
-- Total execution time: 0.88 hours
+- Total plans completed: 20
+- Average duration: 2.7 min
+- Total execution time: 0.90 hours
 
 **By Phase:**
 
@@ -33,10 +33,11 @@ Progress: [###################-] 95%
 | 3. Layout Engine | 3/3 | 12 min | 4 min |
 | 4. Rendering | 5/5 | 15 min | 3 min |
 | 5. CLI & Orchestration | 4/4 | 9 min | 2.25 min |
+| 6. MLIR Lexer | 1/1 | 1 min | 1 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-05 (4 min), 05-01 (2 min), 05-02 (2 min), 05-03 (2 min), 05-04 (3 min)
-- Trend: Stable at 2-4 min per plan
+- Last 5 plans: 05-01 (2 min), 05-02 (2 min), 05-03 (2 min), 05-04 (3 min), 06-01 (1 min)
+- Trend: Stable at 1-3 min per plan
 
 *Updated after each plan completion*
 
@@ -47,7 +48,9 @@ Progress: [###################-] 95%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [Roadmap]: MLIR lexer will use Sublime syntax file (not Pygments custom lexer)
+- [Roadmap]: MLIR lexer uses Pygments RegexLexer with entry-point registration
+- [06-01]: RegexLexer with ordered token patterns for MLIR syntax
+- [06-01]: Entry point registration via pyproject.toml for Pygments discovery
 - [01-01]: Color uses frozen dataclass with slots for immutability
 - [01-01]: ConfigError includes optional field attribute
 - [01-02]: TYPE_CHECKING guard for protocol type imports (avoids circular imports)
@@ -121,6 +124,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29T10:59:36Z
-Stopped at: Completed 05-04-PLAN.md (CLI Tests) - Phase 5 complete
+Last session: 2026-01-30T08:06:43Z
+Stopped at: Completed 06-01-PLAN.md (MLIR Lexer) - Phase 6 complete
 Resume file: None
