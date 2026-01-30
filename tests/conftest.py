@@ -7,6 +7,16 @@ import pytest
 from codepicture.core.types import Color, TextStyle
 
 
+def pytest_addoption(parser):
+    """Add custom CLI options for visual regression testing."""
+    parser.addoption(
+        "--snapshot-update",
+        action="store_true",
+        default=False,
+        help="Update visual regression reference images",
+    )
+
+
 @pytest.fixture
 def sample_color() -> Color:
     """A standard test color (Catppuccin Blue)."""
