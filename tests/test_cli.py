@@ -94,6 +94,12 @@ class TestCliErrors:
         assert result.exit_code != 0
         assert "language" in result.output.lower()
 
+    def test_file_not_found_clean_message(self, tmp_path: Path):
+        """Missing file error has no Python traceback."""
+        result = runner.invoke(app, ["nonexistent.py", "-o", str(tmp_path / "out.png")])
+        assert result.exit_code != 0
+        assert "Traceback" not in result.output
+
 
 class TestCliGeneration:
     """Tests for CLI image generation."""
@@ -200,6 +206,104 @@ class TestCliVerbose:
 # =============================================================================
 # Integration Tests - subprocess
 # =============================================================================
+
+class TestCliTimeout:
+    """Tests for CLI --timeout flag."""
+
+    def test_timeout_appears_in_help(self):
+        """--timeout flag appears in help output."""
+        result = runner.invoke(app, ["--help"])
+        assert result.exit_code == 0
+        assert "--timeout" in result.output
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_timeout_flag_accepted(self, sample_py: Path, tmp_path: Path):
+        """--timeout flag is accepted and renders successfully."""
+        output = tmp_path / "out.png"
+        result = runner.invoke(app, [str(sample_py), "-o", str(output), "--timeout", "5"])
+        assert result.exit_code == 0, f"CLI failed: {result.output}"
+        assert output.exists()
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_timeout_zero_disables(self, sample_py: Path, tmp_path: Path):
+        """--timeout 0 disables timeout and renders successfully."""
+        output = tmp_path / "out.png"
+        result = runner.invoke(app, [str(sample_py), "-o", str(output), "--timeout", "0"])
+        assert result.exit_code == 0, f"CLI failed: {result.output}"
+        assert output.exists()
+
+
+class TestCliExitCodes:
+    """Tests for CLI exit codes via subprocess."""
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_success_exits_zero(self, tmp_path: Path):
+        """Successful render exits with code 0."""
+        input_file = tmp_path / "test.py"
+        input_file.write_text('print("hello")')
+        output_file = tmp_path / "output.png"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "codepicture", str(input_file), "-o", str(output_file)],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0
+
+    def test_file_not_found_exits_nonzero(self, tmp_path: Path):
+        """Nonexistent file exits with non-zero code."""
+        output_file = tmp_path / "output.png"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "codepicture", "nonexistent.py", "-o", str(output_file)],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode != 0
+
+    def test_error_message_no_traceback(self, tmp_path: Path):
+        """Error messages do not contain Python tracebacks."""
+        output_file = tmp_path / "output.png"
+
+        result = subprocess.run(
+            [sys.executable, "-m", "codepicture", "nonexistent.py", "-o", str(output_file)],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode != 0
+        assert "Traceback" not in result.stderr
+        assert "error" in result.stderr.lower() or "not found" in result.stderr.lower()
+
+
+class TestCliLanguageFallback:
+    """Tests for unknown language fallback."""
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_unknown_language_renders_as_text(self, sample_py: Path, tmp_path: Path):
+        """Unknown language falls back to plain text and renders successfully."""
+        output = tmp_path / "out.png"
+        result = runner.invoke(
+            app, [str(sample_py), "-o", str(output), "-l", "notareallanguage"]
+        )
+        assert result.exit_code == 0, f"CLI failed: {result.output}"
+        assert output.exists()
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_unknown_language_warns_on_stderr(self, sample_py: Path, tmp_path: Path):
+        """Unknown language produces a warning about plain text fallback."""
+        output = tmp_path / "out.png"
+        result = runner.invoke(
+            app, [str(sample_py), "-o", str(output), "-l", "notareallanguage"]
+        )
+        assert result.exit_code == 0
+        # CliRunner merges stdout/stderr; check for warning text
+        assert "Warning" in result.output or "plain text" in result.output
+
 
 class TestCliIntegration:
     """Integration tests using subprocess for true end-to-end testing."""
