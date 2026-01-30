@@ -35,11 +35,14 @@ dev = [
     "pytest>=9.0.2",
     "pytest-cov>=7.0.0",
     "pytest-randomly>=4.0.1",
+    "pytest-timeout>=2.4.0",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --tb=short"
+timeout = 5
+timeout_method = "signal"
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
 ]
