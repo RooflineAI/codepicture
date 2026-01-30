@@ -88,7 +88,12 @@ Plans:
   3. All 5 languages x 3 formats (PNG/SVG/PDF) render valid output within timeout
   4. Feature toggle combinations (shadow on/off, chrome on/off, line numbers on/off) all produce valid, visually verified output
   5. pixelmatch-based comparison uses configurable threshold to handle anti-aliasing without false positives
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 10-01-PLAN.md — Install VRT dependencies, build comparison infrastructure, create visual fixtures
+- [ ] 10-02-PLAN.md — Generate reference images and create visual regression tests (5 langs x 3 formats + config variants)
+- [ ] 10-03-PLAN.md — Parametrized reliability matrix tests (REL-01 language x format, REL-02 feature toggles)
+- [ ] 10-04-PLAN.md — CI integration (visual regression job) and Git LFS setup for reference images
 
 ### Phase 11: Performance Benchmarks
 **Goal**: Rendering performance is measured per-stage and end-to-end, with results tracked in CI
@@ -116,7 +121,7 @@ Plans:
 | 7. Safety Nets | v1.1 | 2/2 | Complete | 2026-01-30 |
 | 8. MLIR Hang Fix | v1.1 | 2/2 | Complete | 2026-01-30 |
 | 9. Rendering Timeout Guards | v1.1 | 3/3 | Complete | 2026-01-30 |
-| 10. Visual Regression & Reliability | v1.1 | 0/TBD | Not started | - |
+| 10. Visual Regression & Reliability | v1.1 | 0/4 | Not started | - |
 | 11. Performance Benchmarks | v1.1 | 0/TBD | Not started | - |
 
 ---
