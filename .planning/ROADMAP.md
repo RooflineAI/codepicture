@@ -29,7 +29,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 **Milestone Goal:** Harden codepicture for real-world usage — fix rendering bugs, add timeout protection, build visual regression tests, and profile performance.
 
 - [x] **Phase 7: Safety Nets** — Prevent CI hangs with test-level and job-level timeouts (completed 2026-01-30)
-- [ ] **Phase 8: MLIR Hang Fix** — Diagnose and fix the test.mlir rendering hang
+- [x] **Phase 8: MLIR Hang Fix** — Diagnose and fix the test.mlir rendering hang (completed 2026-01-30)
 - [ ] **Phase 9: Rendering Timeout Guards** — Application-level timeout protection with clean error handling
 - [ ] **Phase 10: Visual Regression & Reliability** — Automated visual verification and parametrized rendering tests
 - [ ] **Phase 11: Performance Benchmarks** — Per-stage and end-to-end profiling with CI integration
@@ -61,7 +61,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 08-01-PLAN.md — Cache font resolution, add MLIR lexer catch-all, cache canvas font setup
-- [ ] 08-02-PLAN.md — Create MLIR test corpus and regression tests
+- [x] 08-02-PLAN.md — Create MLIR test corpus and regression tests
 
 ### Phase 9: Rendering Timeout Guards
 **Goal**: The rendering pipeline has application-level timeout protection and all failure modes produce clean, user-friendly error messages
@@ -110,7 +110,7 @@ Plans:
 | 5. CLI & Orchestration | v1.0 | 4/4 | Complete | 2026-01-29 |
 | 6. MLIR Lexer | v1.0 | 2/2 | Complete | 2026-01-30 |
 | 7. Safety Nets | v1.1 | 2/2 | Complete | 2026-01-30 |
-| 8. MLIR Hang Fix | v1.1 | 1/2 | In progress | - |
+| 8. MLIR Hang Fix | v1.1 | 2/2 | Complete | 2026-01-30 |
 | 9. Rendering Timeout Guards | v1.1 | 0/TBD | Not started | - |
 | 10. Visual Regression & Reliability | v1.1 | 0/TBD | Not started | - |
 | 11. Performance Benchmarks | v1.1 | 0/TBD | Not started | - |

@@ -7,7 +7,7 @@
 
 ### Bug Fixes & Safety
 
-- [ ] **SAFE-01**: Fix MLIR lexer hang on `test.mlir` — diagnose root cause (regex backtracking) and fix without introducing new backtracking risks
+- [x] **SAFE-01**: Fix MLIR lexer hang on `test.mlir` — diagnose root cause (regex backtracking) and fix without introducing new backtracking risks
 - [ ] **SAFE-02**: Application-level rendering timeout guard — abort rendering if any pipeline stage exceeds configurable time limit (default 30s), with clear error message
 - [ ] **SAFE-03**: Add `RenderTimeoutError` to error hierarchy with user-friendly CLI output (no Python tracebacks)
 - [ ] **SAFE-04**: Add pytest-timeout to test suite with global default timeout (5s) to prevent CI hangs
