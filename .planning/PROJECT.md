@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Python CLI tool that transforms code snippets into beautiful, presentation-ready images. Takes a source file, applies syntax highlighting and visual styling (macOS window controls, shadows, themes), and outputs PNG, SVG, or PDF. Built for developers who want polished code visuals for slides without fussing with screenshot tools.
+A Python CLI tool that transforms code snippets into polished, presentation-ready images. Takes a source file, applies syntax highlighting with 55+ themes (including Catppuccin), adds macOS window chrome and drop shadows, and outputs PNG (2x HiDPI), SVG, or PDF. Includes a custom MLIR lexer for first-class MLIR syntax highlighting.
 
 ## Core Value
 
@@ -12,56 +12,60 @@ One command turns code into a slide-ready image: `codepicture snippet.py -o slid
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ CLI accepts source file path and outputs image — v1.0
+- ✓ PNG output format — v1.0
+- ✓ SVG output format — v1.0
+- ✓ PDF output format — v1.0
+- ✓ Syntax highlighting via Pygments — v1.0
+- ✓ Custom lexer support (MLIR via Pygments RegexLexer) — v1.0
+- ✓ Catppuccin theme support — v1.0
+- ✓ Built-in Pygments themes (Dracula, Monokai, One Dark, etc.) — v1.0
+- ✓ macOS-style window controls (traffic light buttons) — v1.0
+- ✓ Drop shadow effect (on/off toggle) — v1.0
+- ✓ TOML config file support (~/.config/codepicture/config.toml) — v1.0
+- ✓ Configurable font family and size — v1.0
+- ✓ Configurable padding — v1.0
+- ✓ Configurable corner radius — v1.0
+- ✓ Configurable background color — v1.0
+- ✓ Auto-detect language from file extension — v1.0
+- ✓ Explicit language override via CLI flag — v1.0
+- ✓ Line numbers in gutter — v1.0
+- ✓ Configurable line height — v1.0
+- ✓ Tab-to-space normalization — v1.0
+- ✓ CLI flags override config file settings — v1.0
+- ✓ Line numbers in gutter — v1.0
 
 ### Active
 
-- [ ] CLI accepts source file path and outputs image
-- [ ] PNG output format
-- [ ] SVG output format
-- [ ] PDF output format
-- [ ] Syntax highlighting via Pygments
-- [ ] Custom lexer support (e.g., MLIR)
-- [ ] Catppuccin theme support
-- [ ] Built-in Pygments themes (Dracula, Monokai, One Dark, etc.)
-- [ ] macOS-style window controls (traffic light buttons)
-- [ ] Drop shadow effect
-- [ ] TOML config file support (~/.config/codepicture/config.toml)
-- [ ] Configurable font family and size
-- [ ] Configurable padding
-- [ ] Configurable corner radius
-- [ ] Configurable shadow parameters
-- [ ] Auto-detect language from file extension
-- [ ] Explicit language override via CLI flag
+(None — planning next milestone)
 
 ### Out of Scope
 
 - Line highlighting — deferred to v2
+- Gradient backgrounds — deferred to v2
 - Clipboard input/output — nice-to-have for later
+- Font ligatures — deferred to v2
 - GUI or web UI — v1 is CLI-only, web UI is future consideration
 - Windows support — macOS and Linux only for now
 - Real-time preview — batch processing only
+- Animations / GIFs — static images only, different tool category
+- Cloud accounts / web service — CLI-first, no infrastructure complexity
 
 ## Context
 
-This is a Python rewrite inspired by Silicon (Rust). Python chosen because:
-- Performance isn't critical for this use case
-- Better Python ecosystem for SVG manipulation
-- Easier contribution for open source
+Shipped v1.0 MVP with 6,050 lines of Python (3,214 source + 2,836 test).
+Tech stack: Python 3.13+, Cairo/Pango, Pygments, Typer, Pydantic.
+260 tests passing with 80%+ coverage and GitHub Actions CI.
 
-Architecture document exists at `PYTHON_REWRITE_ARCHITECTURE.md` with detailed component design:
-- Application facade pattern (SiliconApp) for future GUI readiness
-- Protocol-based abstractions (Canvas, Highlighter, Theme, TextMeasurer)
-- Cairo/Pango for rendering, Pygments for highlighting
-- Pydantic for config validation
+This is a Python rewrite inspired by Silicon (Rust). Python chosen because performance isn't critical, better ecosystem for SVG manipulation, and easier open source contribution.
 
-User works with MLIR, which requires custom lexer support — this is a core use case.
+User works with MLIR, which requires custom lexer support — this is a core use case, shipped with custom Pygments RegexLexer.
 
 Intended trajectory: personal use → startup internal tool → open source.
 
 ## Constraints
 
-- **Stack**: Python 3.11+, Cairo/Pango, Pygments, Typer, Pydantic — per architecture doc
+- **Stack**: Python 3.13+, Cairo/Pango, Pygments, Typer, Pydantic
 - **Platform**: Must work on macOS and Linux
 - **Config**: TOML format at ~/.config/codepicture/config.toml
 
@@ -69,12 +73,15 @@ Intended trajectory: personal use → startup internal tool → open source.
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Python over Rust | Performance not critical, better SVG ecosystem | — Pending |
-| Cairo/Pango for rendering | Mature, handles fonts well, supports PNG/SVG/PDF | — Pending |
-| Pygments for highlighting | Standard Python choice, extensive language support, custom lexers | — Pending |
-| Typer for CLI | Modern, type-hint based, good DX | — Pending |
-| Pydantic for config | Validation at load time, clear error messages | — Pending |
-| Protocol-based architecture | Enables future backends (Skia, browser) and testability | — Pending |
+| Python over Rust | Performance not critical, better SVG ecosystem | ✓ Good — 6K LOC in 3 days |
+| Cairo/Pango for rendering | Mature, handles fonts well, supports PNG/SVG/PDF | ✓ Good — PNG/SVG/PDF all working |
+| Pygments for highlighting | Standard Python choice, extensive language support, custom lexers | ✓ Good — 55+ themes, custom MLIR lexer |
+| Typer for CLI | Modern, type-hint based, good DX | ✓ Good — clean CLI with flag overrides |
+| Pydantic for config | Validation at load time, clear error messages | ✓ Good — catches config errors early |
+| Protocol-based architecture | Enables future backends (Skia, browser) and testability | ✓ Good — clean component boundaries |
+| Cairo text API over Pango | macOS library linking issues with PyGObject | ⚠️ Revisit — works for monospace, may need Pango for ligatures |
+| RegexLexer for MLIR | 80% coverage with 20% effort vs Sublime syntax parser | ✓ Good — covers common MLIR constructs |
+| Fixed shadow style (on/off) | Reduces config complexity, macOS-standard look | ✓ Good — clean visual result |
 
 ---
-*Last updated: 2026-01-28 after initialization*
+*Last updated: 2026-01-30 after v1.0 milestone*
