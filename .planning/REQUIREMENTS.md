@@ -60,31 +60,31 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SAFE-01 | TBD | Pending |
-| SAFE-02 | TBD | Pending |
-| SAFE-03 | TBD | Pending |
-| SAFE-04 | TBD | Pending |
-| SAFE-05 | TBD | Pending |
-| VRT-01 | TBD | Pending |
-| VRT-02 | TBD | Pending |
-| VRT-03 | TBD | Pending |
-| VRT-04 | TBD | Pending |
-| VRT-05 | TBD | Pending |
-| VRT-06 | TBD | Pending |
-| VRT-07 | TBD | Pending |
-| VRT-08 | TBD | Pending |
-| REL-01 | TBD | Pending |
-| REL-02 | TBD | Pending |
-| REL-03 | TBD | Pending |
-| PERF-01 | TBD | Pending |
-| PERF-02 | TBD | Pending |
-| PERF-03 | TBD | Pending |
+| SAFE-01 | Phase 8 | Pending |
+| SAFE-02 | Phase 9 | Pending |
+| SAFE-03 | Phase 9 | Pending |
+| SAFE-04 | Phase 7 | Pending |
+| SAFE-05 | Phase 7 | Pending |
+| VRT-01 | Phase 10 | Pending |
+| VRT-02 | Phase 10 | Pending |
+| VRT-03 | Phase 10 | Pending |
+| VRT-04 | Phase 10 | Pending |
+| VRT-05 | Phase 10 | Pending |
+| VRT-06 | Phase 10 | Pending |
+| VRT-07 | Phase 10 | Pending |
+| VRT-08 | Phase 10 | Pending |
+| REL-01 | Phase 10 | Pending |
+| REL-02 | Phase 10 | Pending |
+| REL-03 | Phase 9 | Pending |
+| PERF-01 | Phase 11 | Pending |
+| PERF-02 | Phase 11 | Pending |
+| PERF-03 | Phase 11 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 19 total
-- Mapped to phases: 0 (awaiting roadmap)
-- Unmapped: 19 ⚠️
+- Mapped to phases: 19
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-30*
-*Last updated: 2026-01-30 after initial definition*
+*Last updated: 2026-01-30 — traceability filled with phase assignments*
