@@ -15,37 +15,37 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Output Formats
 
-- [ ] **OUT-01**: PNG output format
-- [ ] **OUT-02**: SVG output format
-- [ ] **OUT-03**: PDF output format
+- [x] **OUT-01**: PNG output format
+- [x] **OUT-02**: SVG output format
+- [x] **OUT-03**: PDF output format
 
 ### Syntax Highlighting
 
-- [ ] **HIGH-01**: Syntax highlighting via Pygments tokenization
-- [ ] **HIGH-02**: Auto-detect language from file extension
-- [ ] **HIGH-03**: Explicit language override via --language flag
-- [ ] **HIGH-04**: Custom lexer support for domain-specific languages (MLIR via Sublime syntax)
+- [x] **HIGH-01**: Syntax highlighting via Pygments tokenization
+- [x] **HIGH-02**: Auto-detect language from file extension
+- [x] **HIGH-03**: Explicit language override via --language flag
+- [x] **HIGH-04**: Custom lexer support for domain-specific languages (MLIR via Sublime syntax)
 
 ### Theming
 
-- [ ] **THEME-01**: Catppuccin theme support
-- [ ] **THEME-02**: Built-in Pygments themes (Dracula, Monokai, One Dark, etc.)
+- [x] **THEME-01**: Catppuccin theme support
+- [x] **THEME-02**: Built-in Pygments themes (Dracula, Monokai, One Dark, etc.)
 
 ### Visual Styling
 
-- [ ] **VIS-01**: macOS-style window controls (red/yellow/green traffic lights)
-- [ ] **VIS-02**: Drop shadow effect (on/off toggle, fixed macOS style)
-- [ ] **VIS-03**: Line numbers in gutter
-- [ ] **VIS-04**: Configurable padding around code
-- [ ] **VIS-05**: Configurable corner radius
-- [ ] **VIS-06**: Configurable background color
+- [x] **VIS-01**: macOS-style window controls (red/yellow/green traffic lights)
+- [x] **VIS-02**: Drop shadow effect (on/off toggle, fixed macOS style)
+- [x] **VIS-03**: Line numbers in gutter
+- [x] **VIS-04**: Configurable padding around code
+- [x] **VIS-05**: Configurable corner radius
+- [x] **VIS-06**: Configurable background color
 
 ### Typography
 
-- [ ] **TYPO-01**: Configurable font family
-- [ ] **TYPO-02**: Configurable font size
-- [ ] **TYPO-03**: Configurable line height
-- [ ] **TYPO-04**: Tab-to-space normalization
+- [x] **TYPO-01**: Configurable font family
+- [x] **TYPO-02**: Configurable font size
+- [x] **TYPO-03**: Configurable line height
+- [x] **TYPO-04**: Tab-to-space normalization
 
 ## v2 Requirements
 
@@ -97,7 +97,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HIGH-01 | Phase 2 | Complete |
 | HIGH-02 | Phase 2 | Complete |
 | HIGH-03 | Phase 2 | Complete |
-| HIGH-04 | Phase 6 | Pending |
+| HIGH-04 | Phase 6 | Complete |
 | THEME-01 | Phase 2 | Complete |
 | THEME-02 | Phase 2 | Complete |
 | VIS-01 | Phase 4 | Complete |
@@ -118,4 +118,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-29 after Phase 5 completion*
+*Last updated: 2026-01-30 after Phase 6 completion*

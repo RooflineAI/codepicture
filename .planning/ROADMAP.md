@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Layout Engine** - Text measurement, canvas sizing, typography settings
 - [x] **Phase 4: Rendering** - Cairo/Pango rendering, visual effects, multi-format output
 - [x] **Phase 5: CLI & Orchestration** - Application facade, Typer CLI, config file loading
-- [ ] **Phase 6: MLIR Lexer** - Custom Sublime syntax-based lexer for MLIR with dialect support
+- [x] **Phase 6: MLIR Lexer** - Custom Sublime syntax-based lexer for MLIR with dialect support
 
 ## Phase Details
 
@@ -135,8 +135,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — MlirLexer implementation and entry point registration
-- [ ] 06-02-PLAN.md — MLIR lexer test suite
+- [x] 06-01-PLAN.md — MlirLexer implementation and entry point registration
+- [x] 06-02-PLAN.md — MLIR lexer test suite
 
 ## Progress
 
@@ -151,7 +151,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 3. Layout Engine | 3/3 | Complete | 2026-01-29 |
 | 4. Rendering | 5/5 | Complete | 2026-01-29 |
 | 5. CLI & Orchestration | 4/4 | Complete | 2026-01-29 |
-| 6. MLIR Lexer | 0/2 | Not started | - |
+| 6. MLIR Lexer | 2/2 | Complete | 2026-01-30 |
 
 ---
 *Roadmap created: 2026-01-28*
