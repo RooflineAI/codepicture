@@ -1,211 +1,290 @@
-# Stack Research
+# Technology Stack: v1.1 Reliability Milestone Additions
 
-**Domain:** Python CLI code screenshot/image generation tool
-**Researched:** 2026-01-28
-**Confidence:** HIGH
+**Project:** codepicture
+**Milestone:** v1.1 -- Reliability, Visual Regression, Performance
+**Researched:** 2026-01-30
+**Overall confidence:** HIGH
 
-## Recommended Stack
+## Context
 
-### Core Technologies
+The v1.0 stack is validated and shipping (Python 3.13+, PyCairo, Pygments, Typer, Pydantic, pytest). This document covers ONLY the stack additions needed for three new capabilities:
 
-| Technology | Version | Purpose | Why Recommended | Confidence |
-|------------|---------|---------|-----------------|------------|
-| Python | 3.13+ | Runtime | Project specifies 3.13; PyCairo 1.29.0 requires 3.10+; all core libraries support 3.13 | HIGH |
-| PyCairo | 1.29.0 | 2D vector graphics rendering | Industry-standard for high-quality vector graphics; outputs PNG, SVG, PDF natively; mature and stable | HIGH |
-| PyGObject | 3.54.5 | Access to Pango text layout | Required for PangoCairo text rendering; provides professional text layout with kerning, ligatures, and multi-script support | HIGH |
-| Pygments | 2.19.2 | Syntax highlighting | De facto standard for Python syntax highlighting; 598+ languages; outputs tokenized text for custom rendering | HIGH |
-| Typer | 0.21.1 | CLI framework | Modern CLI framework using type hints; built on Click; auto-completion; Rich integration for beautiful output | HIGH |
-| Pydantic | 2.12.5 | Configuration/validation | Type-safe configuration schemas; validation with clear error messages; serialization for config files | HIGH |
+1. Visual regression testing (image comparison in CI)
+2. Performance profiling (benchmark rendering, detect regressions)
+3. Rendering reliability (timeouts for hanging renders)
 
-### Rendering Stack Detail
+## Recommended Additions
 
-| Component | Library | Role | Notes |
-|-----------|---------|------|-------|
-| Graphics Engine | PyCairo | Renders shapes, shadows, rounded corners | Outputs to PNG, SVG, PDF directly |
-| Text Layout | PangoCairo (via PyGObject) | Professional text rendering | Handles fonts, kerning, line wrapping |
-| Syntax Parsing | Pygments | Tokenizes code by language | Returns token stream with style info |
-| Color Themes | Pygments styles | Provides syntax colors | 50+ built-in styles (Monokai, Dracula, etc.) |
+### Visual Regression Testing
 
-### Supporting Libraries
+| Library | Version | Purpose | Why This One |
+|---------|---------|---------|--------------|
+| pixelmatch | 0.3.0 | Pixel-level image comparison | Purpose-built for screenshot comparison in tests. Anti-aliasing detection prevents false positives on font rendering differences. Perceptual color difference metrics. Works with PIL.Image (Pillow already in deps). No heavyweight dependencies like OpenCV. |
+| Pillow | (already in deps) | Image loading, diff visualization | Already a project dependency (>=10.0). `ImageChops.difference()` provides quick diff images. `Image.open()` loads reference snapshots. |
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| Rich | 14.3.1 | Terminal output formatting | CLI progress bars, error display, tables; bundled with Typer |
-| Pillow | 12.1.0 | Image manipulation (optional) | Only if post-processing PNG output (resize, composite); not for primary rendering |
-| CairoSVG | 2.8.2 | SVG to PNG/PDF conversion | Only if accepting SVG input; not needed for SVG output (Cairo does that) |
-| ReportLab | 4.4.9 | Advanced PDF features (optional) | Only if needing PDF metadata, bookmarks, or multi-page documents |
+**Why pixelmatch over alternatives:**
 
-### Development Tools
+| Option | Verdict | Reason |
+|--------|---------|--------|
+| **pixelmatch** | **USE** | Lightweight (pure Python), anti-aliasing aware, configurable threshold, returns mismatch count for assertions. Originally built for screenshot testing. |
+| pytest-image-snapshot | SKIP | Adds a fixture layer on top of pixelmatch. We want direct control over comparison logic (threshold per test, custom diff output). Adding our own thin wrapper around pixelmatch is ~20 lines and avoids a plugin dependency. |
+| pytest-image-diff | SKIP | Depends on Pillow + additional dependencies. Less popular. Plugin-based approach limits flexibility. |
+| Pillow ImageChops only | SKIP | `ImageChops.difference().getbbox()` works for exact matches but has no anti-aliasing tolerance. Font rendering on different platforms produces anti-aliased pixels that differ by 1-2 values -- this causes false failures without pixelmatch's AA detection. |
+| OpenCV (cv2) | SKIP | Massive dependency (~50MB). SSIM comparison is overkill for pixel-exact screenshot testing. Adds native compilation complexity to CI. |
+| visual-comparison | SKIP | Requires OpenCV. Draws rectangles on differences -- visual but not useful for CI assertions. |
 
-| Tool | Version | Purpose | Notes |
-|------|---------|---------|-------|
-| pytest | 9.0.2 | Testing framework | Use `typer.testing.CliRunner` for CLI tests |
-| pytest-image-snapshot | 0.4.5 | Visual regression testing | Compare generated images against reference snapshots |
-| ruff | 0.14.14 | Linting + formatting | Replaces flake8, isort, black; extremely fast (Rust-based) |
-| mypy | 1.19.1 | Static type checking | Validates Pydantic models and type hints |
-| uv | latest | Package/project management | Fast dependency resolution; lockfile support |
-
-## Installation
-
-```bash
-# Core dependencies (using uv)
-uv add pycairo pygobject pygments typer pydantic
-
-# Or with pip
-pip install pycairo pygobject pygments typer pydantic
-
-# Dev dependencies
-uv add --dev pytest pytest-image-snapshot ruff mypy
-
-# System dependencies (required before pip install)
-# macOS:
-brew install cairo pango gobject-introspection pkg-config
-
-# Ubuntu/Debian:
-sudo apt-get install libcairo2-dev libpango1.0-dev libgirepository1.0-dev
-
-# Fedora:
-sudo dnf install cairo-devel pango-devel gobject-introspection-devel
-```
-
-## Alternatives Considered
-
-| Recommended | Alternative | When to Use Alternative |
-|-------------|-------------|-------------------------|
-| PyCairo + PangoCairo | Pillow (PIL) | Simple image manipulation only; Pillow lacks vector output (no SVG/PDF) and has inferior text rendering (no kerning, poor multi-line support) |
-| PyCairo + PangoCairo | Pygments ImageFormatter | Quick prototypes only; uses Pillow internally; limited customization; cannot produce SVG/PDF |
-| PyCairo + PangoCairo | Playwright (browser rendering) | When you need exact browser CSS rendering; adds ~100MB dependency; requires browser install; slower |
-| PyCairo + PangoCairo | svgwrite | SVG-only output; no PNG/PDF; unmaintained as of 2025 |
-| Typer | Click | Legacy projects; Typer wraps Click with better ergonomics |
-| Typer | argparse | Stdlib-only constraints; missing auto-completion and Rich integration |
-| Pydantic | dataclasses | Simpler needs; lacks validation, serialization, schema generation |
-
-## What NOT to Use
-
-| Avoid | Why | Use Instead |
-|-------|-----|-------------|
-| Pillow for primary rendering | Cannot output SVG or PDF; text rendering lacks kerning and proper line wrapping; limited font control | PyCairo + PangoCairo |
-| Pygments ImageFormatter alone | Uses Pillow internally; no SVG/PDF; limited window chrome customization | Use Pygments for tokenization only, render with Cairo |
-| pangocairocffi | Incomplete CFFI bindings; difficult to work with; PyGObject is the maintained approach | PyGObject for PangoCairo access |
-| svgwrite | Unmaintained (GitHub says "UNMAINTAINED"); Cairo can output SVG directly | PyCairo with SVGSurface |
-| Playwright/Selenium | Massive dependencies (~100MB+); requires browser; network latency if using web service; overkill for code screenshots | PyCairo renders locally, no browser needed |
-| Click directly | More verbose than Typer; requires decorator boilerplate; Typer provides better DX | Typer (built on Click) |
-| Python 3.9-3.10 | PyCairo 1.29.0 dropped Python 3.9 support (Nov 2025); pytest 9.0 requires 3.10+ | Python 3.13+ |
-
-## Stack Patterns
-
-**Standard Pattern (Recommended):**
-```
-Code Input -> Pygments (tokenize) -> Token Stream
-                                         |
-                                         v
-                           PangoCairo (layout text with colors)
-                                         |
-                                         v
-                           PyCairo (draw window chrome, shadows)
-                                         |
-                                         v
-                           Output: PNG / SVG / PDF
-```
-
-**If SVG input/processing needed:**
-```
-SVG Input -> CairoSVG (parse) -> Cairo operations -> Output
-```
-
-**If PDF with metadata needed:**
-```
-Cairo PNG/SVG -> ReportLab (embed, add metadata) -> Final PDF
-```
-
-## Version Compatibility Matrix
-
-| Package | Min Python | Max Python | Notes |
-|---------|------------|------------|-------|
-| PyCairo 1.29.0 | 3.10 | 3.14 | Dropped 3.9 in Nov 2025 |
-| PyGObject 3.54.5 | 3.9 | 3.14 | Requires system GObject libs |
-| Pygments 2.19.2 | 3.8 | 3.13 | Very stable |
-| Typer 0.21.1 | 3.9 | 3.14 | Includes Rich by default |
-| Pydantic 2.12.5 | 3.9 | 3.14 | Use v2, not v1 |
-| pytest 9.0.2 | 3.10 | 3.14 | Dropped 3.9 in Dec 2025 |
-| Pillow 12.1.0 | 3.10 | 3.14 | Optional; dropped 3.9 |
-
-**Minimum viable Python: 3.10** (PyCairo, pytest constraint)
-**Recommended Python: 3.13** (project spec; all libs support it)
-
-## System Dependencies
-
-Cairo and Pango are C libraries. PyCairo and PyGObject are Python bindings that require:
-
-| Platform | Required Packages | Install Command |
-|----------|------------------|-----------------|
-| macOS | cairo, pango, gobject-introspection, pkg-config | `brew install cairo pango gobject-introspection pkg-config` |
-| Ubuntu/Debian | libcairo2-dev, libpango1.0-dev, libgirepository1.0-dev | `apt-get install libcairo2-dev libpango1.0-dev libgirepository1.0-dev` |
-| Fedora | cairo-devel, pango-devel, gobject-introspection-devel | `dnf install cairo-devel pango-devel gobject-introspection-devel` |
-| Alpine | cairo-dev, pango-dev, gobject-introspection-dev | `apk add cairo-dev pango-dev gobject-introspection-dev` |
-
-**Note:** These must be installed BEFORE `pip install pycairo pygobject`. The Python packages compile against these headers.
-
-## Font Considerations
-
-PangoCairo uses system fonts. For consistent cross-platform rendering:
-
-| Approach | Pros | Cons |
-|----------|------|------|
-| Bundle fonts (e.g., JetBrains Mono, Fira Code) | Consistent output everywhere | Increases package size; licensing considerations |
-| Use system fonts with fallbacks | No bundling needed | Output varies by system |
-| Specify font stack | Best of both worlds | Requires font availability logic |
-
-**Recommendation:** Bundle a single high-quality monospace font (JetBrains Mono is OFL-licensed, supports ligatures) and use it as default, with fallback to system monospace.
-
-## Testing Strategy
-
-| Test Type | Tool | Purpose |
-|-----------|------|---------|
-| Unit tests | pytest | Test token parsing, color calculation, config validation |
-| CLI tests | pytest + typer.testing.CliRunner | Test CLI argument parsing, output files created |
-| Visual regression | pytest-image-snapshot | Compare generated images to reference snapshots |
-| Type checking | mypy | Validate Pydantic models and function signatures |
+**Integration pattern:**
 
 ```python
-# Example CLI test
-from typer.testing import CliRunner
-from codepicture.cli import app
+# tests/conftest.py or tests/visual/conftest.py
+import pytest
+from pathlib import Path
+from PIL import Image
+from pixelmatch.contrib.PIL import pixelmatch
 
-runner = CliRunner()
+SNAPSHOT_DIR = Path(__file__).parent / "snapshots"
 
-def test_generates_png():
-    result = runner.invoke(app, ["input.py", "-o", "output.png"])
-    assert result.exit_code == 0
-    assert Path("output.png").exists()
+@pytest.fixture
+def assert_image_match():
+    """Compare a rendered image against a reference snapshot."""
+    def _compare(actual: Image.Image, snapshot_name: str, threshold: float = 0.1):
+        ref_path = SNAPSHOT_DIR / f"{snapshot_name}.png"
+        if not ref_path.exists():
+            # First run: save as reference
+            actual.save(ref_path)
+            pytest.skip(f"Created reference snapshot: {ref_path}")
+
+        expected = Image.open(ref_path)
+        assert actual.size == expected.size, (
+            f"Size mismatch: {actual.size} vs {expected.size}"
+        )
+
+        # Create diff image for debugging
+        diff = Image.new("RGBA", actual.size)
+        num_diff = pixelmatch(actual, expected, diff, threshold=threshold)
+
+        if num_diff > 0:
+            diff_path = ref_path.with_suffix(".diff.png")
+            diff.save(diff_path)
+
+        assert num_diff == 0, (
+            f"{num_diff} pixels differ. Diff saved to {diff_path}"
+        )
+    return _compare
+```
+
+**Snapshot management in CI:**
+- Store reference snapshots in `tests/snapshots/` under version control
+- Generate on one platform only (macOS or Linux) to avoid cross-platform font rendering differences
+- Use `--update-snapshots` flag (custom pytest flag) to regenerate references
+- Save diff images as CI artifacts on failure for debugging
+
+### Performance Profiling
+
+| Library | Version | Purpose | Why This One |
+|---------|---------|---------|--------------|
+| pytest-benchmark | 5.2.3 | Benchmark rendering functions | Native pytest integration. Calibrated timing with statistical rigor (rounds, warmup, outlier detection). Regression detection via `--benchmark-compare`. Built-in cProfile integration via `--benchmark-cprofile`. Actively maintained (Nov 2025 release). |
+| snakeviz | 2.2.2 | Profile visualization (dev only) | Browser-based visualization of cProfile output. Icicle charts make hotspots obvious. Not a test dependency -- developer tool for investigating slow paths. |
+
+**Why pytest-benchmark over alternatives:**
+
+| Option | Verdict | Reason |
+|--------|---------|--------|
+| **pytest-benchmark** | **USE** | Already uses pytest (260 tests). Statistical rigor (min/max/mean/stddev). `--benchmark-compare` detects regressions in CI. `--benchmark-cprofile` gives per-function breakdown. Python 3.13 fixes landed in v5.2.x. |
+| time.perf_counter manually | SKIP | No statistical rigor. No CI regression detection. Reinventing the wheel. |
+| asv (airspeed velocity) | SKIP | Designed for long-running benchmark suites across git history. Overkill for a CLI tool. Separate from pytest -- would need parallel test infrastructure. |
+| perftester | SKIP | Lightweight but too simple. No regression detection. No pytest integration. |
+| scalene | SKIP | Full profiler (CPU+memory+GPU). Great for investigation but not for CI regression testing. Use ad-hoc, not as a dependency. |
+
+**Integration pattern:**
+
+```python
+# tests/benchmarks/test_render_performance.py
+import pytest
+
+def test_render_simple_python(benchmark, tmp_path):
+    """Benchmark rendering a small Python file."""
+    from codepicture.render import render_code_to_image
+
+    code = "def hello():\n    print('world')\n"
+    output = tmp_path / "bench.png"
+
+    benchmark(render_code_to_image, code=code, output=output, language="python")
+
+def test_render_large_file(benchmark, tmp_path):
+    """Benchmark rendering a large file (100 lines)."""
+    from codepicture.render import render_code_to_image
+
+    code = "\n".join(f"line_{i} = {i}" for i in range(100))
+    output = tmp_path / "bench.png"
+
+    benchmark(render_code_to_image, code=code, output=output, language="python")
+```
+
+**CI integration:**
+
+```yaml
+# In GitHub Actions workflow
+- name: Run benchmarks
+  run: pytest tests/benchmarks/ --benchmark-only --benchmark-json=benchmark.json
+
+- name: Compare with baseline (optional, on PR)
+  run: pytest tests/benchmarks/ --benchmark-only --benchmark-compare=0001
+```
+
+**pytest configuration:**
+
+```toml
+# pyproject.toml addition
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "benchmark: marks benchmark tests",
+]
+# Exclude benchmarks from normal test runs
+addopts = "-v --tb=short --benchmark-disable"
+```
+
+This way `pytest` runs all tests WITHOUT benchmarks (fast CI), and `pytest --benchmark-only` runs ONLY benchmarks (performance CI step).
+
+### Rendering Reliability (Timeouts)
+
+| Library | Version | Purpose | Why This One |
+|---------|---------|---------|--------------|
+| stdlib `signal` | (built-in) | SIGALRM-based render timeouts | Zero dependencies. Python stdlib. Works on macOS and Linux (CI targets). Main thread only -- which is fine for a CLI tool. Simple decorator pattern. |
+| stdlib `concurrent.futures` | (built-in) | Thread-based timeout fallback | Cross-platform fallback. `ThreadPoolExecutor` with `future.result(timeout=N)` works on Windows too. Useful if signal approach has issues with Cairo's C code. |
+
+**Why stdlib over third-party timeout libraries:**
+
+| Option | Verdict | Reason |
+|--------|---------|--------|
+| **signal.SIGALRM** | **USE (primary)** | Zero deps. CLI runs in main thread. Works on macOS/Linux (our CI). Simple and debuggable. |
+| **concurrent.futures** | **USE (fallback)** | Stdlib. Cross-platform. Needed if SIGALRM can't interrupt Cairo C code (Cairo holds the GIL during rendering -- signal delivery may be delayed until Cairo returns to Python). |
+| timeout-decorator | SKIP | Unmaintained (no releases in 12+ months). Wraps signal.SIGALRM anyway -- we can write 15 lines ourselves. |
+| wrapt-timeout-decorator | SKIP | Adds `dill` and `multiprocess` deps for subprocess-based timeouts. Overkill for a CLI tool running in main thread. |
+| asyncio.timeout | SKIP | Would require making rendering async. Entire codebase is sync. Not worth the refactor. |
+
+**Critical caveat -- Cairo and SIGALRM:**
+
+Cairo rendering happens in C code. `signal.SIGALRM` is delivered when Python regains control. If Cairo is stuck in a C-level loop (e.g., complex shadow blur), the signal won't fire until Cairo returns. This means:
+
+- **For Pygments lexer hangs** (Python code, regex backtracking): SIGALRM works perfectly.
+- **For Cairo rendering hangs** (C code): SIGALRM may be delayed. Use `concurrent.futures.ThreadPoolExecutor` with `future.result(timeout=N)` as the robust approach. The thread won't be killed, but we can raise `TimeoutError` and move on.
+- **Nuclear option**: `multiprocessing.Process` with `process.join(timeout=N)` then `process.terminate()`. Kills the entire subprocess including C code. Use only if thread-based timeout is insufficient.
+
+**Recommended implementation (two-tier):**
+
+```python
+# codepicture/safety.py
+import signal
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
+from functools import wraps
+
+DEFAULT_RENDER_TIMEOUT = 30  # seconds
+
+def with_timeout(timeout_seconds: int = DEFAULT_RENDER_TIMEOUT):
+    """Timeout decorator using ThreadPoolExecutor (works with C extensions)."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(func, *args, **kwargs)
+                try:
+                    return future.result(timeout=timeout_seconds)
+                except TimeoutError:
+                    raise RenderTimeoutError(
+                        f"Rendering timed out after {timeout_seconds}s. "
+                        f"This may indicate a lexer backtracking issue or "
+                        f"overly complex rendering operation."
+                    )
+        return wrapper
+    return decorator
+
+class RenderTimeoutError(Exception):
+    """Raised when rendering exceeds the allowed time."""
+    pass
+```
+
+**Why ThreadPoolExecutor over signal.SIGALRM as primary:**
+
+The known hang issue is with MLIR lexer/rendering. Pygments lexing uses regex which IS interruptible by signals, but Cairo shadow blur is C code which is NOT. Using ThreadPoolExecutor as the primary approach covers both cases uniformly, at the cost of not being able to truly kill a stuck thread. For a CLI tool, this is acceptable -- the process exits anyway.
+
+## Complete v1.1 Dev Dependencies Addition
+
+```toml
+# pyproject.toml [dependency-groups] update
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "pytest-randomly>=4.0.1",
+    "pytest-benchmark>=5.2.3",
+    "pixelmatch>=0.3.0",
+    "snakeviz>=2.2.2",
+]
+```
+
+```bash
+# Install new dev dependencies
+uv add --dev pytest-benchmark pixelmatch snakeviz
+```
+
+**No new runtime dependencies.** All timeout/reliability code uses stdlib only.
+
+## What NOT to Add
+
+| Do Not Add | Why Not | What to Use Instead |
+|------------|---------|---------------------|
+| OpenCV (cv2) | 50MB+ dependency for image comparison. Overkill. Adds native build complexity. | pixelmatch (pure Python, 0.3MB) |
+| pytest-image-snapshot | Plugin abstraction over pixelmatch. Hides control over thresholds and diff output. | Direct pixelmatch usage with custom fixture (~20 lines) |
+| timeout-decorator | Unmaintained. Just wraps signal.SIGALRM. | stdlib signal + concurrent.futures |
+| wrapt-timeout-decorator | Pulls in dill + multiprocess. Designed for complex subprocess scenarios we don't need. | stdlib concurrent.futures |
+| hypothesis | Property-based testing is valuable but not the focus of this milestone. Add in a future milestone. | Direct pytest tests for known edge cases |
+| memray / scalene | Memory profilers. Useful for investigation but not for CI regression tests. Run ad-hoc. | pytest-benchmark for timing regressions; cProfile for hotspots |
+| asv (airspeed velocity) | Separate benchmark infrastructure. Designed for tracking across git history. Overkill. | pytest-benchmark with --benchmark-compare |
+
+## Version Compatibility
+
+| New Package | Min Python | Requires | Notes |
+|-------------|------------|----------|-------|
+| pytest-benchmark 5.2.3 | 3.9 | pytest>=8.1 | Fixed Python 3.13 counter overflow bug in v5.2.x |
+| pixelmatch 0.3.0 | 3.7 | Pillow (already in deps) | Pure Python, no native deps |
+| snakeviz 2.2.2 | 3.9 | tornado | Dev-only, browser-based viewer |
+
+All compatible with Python 3.13+ and existing pytest 9.0.2.
+
+## CI Integration Summary
+
+```
+Normal CI (every push):
+  pytest                          # 260+ tests, benchmarks disabled
+  pytest --benchmark-only         # benchmarks only (separate step)
+
+PR CI (compare performance):
+  pytest --benchmark-only --benchmark-compare=baseline.json
+
+Visual regression:
+  pytest tests/visual/            # compare against snapshots/
+  Upload diff images as artifacts on failure
 ```
 
 ## Sources
 
-**Package Versions (verified via PyPI, Jan 2026):**
-- [PyCairo 1.29.0](https://pypi.org/project/pycairo/) - Python 3.10+, released Nov 2025
-- [PyGObject 3.54.5](https://pypi.org/project/PyGObject/) - Python 3.9+, released Oct 2025
-- [Pygments 2.19.2](https://pypi.org/project/Pygments/) - Python 3.8+, released Jun 2025
-- [Typer 0.21.1](https://pypi.org/project/typer/) - Python 3.9+, released Jan 2026
-- [Pydantic 2.12.5](https://pypi.org/project/pydantic/) - Python 3.9+, released Nov 2025
-- [pytest 9.0.2](https://pypi.org/project/pytest/) - Python 3.10+, released Dec 2025
-- [Rich 14.3.1](https://pypi.org/project/rich/) - Python 3.8+, released Jan 2026
-- [Pillow 12.1.0](https://pypi.org/project/Pillow/) - Python 3.10+, released Jan 2026
-- [ruff 0.14.14](https://pypi.org/project/ruff/) - Python 3.7+, released Jan 2026
-- [mypy 1.19.1](https://pypi.org/project/mypy/) - Python 3.9+, released Dec 2025
+**Verified via PyPI/official docs (HIGH confidence):**
+- [pixelmatch 0.3.0 on PyPI](https://pypi.org/project/pixelmatch/) -- Python port of mapbox/pixelmatch, PIL.Image support
+- [pixelmatch-py GitHub](https://github.com/whtsky/pixelmatch-py) -- API docs, threshold/AA options
+- [pytest-benchmark 5.2.3 docs](https://pytest-benchmark.readthedocs.io/) -- cProfile integration, compare mode
+- [pytest-benchmark PyPI](https://pypi.org/project/pytest-benchmark/) -- v5.2.3, Python 3.9+, pytest 8.1+
+- [snakeviz 2.2.2 on PyPI](https://pypi.org/project/snakeviz/) -- Python 3.9+, BSD licensed
+- [Python signal module docs](https://docs.python.org/3/library/signal.html) -- SIGALRM limitations with C extensions
+- [Pillow ImageChops docs](https://pillow.readthedocs.io/en/stable/reference/ImageChops.html) -- difference() for diff visualization
 
-**Architecture References:**
-- [PyCairo + Pango integration](https://aperiodic.net/pip/archives/Geekery/cairo-pango-python/) - PyGObject approach (HIGH confidence)
-- [Pygments formatters](https://pygments.org/docs/formatters/) - Official docs (HIGH confidence)
-- [Typer testing](https://typer.tiangolo.com/tutorial/testing/) - Official docs (HIGH confidence)
-- [pytest-image-snapshot](https://github.com/bmihelac/pytest-image-snapshot) - Visual testing plugin
-
-**Ecosystem Research:**
-- [Real Python code image generator tutorial](https://realpython.com/python-code-image-generator/) - Flask+Playwright approach (not recommended for CLI)
-- [Silicon (Rust)](https://github.com/Aloxaf/silicon) - Reference for feature set; local rendering, no browser
-- [Carbon.now.sh](https://carbon.now.sh/) - Reference for UI/UX; web-based approach
+**Verified via web search (MEDIUM confidence):**
+- [pytest-benchmark patterns (Dec 2025)](https://medium.com/@sparknp1/10-pytest-benchmark-patterns-for-honest-performance-claims-6cc674893494) -- Best practices for honest benchmarking
+- [Python timeout best practices](https://betterstack.com/community/guides/scaling-python/python-timeouts/) -- ThreadPoolExecutor as robust timeout approach
+- [pytest-image-snapshot 0.4.5](https://github.com/bmihelac/pytest-image-snapshot) -- Evaluated, decided against (see rationale above)
 
 ---
-*Stack research for: Python CLI code screenshot tool*
-*Researched: 2026-01-28*
-*Overall confidence: HIGH - All versions verified via PyPI; architecture validated against official documentation*
+*Stack research for: codepicture v1.1 reliability milestone*
+*Researched: 2026-01-30*
+*Overall confidence: HIGH -- All versions verified via PyPI; integration patterns validated against official documentation*
