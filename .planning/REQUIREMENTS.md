@@ -8,8 +8,8 @@
 ### Bug Fixes & Safety
 
 - [x] **SAFE-01**: Fix MLIR lexer hang on `test.mlir` — diagnose root cause (regex backtracking) and fix without introducing new backtracking risks
-- [ ] **SAFE-02**: Application-level rendering timeout guard — abort rendering if any pipeline stage exceeds configurable time limit (default 30s), with clear error message
-- [ ] **SAFE-03**: Add `RenderTimeoutError` to error hierarchy with user-friendly CLI output (no Python tracebacks)
+- [x] **SAFE-02**: Application-level rendering timeout guard — abort rendering if any pipeline stage exceeds configurable time limit (default 30s), with clear error message
+- [x] **SAFE-03**: Add `RenderTimeoutError` to error hierarchy with user-friendly CLI output (no Python tracebacks)
 - [ ] **SAFE-04**: Add pytest-timeout to test suite with global default timeout (5s) to prevent CI hangs
 - [ ] **SAFE-05**: Add CI job timeout to GitHub Actions workflow (10 minutes)
 
@@ -28,7 +28,7 @@
 
 - [ ] **REL-01**: Parametrized rendering tests across all 5 core languages x 3 output formats (PNG/SVG/PDF) — assert valid output and completion within timeout
 - [ ] **REL-02**: Parametrized rendering tests across feature toggles (shadow, chrome, line numbers) — assert valid output
-- [ ] **REL-03**: Error handling audit — all failure modes (bad input file, unsupported language, timeout, invalid config) produce clean error messages and non-zero exit codes
+- [x] **REL-03**: Error handling audit — all failure modes (bad input file, unsupported language, timeout, invalid config) produce clean error messages and non-zero exit codes
 
 ### Performance
 
@@ -60,9 +60,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SAFE-01 | Phase 8 | Pending |
-| SAFE-02 | Phase 9 | Pending |
-| SAFE-03 | Phase 9 | Pending |
+| SAFE-01 | Phase 8 | Complete |
+| SAFE-02 | Phase 9 | Complete |
+| SAFE-03 | Phase 9 | Complete |
 | SAFE-04 | Phase 7 | Complete |
 | SAFE-05 | Phase 7 | Complete |
 | VRT-01 | Phase 10 | Pending |
@@ -75,7 +75,7 @@
 | VRT-08 | Phase 10 | Pending |
 | REL-01 | Phase 10 | Pending |
 | REL-02 | Phase 10 | Pending |
-| REL-03 | Phase 9 | Pending |
+| REL-03 | Phase 9 | Complete |
 | PERF-01 | Phase 11 | Pending |
 | PERF-02 | Phase 11 | Pending |
 | PERF-03 | Phase 11 | Pending |

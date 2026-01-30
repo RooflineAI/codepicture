@@ -30,7 +30,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 
 - [x] **Phase 7: Safety Nets** — Prevent CI hangs with test-level and job-level timeouts (completed 2026-01-30)
 - [x] **Phase 8: MLIR Hang Fix** — Diagnose and fix the test.mlir rendering hang (completed 2026-01-30)
-- [ ] **Phase 9: Rendering Timeout Guards** — Application-level timeout protection with clean error handling
+- [x] **Phase 9: Rendering Timeout Guards** — Application-level timeout protection with clean error handling (completed 2026-01-30)
 - [ ] **Phase 10: Visual Regression & Reliability** — Automated visual verification and parametrized rendering tests
 - [ ] **Phase 11: Performance Benchmarks** — Per-stage and end-to-end profiling with CI integration
 
@@ -74,9 +74,9 @@ Plans:
   4. Timeout guard uses ThreadPoolExecutor (works with C extensions), not signal-based timeout
 **Plans**: 3 plans
 Plans:
-- [ ] 09-01-PLAN.md — Error hierarchy extensions + timeout wrapper + atomic writes
-- [ ] 09-02-PLAN.md — CLI --timeout flag, exit codes, input validation, language fallback
-- [ ] 09-03-PLAN.md — Comprehensive tests for timeout, errors, and CLI integration
+- [x] 09-01-PLAN.md — Error hierarchy extensions + timeout wrapper + atomic writes
+- [x] 09-02-PLAN.md — CLI --timeout flag, exit codes, input validation, language fallback
+- [x] 09-03-PLAN.md — Comprehensive tests for timeout, errors, and CLI integration
 
 ### Phase 10: Visual Regression & Reliability
 **Goal**: Rendering output is verified visually against reference images, and all language/format/config combinations produce valid output
@@ -115,7 +115,7 @@ Plans:
 | 6. MLIR Lexer | v1.0 | 2/2 | Complete | 2026-01-30 |
 | 7. Safety Nets | v1.1 | 2/2 | Complete | 2026-01-30 |
 | 8. MLIR Hang Fix | v1.1 | 2/2 | Complete | 2026-01-30 |
-| 9. Rendering Timeout Guards | v1.1 | 0/3 | Not started | - |
+| 9. Rendering Timeout Guards | v1.1 | 3/3 | Complete | 2026-01-30 |
 | 10. Visual Regression & Reliability | v1.1 | 0/TBD | Not started | - |
 | 11. Performance Benchmarks | v1.1 | 0/TBD | Not started | - |
 
