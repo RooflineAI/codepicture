@@ -60,7 +60,7 @@ Plans:
   4. A corpus of MLIR test files (including test.mlir) all render successfully
 **Plans**: 2 plans
 Plans:
-- [ ] 08-01-PLAN.md — Cache font resolution, add MLIR lexer catch-all, cache canvas font setup
+- [x] 08-01-PLAN.md — Cache font resolution, add MLIR lexer catch-all, cache canvas font setup
 - [ ] 08-02-PLAN.md — Create MLIR test corpus and regression tests
 
 ### Phase 9: Rendering Timeout Guards
@@ -110,7 +110,7 @@ Plans:
 | 5. CLI & Orchestration | v1.0 | 4/4 | Complete | 2026-01-29 |
 | 6. MLIR Lexer | v1.0 | 2/2 | Complete | 2026-01-30 |
 | 7. Safety Nets | v1.1 | 2/2 | Complete | 2026-01-30 |
-| 8. MLIR Hang Fix | v1.1 | 0/2 | Planned | - |
+| 8. MLIR Hang Fix | v1.1 | 1/2 | In progress | - |
 | 9. Rendering Timeout Guards | v1.1 | 0/TBD | Not started | - |
 | 10. Visual Regression & Reliability | v1.1 | 0/TBD | Not started | - |
 | 11. Performance Benchmarks | v1.1 | 0/TBD | Not started | - |

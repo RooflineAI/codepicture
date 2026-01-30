@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 ## Current Position
 
 Phase: 8 of 11 (MLIR Hang Fix)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-01-30 — Phase 7 (Safety Nets) complete
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-01-30 — Completed 08-01-PLAN.md
 
-Progress: [#######################.................] 57% (v1.0 complete, Phase 7 done)
+Progress: [########################................] 61% (v1.0 complete, Phase 7 done, 08-01 done)
 
 ## Performance Metrics
 
@@ -35,6 +35,13 @@ Progress: [#######################.................] 57% (v1.0 complete, Phase 7
 | 5. CLI & Orchestration | 4/4 | 9 min | 2.25 min |
 | 6. MLIR Lexer | 2/2 | 3 min | 1.5 min |
 
+**v1.1 Phases:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| 7. Safety Nets | 2/2 | - | - |
+| 8. MLIR Hang Fix | 1/2 | 2 min | 2 min |
+
 *Updated after each plan completion*
 
 ## Accumulated Context
@@ -43,13 +50,18 @@ Progress: [#######################.................] 57% (v1.0 complete, Phase 7
 
 Decisions are logged in PROJECT.md Key Decisions table.
 
+Recent additions:
+- DEC-22: lru_cache(maxsize=16) for resolve_font_family
+- DEC-23: Instance-level _current_font tuple caching in CairoCanvas
+
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-- `test.mlir` causes rendering hang — targeted by Phase 8
+- `test.mlir` rendering hang RESOLVED (0.22s render time after 08-01 fixes)
+- Phase 8 plan 02 (MLIR test corpus) still pending
 
 ### Roadmap Evolution
 
@@ -59,5 +71,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-30
-Stopped at: Phase 7 complete, ready to plan Phase 8
+Stopped at: Completed 08-01-PLAN.md
 Resume file: None
