@@ -98,6 +98,8 @@ class TestCliErrors:
 class TestCliGeneration:
     """Tests for CLI image generation."""
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_generate_png(self, sample_py: Path, tmp_path: Path):
         """Generate PNG from Python file."""
         output = tmp_path / "output.png"
@@ -108,6 +110,8 @@ class TestCliGeneration:
         # Check PNG magic bytes
         assert output.read_bytes()[:8] == b'\x89PNG\r\n\x1a\n'
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_generate_svg(self, sample_py: Path, tmp_path: Path):
         """Generate SVG from Python file."""
         output = tmp_path / "output.svg"
@@ -118,6 +122,8 @@ class TestCliGeneration:
         content = output.read_text()
         assert "<svg" in content
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_format_flag_overrides_extension(self, sample_py: Path, tmp_path: Path):
         """--format overrides extension inference."""
         output = tmp_path / "output.png"  # .png extension
@@ -128,6 +134,8 @@ class TestCliGeneration:
         content = output.read_text()
         assert "<svg" in content
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_theme_flag(self, sample_py: Path, tmp_path: Path):
         """--theme flag changes output colors."""
         output = tmp_path / "output.png"
@@ -136,6 +144,8 @@ class TestCliGeneration:
         assert result.exit_code == 0, f"CLI failed: {result.output}"
         assert output.exists()
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_config_file(self, sample_py: Path, sample_config: Path, tmp_path: Path):
         """--config flag loads config from file."""
         output = tmp_path / "output.png"
@@ -147,6 +157,8 @@ class TestCliGeneration:
         assert result.exit_code == 0, f"CLI failed: {result.output}"
         assert output.exists()
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_creates_parent_directories(self, sample_py: Path, tmp_path: Path):
         """Output path parent directories are created."""
         output = tmp_path / "nested" / "deep" / "output.png"
@@ -155,6 +167,8 @@ class TestCliGeneration:
         assert result.exit_code == 0, f"CLI failed: {result.output}"
         assert output.exists()
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_stdin_with_language(self, tmp_path: Path):
         """stdin input works with --language flag."""
         output = tmp_path / "output.png"
@@ -171,6 +185,8 @@ class TestCliGeneration:
 class TestCliVerbose:
     """Tests for verbose mode."""
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_verbose_shows_steps(self, sample_py: Path, tmp_path: Path):
         """--verbose shows processing steps on stderr."""
         output = tmp_path / "output.png"
@@ -208,6 +224,8 @@ class TestCliIntegration:
         assert result.returncode == 0
         assert __version__ in result.stdout
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_cli_generate_subprocess(self, tmp_path: Path):
         """End-to-end image generation via subprocess."""
         # Create input file
@@ -240,6 +258,8 @@ class TestCliIntegration:
         # Error should be on stderr
         assert "error" in result.stderr.lower() or "not found" in result.stderr.lower()
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_cli_silent_on_success(self, tmp_path: Path):
         """CLI is silent on success (no stdout)."""
         input_file = tmp_path / "test.py"

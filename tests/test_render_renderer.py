@@ -66,6 +66,8 @@ class TestRendererPNG:
         result = renderer.render(render_tokens, metrics, theme)
         assert result.format == OutputFormat.PNG
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_render_png_with_line_numbers(self, render_tokens):
         config = RenderConfig(
             shadow=False,
@@ -130,6 +132,8 @@ class TestRendererPDF:
 class TestRendererWithShadow:
     """Test shadow rendering (PNG only)."""
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_png_with_shadow_produces_larger_output(self, render_tokens):
         config_no_shadow = RenderConfig(
             shadow=False,
@@ -163,6 +167,8 @@ class TestRendererWithShadow:
 class TestRendererIntegration:
     """Integration tests verifying end-to-end rendering."""
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_full_render_with_all_features(self, render_tokens):
         """Test render with chrome, line numbers, and shadow."""
         config = RenderConfig(
@@ -185,6 +191,8 @@ class TestRendererIntegration:
         assert result.width > 0
         assert result.height > 0
 
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
     def test_render_different_themes(self, render_tokens, minimal_render_config, render_metrics):
         """Test rendering with different themes."""
         renderer = Renderer(minimal_render_config)
