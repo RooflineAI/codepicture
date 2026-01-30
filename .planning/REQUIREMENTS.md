@@ -10,24 +10,24 @@
 - [x] **SAFE-01**: Fix MLIR lexer hang on `test.mlir` — diagnose root cause (regex backtracking) and fix without introducing new backtracking risks
 - [x] **SAFE-02**: Application-level rendering timeout guard — abort rendering if any pipeline stage exceeds configurable time limit (default 30s), with clear error message
 - [x] **SAFE-03**: Add `RenderTimeoutError` to error hierarchy with user-friendly CLI output (no Python tracebacks)
-- [ ] **SAFE-04**: Add pytest-timeout to test suite with global default timeout (5s) to prevent CI hangs
-- [ ] **SAFE-05**: Add CI job timeout to GitHub Actions workflow (10 minutes)
+- [x] **SAFE-04**: Add pytest-timeout to test suite with global default timeout (5s) to prevent CI hangs
+- [x] **SAFE-05**: Add CI job timeout to GitHub Actions workflow (10 minutes)
 
 ### Visual Regression Testing
 
-- [ ] **VRT-01**: Visual regression test infrastructure — pixelmatch-based comparison with configurable threshold, diff image output on failure
-- [ ] **VRT-02**: Reference images for Python fixture rendered with default config
-- [ ] **VRT-03**: Reference images for Rust fixture rendered with default config
-- [ ] **VRT-04**: Reference images for C++ fixture rendered with default config
-- [ ] **VRT-05**: Reference images for JavaScript fixture rendered with default config
-- [ ] **VRT-06**: Reference images for MLIR fixture rendered with default config
-- [ ] **VRT-07**: Reference images for config variants (shadow on/off, line numbers on/off, chrome on/off)
-- [ ] **VRT-08**: Snapshot update mechanism (`--snapshot-update` or equivalent) for intentional visual changes
+- [x] **VRT-01**: Visual regression test infrastructure — pixelmatch-based comparison with configurable threshold, diff image output on failure
+- [x] **VRT-02**: Reference images for Python fixture rendered with default config
+- [x] **VRT-03**: Reference images for Rust fixture rendered with default config
+- [x] **VRT-04**: Reference images for C++ fixture rendered with default config
+- [x] **VRT-05**: Reference images for JavaScript fixture rendered with default config
+- [x] **VRT-06**: Reference images for MLIR fixture rendered with default config
+- [x] **VRT-07**: Reference images for config variants (shadow on/off, line numbers on/off, chrome on/off)
+- [x] **VRT-08**: Snapshot update mechanism (`--snapshot-update` or equivalent) for intentional visual changes
 
 ### Rendering Reliability
 
-- [ ] **REL-01**: Parametrized rendering tests across all 5 core languages x 3 output formats (PNG/SVG/PDF) — assert valid output and completion within timeout
-- [ ] **REL-02**: Parametrized rendering tests across feature toggles (shadow, chrome, line numbers) — assert valid output
+- [x] **REL-01**: Parametrized rendering tests across all 5 core languages x 3 output formats (PNG/SVG/PDF) — assert valid output and completion within timeout
+- [x] **REL-02**: Parametrized rendering tests across feature toggles (shadow, chrome, line numbers) — assert valid output
 - [x] **REL-03**: Error handling audit — all failure modes (bad input file, unsupported language, timeout, invalid config) produce clean error messages and non-zero exit codes
 
 ### Performance
@@ -65,16 +65,16 @@
 | SAFE-03 | Phase 9 | Complete |
 | SAFE-04 | Phase 7 | Complete |
 | SAFE-05 | Phase 7 | Complete |
-| VRT-01 | Phase 10 | Pending |
-| VRT-02 | Phase 10 | Pending |
-| VRT-03 | Phase 10 | Pending |
-| VRT-04 | Phase 10 | Pending |
-| VRT-05 | Phase 10 | Pending |
-| VRT-06 | Phase 10 | Pending |
-| VRT-07 | Phase 10 | Pending |
-| VRT-08 | Phase 10 | Pending |
-| REL-01 | Phase 10 | Pending |
-| REL-02 | Phase 10 | Pending |
+| VRT-01 | Phase 10 | Complete |
+| VRT-02 | Phase 10 | Complete |
+| VRT-03 | Phase 10 | Complete |
+| VRT-04 | Phase 10 | Complete |
+| VRT-05 | Phase 10 | Complete |
+| VRT-06 | Phase 10 | Complete |
+| VRT-07 | Phase 10 | Complete |
+| VRT-08 | Phase 10 | Complete |
+| REL-01 | Phase 10 | Complete |
+| REL-02 | Phase 10 | Complete |
 | REL-03 | Phase 9 | Complete |
 | PERF-01 | Phase 11 | Pending |
 | PERF-02 | Phase 11 | Pending |

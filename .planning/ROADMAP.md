@@ -31,7 +31,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 - [x] **Phase 7: Safety Nets** — Prevent CI hangs with test-level and job-level timeouts (completed 2026-01-30)
 - [x] **Phase 8: MLIR Hang Fix** — Diagnose and fix the test.mlir rendering hang (completed 2026-01-30)
 - [x] **Phase 9: Rendering Timeout Guards** — Application-level timeout protection with clean error handling (completed 2026-01-30)
-- [ ] **Phase 10: Visual Regression & Reliability** — Automated visual verification and parametrized rendering tests
+- [x] **Phase 10: Visual Regression & Reliability** — Automated visual verification and parametrized rendering tests (completed 2026-01-31)
 - [ ] **Phase 11: Performance Benchmarks** — Per-stage and end-to-end profiling with CI integration
 
 ## Phase Details
@@ -90,10 +90,10 @@ Plans:
   5. pixelmatch-based comparison uses configurable threshold to handle anti-aliasing without false positives
 **Plans**: 4 plans
 Plans:
-- [ ] 10-01-PLAN.md — Install VRT dependencies, build comparison infrastructure, create visual fixtures
-- [ ] 10-02-PLAN.md — Generate reference images and create visual regression tests (5 langs x 3 formats + config variants)
-- [ ] 10-03-PLAN.md — Parametrized reliability matrix tests (REL-01 language x format, REL-02 feature toggles)
-- [ ] 10-04-PLAN.md — CI integration (visual regression job) and Git LFS setup for reference images
+- [x] 10-01-PLAN.md — Install VRT dependencies, build comparison infrastructure, create visual fixtures
+- [x] 10-02-PLAN.md — Generate reference images and create visual regression tests (5 langs x 3 formats + config variants)
+- [x] 10-03-PLAN.md — Parametrized reliability matrix tests (REL-01 language x format, REL-02 feature toggles)
+- [x] 10-04-PLAN.md — CI integration (visual regression job) and Git LFS setup for reference images
 
 ### Phase 11: Performance Benchmarks
 **Goal**: Rendering performance is measured per-stage and end-to-end, with results tracked in CI
@@ -121,7 +121,7 @@ Plans:
 | 7. Safety Nets | v1.1 | 2/2 | Complete | 2026-01-30 |
 | 8. MLIR Hang Fix | v1.1 | 2/2 | Complete | 2026-01-30 |
 | 9. Rendering Timeout Guards | v1.1 | 3/3 | Complete | 2026-01-30 |
-| 10. Visual Regression & Reliability | v1.1 | 0/4 | Not started | - |
+| 10. Visual Regression & Reliability | v1.1 | 4/4 | Complete | 2026-01-31 |
 | 11. Performance Benchmarks | v1.1 | 0/TBD | Not started | - |
 
 ---
