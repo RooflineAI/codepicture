@@ -44,7 +44,10 @@ codepicture transforms code snippets into polished, presentation-ready images vi
   1. Running `pytest` with a test that would hang indefinitely is killed after the global timeout (30s default)
   2. A GitHub Actions CI run that exceeds 10 minutes is automatically cancelled
   3. Existing 260+ tests continue to pass with pytest-timeout enabled
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 07-01-PLAN.md — Add pytest-timeout with 5s default and mark slow tests
+- [ ] 07-02-PLAN.md — Add CI job timeout and artifact upload on failure
 
 ### Phase 8: MLIR Hang Fix
 **Goal**: codepicture successfully renders test.mlir and other MLIR files without hanging
@@ -103,7 +106,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 | 4. Rendering | v1.0 | 5/5 | Complete | 2026-01-29 |
 | 5. CLI & Orchestration | v1.0 | 4/4 | Complete | 2026-01-29 |
 | 6. MLIR Lexer | v1.0 | 2/2 | Complete | 2026-01-30 |
-| 7. Safety Nets | v1.1 | 0/TBD | Not started | - |
+| 7. Safety Nets | v1.1 | 0/2 | Planned | - |
 | 8. MLIR Hang Fix | v1.1 | 0/TBD | Not started | - |
 | 9. Rendering Timeout Guards | v1.1 | 0/TBD | Not started | - |
 | 10. Visual Regression & Reliability | v1.1 | 0/TBD | Not started | - |
