@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 Phase: All phases complete (v1.0 + v1.1 shipped)
 Plan: N/A
 Status: Ready for next milestone
-Last activity: 2026-02-02 — v1.1 milestone shipped
+Last activity: 2026-02-02 — Completed quick-003 (fix PNG colour difference vs SVG/PDF)
 
 Progress: [############################################] 100% (v1.0 + v1.1 complete)
 
@@ -51,5 +51,5 @@ None — all known issues resolved in v1.1.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: v1.1 milestone shipped and archived
+Stopped at: Completed quick-003 (fix PNG BGRA channel swap)
 Resume file: None
