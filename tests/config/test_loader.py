@@ -33,14 +33,14 @@ class TestLoadConfig:
         config = load_config()
         assert config.theme == "catppuccin-mocha"
         assert config.font_size == 14
-        assert config.padding == 40
+        assert config.padding == 20
 
     def test_load_from_explicit_config_path(self, valid_config_toml: Path):
         """load_config(config_path=...) loads from explicit path."""
         config = load_config(config_path=valid_config_toml)
         assert config.theme == "catppuccin-mocha"
         assert config.font_size == 14
-        assert config.padding == 40
+        assert config.padding == 20
 
     def test_invalid_toml_raises_config_error(self, invalid_config_toml: Path):
         """Invalid TOML raises ConfigError."""
@@ -122,7 +122,7 @@ font_size = 16
             assert config.font_size == 16
             # These are defaults, NOT from global config (no merge)
             assert config.theme == "catppuccin-mocha"  # default, not "nord"
-            assert config.padding == 40  # default, not 20
+            assert config.padding == 20  # default, not 20
         finally:
             loader_module.DEFAULT_GLOBAL_CONFIG_PATH = original_global
 

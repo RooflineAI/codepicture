@@ -19,7 +19,7 @@ class TestRenderConfig:
         assert config.tab_width == 4
         assert config.line_height == 1.4
         assert config.output_format == OutputFormat.PNG
-        assert config.padding == 40
+        assert config.padding == 20
         assert config.corner_radius == 12
         assert config.show_line_numbers is True
         assert config.line_number_offset == 1

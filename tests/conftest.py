@@ -42,7 +42,7 @@ def valid_config_toml(tmp_path: Path) -> Path:
     config_file.write_text('''
 theme = "catppuccin-mocha"
 font_size = 14
-padding = 40
+padding = 20
 ''')
     return config_file
 
