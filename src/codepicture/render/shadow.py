@@ -74,12 +74,18 @@ def apply_shadow(surface: cairo.ImageSurface, enabled: bool = True) -> bytes:
     shadow_margin = calculate_shadow_margin()
 
     # Convert Cairo surface to Pillow Image
-    # CRITICAL: Cairo uses BGRA (pre-multiplied alpha), use "RGBa" mode
-    # The "RGBa" mode in Pillow handles pre-multiplied alpha correctly
+    # CRITICAL: Cairo FORMAT_ARGB32 stores pixels as native-endian uint32.
+    # On little-endian systems the byte layout is B, G, R, A.
+    # Pillow's "RGBa" mode expects R, G, B, premultiplied-a and does NOT
+    # swap channels -- it only un-premultiplies alpha.
+    # We must read as raw BGRA, un-premultiply, then swap B<->R.
     data = bytes(surface.get_data())
     pil_image = Image.frombytes("RGBa", (width, height), data)
     # Convert to standard RGBA (un-premultiply alpha)
     pil_image = pil_image.convert("RGBA")
+    # Swap R and B channels to correct Cairo's BGRA byte order
+    b, g, r, a = pil_image.split()
+    pil_image = Image.merge("RGBA", (r, g, b, a))
 
     # Create shadow from alpha channel
     # Extract alpha channel which represents the content shape
