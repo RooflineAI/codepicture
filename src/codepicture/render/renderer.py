@@ -117,67 +117,14 @@ class Renderer:
         # Calculate code area offset (below title bar if present)
         code_y_offset = title_bar_height
 
-        # Draw line numbers if enabled
-        if config.show_line_numbers:
-            line_number_color = theme.line_number_fg
+        if metrics.display_lines:
+            # Word-wrap aware rendering path
+            self._render_wrapped(canvas, lines, metrics, theme, code_y_offset)
+        else:
+            # Legacy rendering path (no wrapping)
+            self._render_legacy(canvas, lines, metrics, theme, code_y_offset)
 
-            for line_idx, _line_tokens in enumerate(lines):
-                # Calculate line number text
-                line_num = line_idx + config.line_number_offset
-                line_num_text = str(line_num)
-
-                # Calculate baseline Y position for this line
-                baseline_y = (
-                    metrics.content_y
-                    + code_y_offset
-                    + line_idx * metrics.line_height_px
-                    + metrics.baseline_offset
-                )
-
-                # Right-align line number in gutter
-                text_width, _ = canvas.measure_text(
-                    line_num_text, config.font_family, config.font_size
-                )
-                line_num_x = metrics.gutter_x + metrics.gutter_width - text_width
-
-                canvas.draw_text(
-                    x=line_num_x,
-                    y=baseline_y,
-                    text=line_num_text,
-                    font_family=config.font_family,
-                    font_size=config.font_size,
-                    color=line_number_color,
-                )
-
-        # Draw code tokens
-        for line_idx, line_tokens in enumerate(lines):
-            # Calculate baseline Y position for this line
-            baseline_y = (
-                metrics.content_y
-                + code_y_offset
-                + line_idx * metrics.line_height_px
-                + metrics.baseline_offset
-            )
-
-            # Track X position for tokens on this line
-            current_x = metrics.code_x
-
-            for token in line_tokens:
-                # Get style for this token type
-                style = theme.get_style(token.token_type)
-
-                # Draw token text
-                text_width = canvas.draw_text(
-                    x=current_x,
-                    y=baseline_y,
-                    text=token.text,
-                    font_family=config.font_family,
-                    font_size=config.font_size,
-                    color=style.color,
-                )
-
-                # Advance X position
-                current_x += text_width
+        # --- end drawing code/line numbers ---
 
         # Save and apply shadow (PNG only)
         if output_format == OutputFormat.PNG:
@@ -204,3 +151,163 @@ class Renderer:
                 width=base_width,
                 height=base_height,
             )
+
+    def _render_legacy(
+        self,
+        canvas: CairoCanvas,
+        lines: list[list[TokenInfo]],
+        metrics: LayoutMetrics,
+        theme: Theme,
+        code_y_offset: float,
+    ) -> None:
+        """Render code using the original (non-wrapped) path."""
+        config = self._config
+
+        # Draw line numbers if enabled
+        if config.show_line_numbers:
+            line_number_color = theme.line_number_fg
+
+            for line_idx, _line_tokens in enumerate(lines):
+                line_num = line_idx + config.line_number_offset
+                line_num_text = str(line_num)
+
+                baseline_y = (
+                    metrics.content_y
+                    + code_y_offset
+                    + line_idx * metrics.line_height_px
+                    + metrics.baseline_offset
+                )
+
+                text_width, _ = canvas.measure_text(
+                    line_num_text, config.font_family, config.font_size
+                )
+                line_num_x = metrics.gutter_x + metrics.gutter_width - text_width
+
+                canvas.draw_text(
+                    x=line_num_x,
+                    y=baseline_y,
+                    text=line_num_text,
+                    font_family=config.font_family,
+                    font_size=config.font_size,
+                    color=line_number_color,
+                )
+
+        # Draw code tokens
+        for line_idx, line_tokens in enumerate(lines):
+            baseline_y = (
+                metrics.content_y
+                + code_y_offset
+                + line_idx * metrics.line_height_px
+                + metrics.baseline_offset
+            )
+
+            current_x = metrics.code_x
+
+            for token in line_tokens:
+                style = theme.get_style(token.token_type)
+
+                text_width = canvas.draw_text(
+                    x=current_x,
+                    y=baseline_y,
+                    text=token.text,
+                    font_family=config.font_family,
+                    font_size=config.font_size,
+                    color=style.color,
+                )
+
+                current_x += text_width
+
+    def _render_wrapped(
+        self,
+        canvas: CairoCanvas,
+        lines: list[list[TokenInfo]],
+        metrics: LayoutMetrics,
+        theme: Theme,
+        code_y_offset: float,
+    ) -> None:
+        """Render code with word-wrap aware display lines."""
+        config = self._config
+
+        # Pre-build flat char maps per source line for efficient slicing
+        # Each entry: list of (char, token_type)
+        char_maps: dict[int, list[tuple[str, str]]] = {}
+        for line_idx, line_tokens in enumerate(lines):
+            chars: list[tuple[str, str]] = []
+            for token in line_tokens:
+                for ch in token.text:
+                    chars.append((ch, token.token_type))
+            char_maps[line_idx] = chars
+
+        wrap_indent_px = metrics.wrap_indent_chars * metrics.char_width
+
+        for display_idx, dline in enumerate(metrics.display_lines):
+            baseline_y = (
+                metrics.content_y
+                + code_y_offset
+                + display_idx * metrics.line_height_px
+                + metrics.baseline_offset
+            )
+
+            # Draw line number (only for non-continuation lines)
+            if config.show_line_numbers and not dline.is_continuation:
+                line_num = dline.source_line_idx + config.line_number_offset
+                line_num_text = str(line_num)
+
+                text_width, _ = canvas.measure_text(
+                    line_num_text, config.font_family, config.font_size
+                )
+                line_num_x = metrics.gutter_x + metrics.gutter_width - text_width
+
+                canvas.draw_text(
+                    x=line_num_x,
+                    y=baseline_y,
+                    text=line_num_text,
+                    font_family=config.font_family,
+                    font_size=config.font_size,
+                    color=theme.line_number_fg,
+                )
+
+            # Determine X start (continuations are indented)
+            if dline.is_continuation:
+                x_start = metrics.code_x + wrap_indent_px
+            else:
+                x_start = metrics.code_x
+
+            # Determine char range for this display line
+            source_chars = char_maps[dline.source_line_idx]
+            char_start = dline.char_offset
+
+            # Find end of this chunk by looking at next display line with same source
+            char_end = len(source_chars)
+            for next_dline in metrics.display_lines[display_idx + 1:]:
+                if next_dline.source_line_idx == dline.source_line_idx:
+                    char_end = next_dline.char_offset
+                    break
+                elif next_dline.source_line_idx != dline.source_line_idx:
+                    break
+
+            chunk_chars = source_chars[char_start:char_end]
+
+            # Group consecutive chars with same token_type into spans
+            if not chunk_chars:
+                continue
+
+            current_x = x_start
+            span_start = 0
+            for i in range(1, len(chunk_chars) + 1):
+                if i == len(chunk_chars) or chunk_chars[i][1] != chunk_chars[span_start][1]:
+                    # Emit span
+                    span_text = "".join(c[0] for c in chunk_chars[span_start:i])
+                    token_type = chunk_chars[span_start][1]
+                    style = theme.get_style(token_type)
+
+                    text_width = canvas.draw_text(
+                        x=current_x,
+                        y=baseline_y,
+                        text=span_text,
+                        font_family=config.font_family,
+                        font_size=config.font_size,
+                        color=style.color,
+                    )
+                    current_x += text_width
+                    span_start = i

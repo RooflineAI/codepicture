@@ -142,6 +142,14 @@ def main(
         int | None,
         typer.Option("--corner-radius", help="Window corner radius")
     ] = None,
+    window_width: Annotated[
+        int | None,
+        typer.Option("--width", help="Window width in pixels (enables word wrap)")
+    ] = None,
+    window_height: Annotated[
+        int | None,
+        typer.Option("--height", help="Window height in pixels")
+    ] = None,
     background_color: Annotated[
         str | None,
         typer.Option("--background", help="Background color (#RRGGBB)")
@@ -235,6 +243,10 @@ def main(
             cli_overrides["window_title"] = window_title
         if shadow is not None:
             cli_overrides["shadow"] = shadow
+        if window_width is not None:
+            cli_overrides["window_width"] = window_width
+        if window_height is not None:
+            cli_overrides["window_height"] = window_height
 
         # Infer output format and add to overrides
         output_format = infer_format(output, format)
