@@ -1,6 +1,10 @@
 """Tests for shadow post-processing."""
 
+from io import BytesIO
+
 import pytest
+from PIL import Image
+
 from codepicture.render import CairoCanvas, apply_shadow
 from codepicture.render.shadow import (
     SHADOW_BLUR_RADIUS,
@@ -61,3 +65,43 @@ class TestApplyShadow:
         canvas.draw_rectangle(0, 0, 100, 100, Color(100, 100, 100))
         data = apply_shadow(canvas._surface, enabled=True)
         assert data[:8] == b'\x89PNG\r\n\x1a\n'
+
+
+class TestShadowColorPreservation:
+    """Regression: verify shadow pipeline does not swap R/B channels."""
+
+    def test_red_stays_red_with_shadow(self):
+        canvas = CairoCanvas.create(100, 100, OutputFormat.PNG, scale=1.0)
+        canvas.draw_rectangle(0, 0, 100, 100, Color(255, 0, 0))
+        data = apply_shadow(canvas._surface, enabled=True)
+
+        img = Image.open(BytesIO(data)).convert("RGBA")
+        # Sample center pixel (content is at shadow_margin offset)
+        margin = calculate_shadow_margin()
+        r, g, b, a = img.getpixel((margin + 50, margin + 50))
+        assert r == 255, f"Red channel should be 255, got {r}"
+        assert g == 0, f"Green channel should be 0, got {g}"
+        assert b == 0, f"Blue channel should be 0, got {b}"
+
+    def test_blue_stays_blue_with_shadow(self):
+        canvas = CairoCanvas.create(100, 100, OutputFormat.PNG, scale=1.0)
+        canvas.draw_rectangle(0, 0, 100, 100, Color(0, 0, 255))
+        data = apply_shadow(canvas._surface, enabled=True)
+
+        img = Image.open(BytesIO(data)).convert("RGBA")
+        margin = calculate_shadow_margin()
+        r, g, b, a = img.getpixel((margin + 50, margin + 50))
+        assert r == 0, f"Red channel should be 0, got {r}"
+        assert g == 0, f"Green channel should be 0, got {g}"
+        assert b == 255, f"Blue channel should be 255, got {b}"
+
+    def test_color_preserved_without_shadow(self):
+        canvas = CairoCanvas.create(100, 100, OutputFormat.PNG, scale=1.0)
+        canvas.draw_rectangle(0, 0, 100, 100, Color(255, 0, 0))
+        data = apply_shadow(canvas._surface, enabled=False)
+
+        img = Image.open(BytesIO(data)).convert("RGBA")
+        r, g, b, a = img.getpixel((50, 50))
+        assert r == 255, f"Red channel should be 255, got {r}"
+        assert g == 0, f"Green channel should be 0, got {g}"
+        assert b == 0, f"Blue channel should be 0, got {b}"
