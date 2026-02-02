@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 Phase: All phases complete (v1.0 + v1.1 shipped)
 Plan: N/A
 Status: Ready for next milestone
-Last activity: 2026-02-02 — Completed quick-005 (add reference tests for wordwrap/fixed sizes)
+Last activity: 2026-02-02 — Completed quick-006 (reduce default padding, update README with window size options)
 
 Progress: [############################################] 100% (v1.0 + v1.1 complete)
 
@@ -49,6 +49,7 @@ None — all known issues resolved in v1.1.
 | 003 | Fix PNG colour difference vs SVG/PDF (BGRA channel swap) | 2026-02-02 | b25efe0 | [003-fix-png-colour-difference-vs-svg-pdf-sha](./quick/003-fix-png-colour-difference-vs-svg-pdf-sha/) |
 | 004 | Add window width/height and word wrap | 2026-02-02 | 6e8243b | [004-add-window-width-height-and-word-wrap](./quick/004-add-window-width-height-and-word-wrap/) |
 | 005 | Add reference tests for wordwrap/fixed sizes | 2026-02-02 | a407ea7 | [005-add-reference-tests-wordwrap-fixed-sizes](./quick/005-add-reference-tests-wordwrap-fixed-sizes/) |
+| 006 | Reduce default padding to 20px, update README with window size options | 2026-02-02 | 6da16c7 | [006-reduce-padding-update-readme-window-s](./quick/006-reduce-padding-update-readme-window-s/) |
 
 ### Roadmap Evolution
 
@@ -59,5 +60,5 @@ None — all known issues resolved in v1.1.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick-005 (add reference tests for wordwrap/fixed sizes)
+Stopped at: Completed quick-006 (reduce default padding, update README with window size options)
 Resume file: None
