@@ -222,6 +222,39 @@ Install [system dependencies](#system-dependencies) first, then:
 git clone https://github.com/your-username/codepicture.git
 cd codepicture
 uv sync
+uv run pre-commit install
+```
+
+### Linting and Formatting
+
+The project uses [ruff](https://docs.astral.sh/ruff/) for linting and formatting.
+
+```bash
+# Check for lint issues
+uv run ruff check .
+
+# Check and auto-fix lint issues
+uv run ruff check --fix .
+
+# Format code
+uv run ruff format .
+```
+
+Configuration lives in `pyproject.toml` under `[tool.ruff]`.
+
+### Pre-commit Hooks
+
+Pre-commit hooks run ruff lint (with auto-fix) and ruff format automatically on
+each commit. Install the hooks once after cloning:
+
+```bash
+uv run pre-commit install
+```
+
+To run all hooks manually against the entire codebase:
+
+```bash
+uv run pre-commit run --all-files
 ```
 
 ### Running Tests
