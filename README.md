@@ -252,6 +252,22 @@ git add tests/visual/references/
 git commit -m "test: update visual regression baselines"
 ```
 
+### Running Benchmarks
+
+The project includes pytest-benchmark tests covering four pipeline stages:
+highlighting, layout, rendering, and end-to-end.
+
+```bash
+# Run all benchmarks
+uv run pytest tests/benchmarks/ --benchmark-only -v
+
+# Save results to JSON for comparison
+uv run pytest tests/benchmarks/ --benchmark-only --benchmark-json=results.json
+
+# Run a specific stage benchmark
+uv run pytest tests/benchmarks/test_bench_pipeline.py --benchmark-only -v
+```
+
 The project has 300+ tests with an 80% coverage requirement.
 
 ## License
