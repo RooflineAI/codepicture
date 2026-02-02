@@ -88,43 +88,43 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HLCORE-01 | TBD | Pending |
-| HLCORE-02 | TBD | Pending |
-| HLCORE-03 | TBD | Pending |
-| HLCORE-04 | TBD | Pending |
-| HLCORE-05 | TBD | Pending |
-| HLCORE-06 | TBD | Pending |
-| HLCORE-07 | TBD | Pending |
-| HLSTYL-01 | TBD | Pending |
-| HLSTYL-02 | TBD | Pending |
-| HLSTYL-03 | TBD | Pending |
-| HLSTYL-04 | TBD | Pending |
-| HLSTYL-05 | TBD | Pending |
-| HLFOC-01 | TBD | Pending |
-| HLFOC-02 | TBD | Pending |
-| HLFOC-03 | TBD | Pending |
-| HLTHEM-01 | TBD | Pending |
-| HLTHEM-02 | TBD | Pending |
-| HLTHEM-03 | TBD | Pending |
-| HLGUT-01 | TBD | Pending |
-| HLGUT-02 | TBD | Pending |
-| HLDOC-01 | TBD | Pending |
-| HLDOC-02 | TBD | Pending |
-| HLDOC-03 | TBD | Pending |
-| HLTEST-01 | TBD | Pending |
-| HLTEST-02 | TBD | Pending |
-| HLTEST-03 | TBD | Pending |
-| HLTEST-04 | TBD | Pending |
-| HLTEST-05 | TBD | Pending |
-| HLTEST-06 | TBD | Pending |
-| HLTEST-07 | TBD | Pending |
-| HLTEST-08 | TBD | Pending |
+| HLCORE-01 | Phase 12 | Pending |
+| HLCORE-02 | Phase 12 | Pending |
+| HLCORE-03 | Phase 12 | Pending |
+| HLCORE-04 | Phase 12 | Pending |
+| HLCORE-05 | Phase 12 | Pending |
+| HLCORE-06 | Phase 12 | Pending |
+| HLCORE-07 | Phase 12 | Pending |
+| HLSTYL-01 | Phase 13 | Pending |
+| HLSTYL-02 | Phase 13 | Pending |
+| HLSTYL-03 | Phase 13 | Pending |
+| HLSTYL-04 | Phase 13 | Pending |
+| HLSTYL-05 | Phase 13 | Pending |
+| HLFOC-01 | Phase 13 | Pending |
+| HLFOC-02 | Phase 13 | Pending |
+| HLFOC-03 | Phase 13 | Pending |
+| HLTHEM-01 | Phase 14 | Pending |
+| HLTHEM-02 | Phase 14 | Pending |
+| HLTHEM-03 | Phase 14 | Pending |
+| HLGUT-01 | Phase 13 | Pending |
+| HLGUT-02 | Phase 13 | Pending |
+| HLDOC-01 | Phase 14 | Pending |
+| HLDOC-02 | Phase 14 | Pending |
+| HLDOC-03 | Phase 14 | Pending |
+| HLTEST-01 | Phase 12 | Pending |
+| HLTEST-02 | Phase 13 | Pending |
+| HLTEST-03 | Phase 12 | Pending |
+| HLTEST-04 | Phase 13 | Pending |
+| HLTEST-05 | Phase 12 | Pending |
+| HLTEST-06 | Phase 13 | Pending |
+| HLTEST-07 | Phase 12 | Pending |
+| HLTEST-08 | Phase 13 | Pending |
 
 **Coverage:**
 - v2.0 requirements: 31 total
-- Mapped to phases: 0
-- Unmapped: 31
+- Mapped to phases: 31
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-02*
-*Last updated: 2026-02-02 after initial definition*
+*Last updated: 2026-02-02 after roadmap creation*
