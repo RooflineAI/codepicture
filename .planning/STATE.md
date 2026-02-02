@@ -42,6 +42,12 @@ None.
 
 None — all known issues resolved in v1.1.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 003 | Fix PNG colour difference vs SVG/PDF (BGRA channel swap) | 2026-02-02 | b25efe0 | [003-fix-png-colour-difference-vs-svg-pdf-sha](./quick/003-fix-png-colour-difference-vs-svg-pdf-sha/) |
+
 ### Roadmap Evolution
 
 - v1.0 shipped 2026-01-30 (Phases 1-6, 21 plans)
