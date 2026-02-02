@@ -1,8 +1,8 @@
 """Integration tests for MLIR rendering.
 
 Regression tests for the MLIR hang fix (Phase 8) and corpus rendering.
-Ensures test.mlir renders within timeout and all MLIR fixtures produce
-valid images with minimal lexer errors.
+Ensures MLIR fixtures render within timeout and produce valid images
+with minimal lexer errors.
 """
 
 import pytest
@@ -13,7 +13,6 @@ from codepicture.cli.orchestrator import generate_image
 from codepicture.config.schema import RenderConfig
 from pygments.token import Error
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures" / "mlir"
 
 CORPUS_FILES = [
@@ -29,7 +28,7 @@ CORPUS_FILES = [
 @pytest.mark.timeout(10)
 def test_mlir_render_completes(tmp_path: Path) -> None:
     """Render test.mlir must complete within timeout -- regression for hang fix."""
-    test_mlir = PROJECT_ROOT / "test.mlir"
+    test_mlir = FIXTURES_DIR / "test.mlir"
     assert test_mlir.exists(), f"test.mlir not found at {test_mlir}"
 
     code = test_mlir.read_text()
@@ -50,7 +49,7 @@ def test_mlir_render_completes(tmp_path: Path) -> None:
 
 def test_mlir_lexer_minimal_error_tokens() -> None:
     """MLIR lexer should not produce excessive Error tokens on valid MLIR."""
-    test_mlir = PROJECT_ROOT / "test.mlir"
+    test_mlir = FIXTURES_DIR / "test.mlir"
     assert test_mlir.exists(), f"test.mlir not found at {test_mlir}"
 
     code = test_mlir.read_text()
