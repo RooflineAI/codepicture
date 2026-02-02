@@ -172,6 +172,26 @@ class TestLayoutEngine:
         assert metrics.code_y >= metrics.content_y
 
 
+    def test_window_width_none_backward_compatible(self, pango_measurer, sample_tokens):
+        """Setting window_width=None produces identical LayoutMetrics as default."""
+        config_default = RenderConfig()
+        config_none = RenderConfig(window_width=None, window_height=None)
+
+        engine_default = LayoutEngine(pango_measurer, config_default)
+        engine_none = LayoutEngine(pango_measurer, config_none)
+
+        metrics_default = engine_default.calculate_metrics(sample_tokens)
+        metrics_none = engine_none.calculate_metrics(sample_tokens)
+
+        assert metrics_default.canvas_width == metrics_none.canvas_width
+        assert metrics_default.canvas_height == metrics_none.canvas_height
+        assert metrics_default.code_x == metrics_none.code_x
+        assert metrics_default.code_width == metrics_none.code_width
+        assert metrics_default.gutter_width == metrics_none.gutter_width
+        assert metrics_default.content_height == metrics_none.content_height
+        assert metrics_none.display_lines == ()
+
+
 class TestLayoutMetrics:
     """Tests for LayoutMetrics dataclass."""
 
