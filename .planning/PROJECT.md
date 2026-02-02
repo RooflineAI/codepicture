@@ -41,14 +41,22 @@ One command turns code into a slide-ready image: `codepicture snippet.py -o slid
 
 ### Active
 
-(None — define next milestone with `/gsd:new-milestone`)
+**Current Milestone: v2.0 — Line Highlighting**
+
+**Goal:** Add the ability to highlight specific lines with colored backgrounds, supporting multiple highlight styles (e.g., add/remove/focus) for presentation-ready code annotations.
+
+- [ ] Highlight specific lines with a background color via CLI flag
+- [ ] Support line number ranges (e.g., 3,7-12)
+- [ ] Multiple highlight styles with distinct colors (e.g., green for additions, red for removals, yellow for focus)
+- [ ] Highlight styling integrates with existing theme system
+- [ ] Works across all output formats (PNG, SVG, PDF)
+- [ ] Configurable via TOML config file
 
 ### Out of Scope
 
-- Line highlighting — deferred to v2
-- Gradient backgrounds — deferred to v2
+- Gradient backgrounds — deferred to future
 - Clipboard input/output — nice-to-have for later
-- Font ligatures — deferred to v2
+- Font ligatures — deferred to future
 - GUI or web UI — v1 is CLI-only, web UI is future consideration
 - Windows support — macOS and Linux only for now
 - Real-time preview — batch processing only
@@ -94,4 +102,4 @@ Intended trajectory: personal use → startup internal tool → open source.
 | Atomic file writes | Prevents partial output on timeout/failure | ✓ Good — no corrupted files |
 
 ---
-*Last updated: 2026-02-02 after v1.1 milestone shipped*
+*Last updated: 2026-02-02 after v2.0 milestone started*

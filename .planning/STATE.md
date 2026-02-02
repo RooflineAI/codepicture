@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** Planning next milestone
+**Current focus:** v2.0 Line Highlighting
 
 ## Current Position
 
-Phase: All phases complete (v1.0 + v1.1 shipped)
-Plan: N/A
-Status: Ready for next milestone
-Last activity: 2026-02-02 — Completed quick-013 (add pre-commit and linting to README)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements for v2.0
+Last activity: 2026-02-02 — Milestone v2.0 started (Line Highlighting)
 
 Progress: [############################################] 100% (v1.0 + v1.1 complete)
 
@@ -67,5 +67,5 @@ None — all known issues resolved in v1.1.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick-013 (add pre-commit and linting to README)
+Stopped at: Starting v2.0 milestone (Line Highlighting)
 Resume file: None
