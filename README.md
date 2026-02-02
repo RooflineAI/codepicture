@@ -29,6 +29,7 @@ codepicture snippet.py -o output.png
 - **Drop shadow effect** for a polished, floating appearance
 - **Line numbers** with configurable starting offset
 - **Configurable typography** -- bundled JetBrains Mono font, adjustable size and line height
+- **Word wrap** -- automatic wrapping when using fixed window width
 - **Visual tuning** -- padding, corner radius, background color
 - **TOML config file** for persistent defaults
 - **Auto-detect language** from file extension
@@ -124,6 +125,13 @@ Use `-` as INPUT_FILE to read from stdin (requires `--language`).
 | `--window-controls / --no-window-controls` | Show or hide window controls |
 | `--title TEXT` | Window title text |
 
+### Window Size
+
+| Option | Description |
+|--------|-------------|
+| `--width N` | Window width in pixels (enables word wrap) |
+| `--height N` | Window height in pixels |
+
 ### Shadow
 
 | Option | Description |
@@ -176,9 +184,11 @@ title = ""
 shadow = true
 
 [visual]
-padding = 40
+padding = 20
 corner_radius = 8
 background_color = "#1e1e2e"
+# window_width = 800    # optional: fixed width (enables word wrap)
+# window_height = 600   # optional: fixed height
 ```
 
 CLI flags always override config file values.
