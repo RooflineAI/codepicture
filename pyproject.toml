@@ -34,12 +34,14 @@ packages = ["src/codepicture"]
 dev = [
     "cairosvg>=2.8.2",
     "pixelmatch>=0.3.0",
+    "pre-commit>=4.0",
     "pymupdf>=1.26.7",
     "pytest>=9.0.2",
     "pytest-benchmark>=5.2.3",
     "pytest-cov>=7.0.0",
     "pytest-randomly>=4.0.1",
     "pytest-timeout>=2.4.0",
+    "ruff>=0.9",
 ]
 
 [tool.pytest.ini_options]
@@ -68,3 +70,17 @@ exclude_also = [
     "@(abc\\.)?abstractmethod",
     "class .*\\bProtocol\\):",
 ]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["codepicture"]
+
+[tool.ruff.format]
+quote-style = "double"
