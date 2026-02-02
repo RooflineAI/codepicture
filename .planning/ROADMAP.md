@@ -7,7 +7,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 ## Milestones
 
 - SHIPPED **v1.0 MVP** — Phases 1-6 (shipped 2026-01-30) — [archive](milestones/v1.0-ROADMAP.md)
-- **v1.1 Reliability & Testing** — Phases 7-11 (in progress)
+- **v1.1 Reliability & Testing** — Phases 7-11 (complete)
 
 ## Phases
 
@@ -24,7 +24,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 
 </details>
 
-### v1.1 Reliability & Testing (In Progress)
+### v1.1 Reliability & Testing (Complete)
 
 **Milestone Goal:** Harden codepicture for real-world usage — fix rendering bugs, add timeout protection, build visual regression tests, and profile performance.
 
@@ -32,7 +32,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 - [x] **Phase 8: MLIR Hang Fix** — Diagnose and fix the test.mlir rendering hang (completed 2026-01-30)
 - [x] **Phase 9: Rendering Timeout Guards** — Application-level timeout protection with clean error handling (completed 2026-01-30)
 - [x] **Phase 10: Visual Regression & Reliability** — Automated visual verification and parametrized rendering tests (completed 2026-01-31)
-- [ ] **Phase 11: Performance Benchmarks** — Per-stage and end-to-end profiling with CI integration
+- [x] **Phase 11: Performance Benchmarks** — Per-stage and end-to-end profiling with CI integration (completed 2026-02-02)
 
 ## Phase Details
 
@@ -105,9 +105,9 @@ Plans:
   3. CI runs benchmarks as an informational step and uploads results as artifacts
 **Plans**: 3 plans
 Plans:
-- [ ] 11-01-PLAN.md — Install pytest-benchmark, create benchmark infrastructure and fixtures
-- [ ] 11-02-PLAN.md — Per-stage benchmarks (highlight, layout, render) for 5 languages
-- [ ] 11-03-PLAN.md — End-to-end pipeline benchmarks and CI workflow
+- [x] 11-01-PLAN.md — Install pytest-benchmark, create benchmark infrastructure and fixtures
+- [x] 11-02-PLAN.md — Per-stage benchmarks (highlight, layout, render) for 5 languages
+- [x] 11-03-PLAN.md — End-to-end pipeline benchmarks and CI workflow
 
 ## Progress
 
@@ -126,7 +126,7 @@ Plans:
 | 8. MLIR Hang Fix | v1.1 | 2/2 | Complete | 2026-01-30 |
 | 9. Rendering Timeout Guards | v1.1 | 3/3 | Complete | 2026-01-30 |
 | 10. Visual Regression & Reliability | v1.1 | 4/4 | Complete | 2026-01-31 |
-| 11. Performance Benchmarks | v1.1 | 0/3 | Not started | - |
+| 11. Performance Benchmarks | v1.1 | 3/3 | Complete | 2026-02-02 |
 
 ---
 *Roadmap created: 2026-01-28*

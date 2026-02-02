@@ -32,9 +32,9 @@
 
 ### Performance
 
-- [ ] **PERF-01**: pytest-benchmark integration with per-stage benchmarks (highlight, layout, render) for core language fixtures
-- [ ] **PERF-02**: End-to-end pipeline benchmark for small/medium/large inputs
-- [ ] **PERF-03**: Benchmark CI integration — run benchmarks as informational step, upload results as artifacts
+- [x] **PERF-01**: pytest-benchmark integration with per-stage benchmarks (highlight, layout, render) for core language fixtures
+- [x] **PERF-02**: End-to-end pipeline benchmark for small/medium/large inputs
+- [x] **PERF-03**: Benchmark CI integration — run benchmarks as informational step, upload results as artifacts
 
 ## Future Requirements
 
@@ -76,9 +76,9 @@
 | REL-01 | Phase 10 | Complete |
 | REL-02 | Phase 10 | Complete |
 | REL-03 | Phase 9 | Complete |
-| PERF-01 | Phase 11 | Pending |
-| PERF-02 | Phase 11 | Pending |
-| PERF-03 | Phase 11 | Pending |
+| PERF-01 | Phase 11 | Complete |
+| PERF-02 | Phase 11 | Complete |
+| PERF-03 | Phase 11 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 19 total
