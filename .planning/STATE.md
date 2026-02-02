@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 Phase: All phases complete (v1.0 + v1.1 shipped)
 Plan: N/A
 Status: Ready for next milestone
-Last activity: 2026-02-02 — Completed quick-011 (move MLIR lexer to custom_lexers subfolder)
+Last activity: 2026-02-02 — Completed quick-012 (set up linting and formatting via ruff)
 
 Progress: [############################################] 100% (v1.0 + v1.1 complete)
 
@@ -55,6 +55,7 @@ None — all known issues resolved in v1.1.
 | 009 | Move test.mlir from project root to tests/fixtures/mlir/ | 2026-02-02 | 9df2b4c | [009-move-the-top-level-test-mlir-file-into-a](./quick/009-move-the-top-level-test-mlir-file-into-a/) |
 | 010 | Add benchmark instructions to README | 2026-02-02 | a158e38 | [010-add-to-the-readme-how-to-run-the-benchma](./quick/010-add-to-the-readme-how-to-run-the-benchma/) |
 | 011 | Move MLIR lexer to custom_lexers subfolder | 2026-02-02 | 90706e9 | [011-move-mlir-lexer-to-custom-lexers-subfold](./quick/011-move-mlir-lexer-to-custom-lexers-subfold/) |
+| 012 | Set up linting and formatting via ruff | 2026-02-02 | 70c4606 | [012-set-up-linting-and-formatting-via-ruff](./quick/012-set-up-linting-and-formatting-via-ruff/) |
 
 ### Roadmap Evolution
 
@@ -65,5 +66,5 @@ None — all known issues resolved in v1.1.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick-011 (move MLIR lexer to custom_lexers subfolder)
+Stopped at: Completed quick-012 (set up linting and formatting via ruff)
 Resume file: None
