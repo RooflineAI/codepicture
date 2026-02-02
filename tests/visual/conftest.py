@@ -6,6 +6,9 @@ for snapshot-based visual regression tests.
 
 from __future__ import annotations
 
+import os
+import subprocess
+import sys
 from io import BytesIO
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -16,6 +19,25 @@ from pixelmatch.contrib.PIL import pixelmatch
 
 if TYPE_CHECKING:
     from codepicture.config import RenderConfig
+
+# ---------------------------------------------------------------------------
+# Ensure cairocffi can find the Homebrew Cairo library on macOS.
+#
+# pycairo links at build time and works fine, but cairocffi (used by
+# cairosvg for SVG visual tests) uses ctypes.util.find_library() at
+# import time, which doesn't search Homebrew paths on macOS.
+# ---------------------------------------------------------------------------
+
+if sys.platform == "darwin" and "DYLD_LIBRARY_PATH" not in os.environ:
+    try:
+        prefix = subprocess.check_output(
+            ["brew", "--prefix", "cairo"], text=True, stderr=subprocess.DEVNULL
+        ).strip()
+        lib_dir = os.path.join(prefix, "lib")
+        if os.path.isfile(os.path.join(lib_dir, "libcairo.2.dylib")):
+            os.environ["DYLD_LIBRARY_PATH"] = lib_dir
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -157,9 +179,13 @@ def build_composite(
 def svg_to_png(svg_data: bytes, scale: float = 2.0) -> Image.Image:
     """Rasterize SVG bytes to a Pillow RGBA Image.
 
-    Uses cairosvg for high-fidelity SVG rendering.
+    Uses cairosvg for high-fidelity SVG rendering.  Raises pytest.skip
+    if cairocffi (the cairosvg backend) cannot find the system Cairo library.
     """
-    import cairosvg
+    try:
+        import cairosvg
+    except OSError as exc:
+        pytest.skip(f"cairosvg unavailable (cairocffi cannot find Cairo): {exc}")
 
     png_bytes = cairosvg.svg2png(bytestring=svg_data, scale=scale)
     return Image.open(BytesIO(png_bytes)).convert("RGBA")

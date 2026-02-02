@@ -214,29 +214,45 @@ Python 3.13 or later is required.
 
 ## Development
 
+### Setup
+
+Install [system dependencies](#system-dependencies) first, then:
+
 ```bash
-# Clone the repository
 git clone https://github.com/your-username/codepicture.git
 cd codepicture
-
-# Install dependencies
 uv sync
-
-# Run the test suite
-pytest
-
-# Run with coverage
-pytest --cov
-
-# Update visual regression reference images
-pytest --snapshot-update
 ```
 
-The project has 260+ tests with an 80% coverage requirement. Visual regression
-tests compare rendered output against stored reference images in
+### Running Tests
+
+```bash
+# Run the full test suite
+uv run pytest
+
+# Run with coverage
+uv run pytest --cov
+```
+
+### Updating Visual Regression References
+
+Visual regression tests compare rendered output against stored reference PNGs in
 `tests/visual/references/`. When rendering changes intentionally (e.g. new
-defaults, bug fixes), regenerate the baselines with `pytest --snapshot-update`
-and commit the updated PNGs.
+defaults, bug fixes), regenerate the baselines:
+
+```bash
+uv run pytest --snapshot-update
+```
+
+Updated tests show as **skipped** — this is expected (each skip wrote a new
+baseline). Verify the images look correct, then commit them:
+
+```bash
+git add tests/visual/references/
+git commit -m "test: update visual regression baselines"
+```
+
+The project has 300+ tests with an 80% coverage requirement.
 
 ## License
 
