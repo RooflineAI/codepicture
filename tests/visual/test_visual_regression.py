@@ -82,7 +82,8 @@ def test_visual_regression(
 
     if snapshot_update or not reference_path.exists():
         actual.save(reference_path)
-        pytest.skip(f"Reference image {'updated' if snapshot_update else 'created'}: {reference_path.name}")
+        action = "updated" if snapshot_update else "created"
+        pytest.skip(f"Reference image {action}: {reference_path.name}")
 
     passed, mismatch_pct = compare_images(
         actual, reference_path, diff_output_dir, test_name

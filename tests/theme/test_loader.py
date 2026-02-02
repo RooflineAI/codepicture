@@ -3,7 +3,7 @@
 import pytest
 
 from codepicture.errors import ThemeError
-from codepicture.theme import PygmentsTheme, get_theme, list_themes
+from codepicture.theme import get_theme, list_themes
 
 
 class TestGetTheme:

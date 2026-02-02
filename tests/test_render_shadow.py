@@ -2,18 +2,17 @@
 
 from io import BytesIO
 
-import pytest
 from PIL import Image
 
+from codepicture.core.types import Color, OutputFormat
 from codepicture.render import CairoCanvas, apply_shadow
 from codepicture.render.shadow import (
     SHADOW_BLUR_RADIUS,
+    SHADOW_COLOR,
     SHADOW_OFFSET_X,
     SHADOW_OFFSET_Y,
-    SHADOW_COLOR,
     calculate_shadow_margin,
 )
-from codepicture.core.types import Color, OutputFormat
 
 
 class TestShadowConstants:
@@ -27,7 +26,7 @@ class TestShadowConstants:
         assert SHADOW_OFFSET_Y == 25
 
     def test_shadow_color(self):
-        assert SHADOW_COLOR == Color(0, 0, 0, 128)
+        assert Color(0, 0, 0, 128) == SHADOW_COLOR
 
 
 class TestCalculateShadowMargin:
@@ -35,7 +34,9 @@ class TestCalculateShadowMargin:
 
     def test_margin_includes_blur_and_offset(self):
         margin = calculate_shadow_margin()
-        expected = SHADOW_BLUR_RADIUS * 2 + max(abs(SHADOW_OFFSET_X), abs(SHADOW_OFFSET_Y))
+        expected = SHADOW_BLUR_RADIUS * 2 + max(
+            abs(SHADOW_OFFSET_X), abs(SHADOW_OFFSET_Y)
+        )
         assert margin == expected
 
     def test_margin_is_125(self):
@@ -50,7 +51,7 @@ class TestApplyShadow:
         canvas = CairoCanvas.create(100, 100, OutputFormat.PNG, scale=1.0)
         canvas.draw_rectangle(10, 10, 80, 80, Color(255, 0, 0))
         data = apply_shadow(canvas._surface, enabled=False)
-        assert data[:8] == b'\x89PNG\r\n\x1a\n'
+        assert data[:8] == b"\x89PNG\r\n\x1a\n"
 
     def test_enabled_returns_larger_png(self):
         canvas = CairoCanvas.create(100, 100, OutputFormat.PNG, scale=1.0)
@@ -64,7 +65,7 @@ class TestApplyShadow:
         canvas = CairoCanvas.create(100, 100, OutputFormat.PNG, scale=1.0)
         canvas.draw_rectangle(0, 0, 100, 100, Color(100, 100, 100))
         data = apply_shadow(canvas._surface, enabled=True)
-        assert data[:8] == b'\x89PNG\r\n\x1a\n'
+        assert data[:8] == b"\x89PNG\r\n\x1a\n"
 
 
 class TestShadowColorPreservation:
@@ -78,7 +79,7 @@ class TestShadowColorPreservation:
         img = Image.open(BytesIO(data)).convert("RGBA")
         # Sample center pixel (content is at shadow_margin offset)
         margin = calculate_shadow_margin()
-        r, g, b, a = img.getpixel((margin + 50, margin + 50))
+        r, g, b, _a = img.getpixel((margin + 50, margin + 50))
         assert r == 255, f"Red channel should be 255, got {r}"
         assert g == 0, f"Green channel should be 0, got {g}"
         assert b == 0, f"Blue channel should be 0, got {b}"
@@ -90,7 +91,7 @@ class TestShadowColorPreservation:
 
         img = Image.open(BytesIO(data)).convert("RGBA")
         margin = calculate_shadow_margin()
-        r, g, b, a = img.getpixel((margin + 50, margin + 50))
+        r, g, b, _a = img.getpixel((margin + 50, margin + 50))
         assert r == 0, f"Red channel should be 0, got {r}"
         assert g == 0, f"Green channel should be 0, got {g}"
         assert b == 255, f"Blue channel should be 255, got {b}"
@@ -101,7 +102,7 @@ class TestShadowColorPreservation:
         data = apply_shadow(canvas._surface, enabled=False)
 
         img = Image.open(BytesIO(data)).convert("RGBA")
-        r, g, b, a = img.getpixel((50, 50))
+        r, g, b, _a = img.getpixel((50, 50))
         assert r == 255, f"Red channel should be 255, got {r}"
         assert g == 0, f"Green channel should be 0, got {g}"
         assert b == 0, f"Blue channel should be 0, got {b}"

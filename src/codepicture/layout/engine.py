@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from codepicture.core.protocols import TextMeasurer
     from codepicture.config.schema import RenderConfig
+    from codepicture.core.protocols import TextMeasurer
     from codepicture.highlight.pygments_highlighter import TokenInfo
 
 import math
@@ -27,8 +27,8 @@ class LayoutEngine:
 
     def __init__(
         self,
-        measurer: "TextMeasurer",
-        config: "RenderConfig",
+        measurer: TextMeasurer,
+        config: RenderConfig,
     ) -> None:
         """Initialize layout engine.
 
@@ -41,7 +41,7 @@ class LayoutEngine:
 
     def calculate_metrics(
         self,
-        lines: list[list["TokenInfo"]],
+        lines: list[list[TokenInfo]],
     ) -> LayoutMetrics:
         """Calculate complete layout metrics for rendering.
 
@@ -68,10 +68,7 @@ class LayoutEngine:
         line_height_px = char_height * self._config.line_height
 
         # Find longest line in characters
-        max_chars = max(
-            sum(len(token.text) for token in line)
-            for line in lines
-        )
+        max_chars = max(sum(len(token.text) for token in line) for line in lines)
 
         # Calculate max line number for gutter width
         max_line_number = len(lines) + self._config.line_number_offset - 1
@@ -117,7 +114,9 @@ class LayoutEngine:
 
                     is_first = True
                     while char_pos < total_chars:
-                        chunk_size = first_chunk_size if is_first else continuation_chunk_size
+                        chunk_size = (
+                            first_chunk_size if is_first else continuation_chunk_size
+                        )
                         chunk_end = min(char_pos + chunk_size, total_chars)
 
                         # Compute token_start and token_end for this chunk
@@ -178,7 +177,7 @@ class LayoutEngine:
 
     @staticmethod
     def _tokens_for_range(
-        tokens: list["TokenInfo"],
+        tokens: list[TokenInfo],
         char_start: int,
         char_end: int,
     ) -> tuple[int, int]:

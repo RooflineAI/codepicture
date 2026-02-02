@@ -19,19 +19,17 @@ from .types import (
 )
 
 __all__ = [
-    # Protocols
     "Canvas",
-    "Highlighter",
-    "TextMeasurer",
-    "Theme",
-    # Types
     "Color",
     "Dimensions",
+    "Highlighter",
     "LayoutMetrics",
     "OutputFormat",
     "Position",
     "Rect",
     "RenderResult",
+    "TextMeasurer",
     "TextStyle",
+    "Theme",
     "WindowStyle",
 ]

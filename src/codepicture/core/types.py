@@ -145,7 +145,9 @@ class DisplayLine:
     source_line_idx: int  # Index into original `lines` list
     token_start: int  # Start index into source line's token list
     token_end: int  # End index (exclusive) into source line's token list
-    char_offset: int  # Character offset within source line where this display line starts
+    char_offset: (
+        int  # Character offset within source line where this display line starts
+    )
     is_continuation: bool  # True if this is a wrapped continuation (no line number)
 
 

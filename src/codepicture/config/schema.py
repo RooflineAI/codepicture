@@ -69,11 +69,11 @@ class RenderConfig(BaseModel):
         if isinstance(v, str):
             try:
                 return OutputFormat(v.lower())
-            except ValueError:
+            except ValueError as err:
                 allowed = [fmt.value for fmt in OutputFormat]
                 raise ValueError(
                     f"Invalid output_format '{v}'. Must be one of: {', '.join(allowed)}"
-                )
+                ) from err
         raise ValueError(f"output_format must be a string, got {type(v).__name__}")
 
     @field_validator("window_style", mode="before")
@@ -85,11 +85,11 @@ class RenderConfig(BaseModel):
         if isinstance(v, str):
             try:
                 return WindowStyle(v.lower())
-            except ValueError:
+            except ValueError as err:
                 allowed = [style.value for style in WindowStyle]
                 raise ValueError(
                     f"Invalid window_style '{v}'. Must be one of: {', '.join(allowed)}"
-                )
+                ) from err
         raise ValueError(f"window_style must be a string, got {type(v).__name__}")
 
     @field_validator("background_color", mode="before")
@@ -99,7 +99,9 @@ class RenderConfig(BaseModel):
         if v is None:
             return None
         if not isinstance(v, str):
-            raise ValueError(f"background_color must be a string, got {type(v).__name__}")
+            raise ValueError(
+                f"background_color must be a string, got {type(v).__name__}"
+            )
         # Allow #RGB, #RRGGBB, #RRGGBBAA formats
         if not re.match(r"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$", v):
             raise ValueError(

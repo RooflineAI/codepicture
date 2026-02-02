@@ -5,13 +5,14 @@ Ensures MLIR fixtures render within timeout and produce valid images
 with minimal lexer errors.
 """
 
-import pytest
 from pathlib import Path
 
-from codepicture.highlight.custom_lexers.mlir_lexer import MlirLexer
+import pytest
+from pygments.token import Error
+
 from codepicture.cli.orchestrator import generate_image
 from codepicture.config.schema import RenderConfig
-from pygments.token import Error
+from codepicture.highlight.custom_lexers.mlir_lexer import MlirLexer
 
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures" / "mlir"
 

@@ -4,7 +4,6 @@ Tests the timeout wrapper (generate_image_with_timeout) and atomic file writes
 (_write_output_atomic) introduced in Phase 9.
 """
 
-import os
 import time
 from pathlib import Path
 from unittest.mock import MagicMock, patch

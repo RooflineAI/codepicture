@@ -5,23 +5,31 @@ import pytest
 from codepicture import (
     LayoutEngine,
     PangoTextMeasurer,
-    Renderer,
     RenderConfig,
+    Renderer,
     get_theme,
 )
 
 LANGUAGES = ["python", "rust", "cpp", "javascript", "mlir"]
 
 FEATURE_CONFIGS = [
-    ("minimal", {"shadow": False, "window_controls": False, "show_line_numbers": False}),
-    ("with_line_numbers", {"shadow": False, "window_controls": False, "show_line_numbers": True}),
+    (
+        "minimal",
+        {"shadow": False, "window_controls": False, "show_line_numbers": False},
+    ),
+    (
+        "with_line_numbers",
+        {"shadow": False, "window_controls": False, "show_line_numbers": True},
+    ),
     ("full", {"shadow": True, "window_controls": True, "show_line_numbers": True}),
 ]
 
 
 @pytest.mark.timeout(0)
 @pytest.mark.parametrize("lang", LANGUAGES)
-def test_bench_render(benchmark, pre_tokenized, pre_computed_metrics, default_config, lang):
+def test_bench_render(
+    benchmark, pre_tokenized, pre_computed_metrics, default_config, lang
+):
     """Benchmark Renderer.render() for a single language with default config."""
     tokens = pre_tokenized[lang]
     metrics = pre_computed_metrics[lang]
@@ -34,8 +42,10 @@ def test_bench_render(benchmark, pre_tokenized, pre_computed_metrics, default_co
 @pytest.mark.parametrize(
     "config_name,overrides", FEATURE_CONFIGS, ids=[c[0] for c in FEATURE_CONFIGS]
 )
-def test_bench_render_features(benchmark, highlighter, code_samples, config_name, overrides):
-    """Benchmark Renderer.render() with different feature toggle combinations (Python)."""
+def test_bench_render_features(
+    benchmark, highlighter, code_samples, config_name, overrides
+):
+    """Benchmark Renderer.render() with different feature toggles (Python)."""
     config = RenderConfig(**overrides)
     code = code_samples["python"]
     tokens = highlighter.highlight(code, "python")

@@ -31,7 +31,7 @@ class TestHighlightThemeIntegration:
 
         # Verify: all tokens got valid TextStyle objects
         assert len(styled_tokens) > 0
-        for text, style in styled_tokens:
+        for _text, style in styled_tokens:
             assert isinstance(style, TextStyle)
             assert style.color is not None  # Theme mapped a color
             assert isinstance(style.color, Color)
@@ -45,7 +45,7 @@ class TestHighlightThemeIntegration:
         ],
     )
     def test_all_token_types_get_valid_colors(self, theme_name: str) -> None:
-        """Verify every token_type from highlight output gets a Color via get_style()."""
+        """Verify every token_type from highlight gets a Color via get_style()."""
         highlighter = PygmentsHighlighter()
         theme = get_theme(theme_name)
 

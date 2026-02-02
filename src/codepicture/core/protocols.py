@@ -77,9 +77,7 @@ class Canvas(Protocol):
         """
         ...
 
-    def draw_circle(
-        self, x: float, y: float, radius: float, color: "Color"
-    ) -> None:
+    def draw_circle(self, x: float, y: float, radius: float, color: "Color") -> None:
         """Draw a filled circle.
 
         Args:

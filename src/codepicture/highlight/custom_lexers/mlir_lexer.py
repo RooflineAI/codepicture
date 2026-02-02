@@ -9,7 +9,7 @@ Registered as a Pygments entry point so that get_lexer_by_name('mlir')
 and get_lexer_for_filename('*.mlir') resolve automatically.
 """
 
-from pygments.lexer import RegexLexer, bygroups
+from pygments.lexer import RegexLexer
 from pygments.token import (
     Comment,
     Keyword,

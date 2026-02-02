@@ -10,12 +10,11 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
-from codepicture import __version__, load_config, list_themes
+from codepicture import __version__, list_themes, load_config
 from codepicture.core.types import OutputFormat
 from codepicture.errors import CodepictureError, InputError, RenderTimeoutError
 
 from .orchestrator import generate_image_with_timeout
-
 
 app = typer.Typer(
     name="codepicture",
@@ -69,8 +68,7 @@ def read_input(input_path: str, language: str | None) -> tuple[str, str | None]:
     if input_path == "-":
         if language is None:
             raise typer.BadParameter(
-                "stdin input (-) requires --language flag",
-                param_hint="'INPUT_FILE'"
+                "stdin input (-) requires --language flag", param_hint="'INPUT_FILE'"
             )
         return sys.stdin.read(), None
 
@@ -81,120 +79,109 @@ def read_input(input_path: str, language: str | None) -> tuple[str, str | None]:
         raise InputError(f"Not a file: {input_path}", input_path=input_path)
     try:
         return path.read_text(), path.name
-    except PermissionError:
+    except PermissionError as err:
         raise InputError(
             f"Permission denied: {input_path}", input_path=input_path
-        )
+        ) from err
 
 
 @app.command()
 def main(
     input_file: Annotated[
-        str,
-        typer.Argument(help="Source code file path, or - for stdin")
+        str, typer.Argument(help="Source code file path, or - for stdin")
     ],
     output: Annotated[
-        Path,
-        typer.Option("-o", "--output", help="Output image path (required)")
+        Path, typer.Option("-o", "--output", help="Output image path (required)")
     ],
     # Config file
     config_file: Annotated[
         Path | None,
-        typer.Option("--config", help="Config file path (overrides search)")
+        typer.Option("--config", help="Config file path (overrides search)"),
     ] = None,
     # Theme & language
     theme: Annotated[
-        str | None,
-        typer.Option("-t", "--theme", help="Color theme name")
+        str | None, typer.Option("-t", "--theme", help="Color theme name")
     ] = None,
     language: Annotated[
         str | None,
-        typer.Option("-l", "--language", help="Source language (auto-detected if omitted)")
+        typer.Option(
+            "-l", "--language", help="Source language (auto-detected if omitted)"
+        ),
     ] = None,
     # Output format
     format: Annotated[
-        str | None,
-        typer.Option("-f", "--format", help="Output format: png, svg, pdf")
+        str | None, typer.Option("-f", "--format", help="Output format: png, svg, pdf")
     ] = None,
     # Typography
     font_family: Annotated[
-        str | None,
-        typer.Option("--font", help="Font family name")
+        str | None, typer.Option("--font", help="Font family name")
     ] = None,
     font_size: Annotated[
-        int | None,
-        typer.Option("--font-size", help="Font size in points")
+        int | None, typer.Option("--font-size", help="Font size in points")
     ] = None,
     line_height: Annotated[
-        float | None,
-        typer.Option("--line-height", help="Line height multiplier")
+        float | None, typer.Option("--line-height", help="Line height multiplier")
     ] = None,
     tab_width: Annotated[
-        int | None,
-        typer.Option("--tab-width", help="Tab width in spaces")
+        int | None, typer.Option("--tab-width", help="Tab width in spaces")
     ] = None,
     # Visual
     padding: Annotated[
-        int | None,
-        typer.Option("--padding", help="Padding around code in pixels")
+        int | None, typer.Option("--padding", help="Padding around code in pixels")
     ] = None,
     corner_radius: Annotated[
-        int | None,
-        typer.Option("--corner-radius", help="Window corner radius")
+        int | None, typer.Option("--corner-radius", help="Window corner radius")
     ] = None,
     window_width: Annotated[
         int | None,
-        typer.Option("--width", help="Window width in pixels (enables word wrap)")
+        typer.Option("--width", help="Window width in pixels (enables word wrap)"),
     ] = None,
     window_height: Annotated[
-        int | None,
-        typer.Option("--height", help="Window height in pixels")
+        int | None, typer.Option("--height", help="Window height in pixels")
     ] = None,
     background_color: Annotated[
-        str | None,
-        typer.Option("--background", help="Background color (#RRGGBB)")
+        str | None, typer.Option("--background", help="Background color (#RRGGBB)")
     ] = None,
     # Line numbers
     line_numbers: Annotated[
         bool | None,
-        typer.Option("--line-numbers/--no-line-numbers", help="Show line numbers")
+        typer.Option("--line-numbers/--no-line-numbers", help="Show line numbers"),
     ] = None,
     line_number_offset: Annotated[
-        int | None,
-        typer.Option("--line-offset", help="Starting line number")
+        int | None, typer.Option("--line-offset", help="Starting line number")
     ] = None,
     # Window chrome
     window_controls: Annotated[
         bool | None,
-        typer.Option("--window-controls/--no-window-controls", help="Show window controls")
+        typer.Option(
+            "--window-controls/--no-window-controls", help="Show window controls"
+        ),
     ] = None,
     window_title: Annotated[
-        str | None,
-        typer.Option("--title", help="Window title text")
+        str | None, typer.Option("--title", help="Window title text")
     ] = None,
     # Shadow
     shadow: Annotated[
-        bool | None,
-        typer.Option("--shadow/--no-shadow", help="Enable drop shadow")
+        bool | None, typer.Option("--shadow/--no-shadow", help="Enable drop shadow")
     ] = None,
     # Timeout
     timeout: Annotated[
         float,
-        typer.Option("--timeout", help="Rendering timeout in seconds (0 to disable)")
+        typer.Option("--timeout", help="Rendering timeout in seconds (0 to disable)"),
     ] = 30.0,
     # Meta options
     verbose: Annotated[
-        bool,
-        typer.Option("-v", "--verbose", help="Show processing steps")
+        bool, typer.Option("-v", "--verbose", help="Show processing steps")
     ] = False,
     version: Annotated[
         bool | None,
         typer.Option(
-            "--version", "-V",
+            "--version",
+            "-V",
             callback=version_callback,
             is_eager=True,
-            help="Show version and exit"
-        )
+            help="Show version and exit",
+        ),
     ] = None,
     list_themes_opt: Annotated[
         bool,
@@ -202,8 +189,8 @@ def main(
             "--list-themes",
             callback=list_themes_callback,
             is_eager=True,
-            help="List available themes and exit"
-        )
+            help="List available themes and exit",
+        ),
     ] = False,
 ) -> None:
     """Generate a beautiful image from source code."""
@@ -285,10 +272,10 @@ def main(
 
     except RenderTimeoutError as e:
         err_console.print(f"[red]Error:[/red] {e}")
-        raise typer.Exit(EXIT_TIMEOUT)
+        raise typer.Exit(EXIT_TIMEOUT) from None
     except CodepictureError as e:
         err_console.print(f"[red]Error:[/red] {e}")
-        raise typer.Exit(EXIT_ERROR)
+        raise typer.Exit(EXIT_ERROR) from None
     except Exception as e:
         err_console.print(f"[red]Error:[/red] Unexpected error: {e}")
-        raise typer.Exit(EXIT_ERROR)
+        raise typer.Exit(EXIT_ERROR) from None

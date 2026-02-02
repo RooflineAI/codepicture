@@ -60,7 +60,16 @@ class CairoCanvas:
     SVG and PDF surfaces write to BytesIO buffers.
     """
 
-    __slots__ = ("_surface", "_ctx", "_format", "_buffer", "_scale", "_width", "_height", "_current_font")
+    __slots__ = (
+        "_buffer",
+        "_ctx",
+        "_current_font",
+        "_format",
+        "_height",
+        "_scale",
+        "_surface",
+        "_width",
+    )
 
     def __init__(
         self,

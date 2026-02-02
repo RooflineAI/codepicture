@@ -75,9 +75,17 @@ exclude_also = [
 target-version = "py313"
 line-length = 88
 src = ["src", "tests"]
+# Visual fixtures are rendered as images; any change alters baselines
+extend-exclude = ["tests/visual/fixtures"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# Pygments lexer class attributes follow the Pygments API convention
+"src/codepicture/highlight/custom_lexers/mlir_lexer.py" = ["RUF012"]
+# Benchmark fixtures are intentional code samples, not production code
+"tests/benchmarks/fixtures/*.py" = ["B007", "B904", "F841", "SIM", "UP046", "RUF012"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["codepicture"]

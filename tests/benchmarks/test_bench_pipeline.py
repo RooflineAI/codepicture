@@ -1,4 +1,4 @@
-"""End-to-end pipeline benchmarks measuring full generate_image for varying input sizes."""
+"""End-to-end pipeline benchmarks for generate_image with varying input sizes."""
 
 import pytest
 

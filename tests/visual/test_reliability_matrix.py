@@ -62,7 +62,7 @@ def test_render_language_format(
     fixture_path = FIXTURES_DIR / fixture_file
     config = RenderConfig(output_format=output_format)
 
-    data, fmt_ext = render_fixture(fixture_path, config, language=language)
+    data, _fmt_ext = render_fixture(fixture_path, config, language=language)
 
     # Non-empty output
     assert len(data) > 0, f"{language}/{output_format.value} produced empty output"
@@ -132,7 +132,7 @@ TOGGLE_COMBOS = [
 def test_render_toggle_combo(overrides: dict) -> None:
     """Each feature toggle combination produces valid PNG output."""
     config = RenderConfig(output_format=OutputFormat.PNG, **overrides)
-    data, fmt_ext = render_fixture(PYTHON_FIXTURE, config, language="python")
+    data, _fmt_ext = render_fixture(PYTHON_FIXTURE, config, language="python")
 
     assert len(data) > 0, f"Toggle combo produced empty output: {overrides}"
     assert data[:4] == b"\x89PNG", "PNG output missing magic bytes"
@@ -164,15 +164,11 @@ def test_toggle_dimensions_change() -> None:
     )
 
     # Chrome on vs off
-    w_chrome, h_chrome = _render_png_dimensions(window_controls=True)
-    w_no_chrome, h_no_chrome = _render_png_dimensions(window_controls=False)
-    assert h_chrome != h_no_chrome, (
-        "Window controls toggle did not change height"
-    )
+    _w_chrome, h_chrome = _render_png_dimensions(window_controls=True)
+    _w_no_chrome, h_no_chrome = _render_png_dimensions(window_controls=False)
+    assert h_chrome != h_no_chrome, "Window controls toggle did not change height"
 
     # Line numbers on vs off
-    w_lines, h_lines = _render_png_dimensions(show_line_numbers=True)
-    w_no_lines, h_no_lines = _render_png_dimensions(show_line_numbers=False)
-    assert w_lines != w_no_lines, (
-        "Line numbers toggle did not change width"
-    )
+    w_lines, _h_lines = _render_png_dimensions(show_line_numbers=True)
+    w_no_lines, _h_no_lines = _render_png_dimensions(show_line_numbers=False)
+    assert w_lines != w_no_lines, "Line numbers toggle did not change width"

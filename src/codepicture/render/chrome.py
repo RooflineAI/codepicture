@@ -15,12 +15,12 @@ if TYPE_CHECKING:
     from codepicture.render.canvas import CairoCanvas
 
 __all__ = [
+    "BUTTON_DIAMETER",
+    "BUTTON_MARGIN_LEFT",
+    "BUTTON_SPACING",
+    "TITLE_BAR_HEIGHT",
     "draw_title_bar",
     "draw_traffic_lights",
-    "TITLE_BAR_HEIGHT",
-    "BUTTON_DIAMETER",
-    "BUTTON_SPACING",
-    "BUTTON_MARGIN_LEFT",
 ]
 
 # Title bar constants (macOS standard)
@@ -103,7 +103,7 @@ def draw_title_bar(
         )
         # Cover the bottom portion that shouldn't be rounded
         # This creates the effect of only rounded top corners
-        if TITLE_BAR_HEIGHT > corner_radius:
+        if corner_radius < TITLE_BAR_HEIGHT:
             canvas.draw_rectangle(
                 x=0,
                 y=TITLE_BAR_HEIGHT - corner_radius,
@@ -141,7 +141,7 @@ def draw_title_bar(
 
         # Center vertically (baseline positioning)
         # Title bar center is TITLE_BAR_HEIGHT / 2
-        # We need to position baseline, which is approximately 0.7 of font height above center
+        # Position baseline (~0.7 of font height above center)
         title_baseline_y = (TITLE_BAR_HEIGHT + title_height * 0.7) / 2
 
         # Draw title with slightly muted foreground color

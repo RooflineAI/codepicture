@@ -4,6 +4,7 @@ Separates business logic from CLI argument handling for testability.
 """
 
 import concurrent.futures
+import contextlib
 import os
 import shutil
 import sys
@@ -11,13 +12,13 @@ import tempfile
 from pathlib import Path
 
 from codepicture import (
-    RenderConfig,
-    PygmentsHighlighter,
     LayoutEngine,
     PangoTextMeasurer,
+    PygmentsHighlighter,
+    RenderConfig,
     Renderer,
-    register_bundled_fonts,
     get_theme,
+    register_bundled_fonts,
 )
 from codepicture.errors import HighlightError, RenderTimeoutError
 
@@ -90,7 +91,7 @@ def _write_output_atomic(data: bytes, output_path: Path) -> None:
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    tmp_fd = tempfile.NamedTemporaryFile(
+    tmp_fd = tempfile.NamedTemporaryFile(  # noqa: SIM115
         dir=output_path.parent,
         prefix=".codepicture-",
         suffix=output_path.suffix,
@@ -103,10 +104,8 @@ def _write_output_atomic(data: bytes, output_path: Path) -> None:
         shutil.move(tmp_path, str(output_path))
     except BaseException:
         tmp_fd.close()
-        try:
+        with contextlib.suppress(OSError):
             os.unlink(tmp_path)
-        except OSError:
-            pass
         raise
 
 
@@ -155,6 +154,6 @@ def generate_image_with_timeout(
             f"Try increasing the timeout with --timeout {int(timeout * 2)}",
             timeout=timeout,
             file_info=filename or "<stdin>",
-        )
+        ) from None
     else:
         executor.shutdown(wait=True)

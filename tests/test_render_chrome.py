@@ -1,18 +1,17 @@
 """Tests for window chrome rendering."""
 
-import pytest
+from codepicture.core.types import Color, OutputFormat
 from codepicture.render import CairoCanvas
 from codepicture.render.chrome import (
-    draw_title_bar,
-    draw_traffic_lights,
-    TITLE_BAR_HEIGHT,
     BUTTON_DIAMETER,
     BUTTON_SPACING,
     CLOSE_COLOR,
-    MINIMIZE_COLOR,
     MAXIMIZE_COLOR,
+    MINIMIZE_COLOR,
+    TITLE_BAR_HEIGHT,
+    draw_title_bar,
+    draw_traffic_lights,
 )
-from codepicture.core.types import Color, OutputFormat
 
 
 class TestChromeConstants:
@@ -28,9 +27,9 @@ class TestChromeConstants:
         assert BUTTON_SPACING == 8
 
     def test_button_colors(self):
-        assert CLOSE_COLOR == Color.from_hex("#ff5f57")
-        assert MINIMIZE_COLOR == Color.from_hex("#febc2e")
-        assert MAXIMIZE_COLOR == Color.from_hex("#28c840")
+        assert Color.from_hex("#ff5f57") == CLOSE_COLOR
+        assert Color.from_hex("#febc2e") == MINIMIZE_COLOR
+        assert Color.from_hex("#28c840") == MAXIMIZE_COLOR
 
 
 class TestDrawTrafficLights:
@@ -61,4 +60,6 @@ class TestDrawTitleBar:
         """Title color adapts to light background."""
         canvas = CairoCanvas.create(400, 100, OutputFormat.PNG, scale=1.0)
         # Light background (avg brightness > 128)
-        draw_title_bar(canvas, 400, Color(200, 200, 200), title="test.py", corner_radius=0)
+        draw_title_bar(
+            canvas, 400, Color(200, 200, 200), title="test.py", corner_radius=0
+        )

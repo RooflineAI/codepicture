@@ -27,12 +27,12 @@ class PygmentsTheme:
     """
 
     __slots__ = (
-        "_name",
-        "_style",
         "_background",
         "_foreground",
-        "_line_number_fg",
         "_line_number_bg",
+        "_line_number_fg",
+        "_name",
+        "_style",
     )
 
     def __init__(self, style_name: str) -> None:
@@ -120,11 +120,8 @@ class PygmentsTheme:
 
         # Color is hex string without # or None
         color_hex = style_dict.get("color")
-        if color_hex:
-            color = Color.from_hex(f"#{color_hex}")
-        else:
-            # Fallback to foreground color (per RESEARCH.md Pitfall 5)
-            color = self._foreground
+        # Fallback to foreground color when no color specified (RESEARCH.md Pitfall 5)
+        color = Color.from_hex(f"#{color_hex}") if color_hex else self._foreground
 
         return TextStyle(
             color=color,

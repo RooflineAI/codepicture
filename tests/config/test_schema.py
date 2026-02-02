@@ -72,7 +72,7 @@ class TestRenderConfig:
         assert any("extra" in e["type"] for e in errors)
 
     def test_output_format_string_conversion(self):
-        """"svg" converts to OutputFormat.SVG."""
+        """ "svg" converts to OutputFormat.SVG."""
         config = RenderConfig(output_format="svg")
         assert config.output_format == OutputFormat.SVG
         config_png = RenderConfig(output_format="png")
@@ -100,7 +100,7 @@ class TestRenderConfig:
         assert config.output_format == OutputFormat.PDF
 
     def test_window_style_string_conversion(self):
-        """"macos" converts to WindowStyle.MACOS."""
+        """ "macos" converts to WindowStyle.MACOS."""
         config = RenderConfig(window_style="macos")
         assert config.window_style == WindowStyle.MACOS
         config_win = RenderConfig(window_style="windows")
@@ -134,7 +134,7 @@ class TestRenderConfig:
         assert config_lower.background_color == "#aabbcc"
 
     def test_background_color_invalid(self):
-        """"red" or "#GGG" raises ValidationError."""
+        """ "red" or "#GGG" raises ValidationError."""
         with pytest.raises(ValidationError) as exc_info:
             RenderConfig(background_color="red")
         errors = exc_info.value.errors()
@@ -184,4 +184,3 @@ class TestRenderConfig:
             RenderConfig(corner_radius=51)
         config = RenderConfig(corner_radius=25)
         assert config.corner_radius == 25
-

@@ -1,4 +1,4 @@
-"""Shared benchmark fixtures providing pre-computed inputs for isolated stage benchmarking."""
+"""Shared benchmark fixtures with pre-computed inputs for stage benchmarking."""
 
 from pathlib import Path
 

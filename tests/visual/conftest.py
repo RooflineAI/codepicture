@@ -105,9 +105,7 @@ def compare_images(
 
     # Size mismatch is an automatic failure
     if reference.size != actual.size:
-        note = (
-            f"Size mismatch: reference {reference.size} vs actual {actual.size}"
-        )
+        note = f"Size mismatch: reference {reference.size} vs actual {actual.size}"
         note_path = diff_output_dir / f"{test_name}_size_mismatch.txt"
         note_path.write_text(note)
         print(f"  {test_name}: FAIL — {note}")
@@ -155,17 +153,15 @@ def build_composite(
     # Try to use a reasonable font; fall back to default if unavailable
     try:
         font = ImageFont.truetype("Arial", 14)
-    except (OSError, IOError):
+    except OSError:
         font = ImageFont.load_default()
 
     labels = ["Expected", "Actual", "Diff"]
     for idx, (label, img) in enumerate(
-        zip(labels, [expected, actual, diff])
+        zip(labels, [expected, actual, diff], strict=True)
     ):
         x_offset = idx * w
-        draw.text(
-            (x_offset + 4, 4), label, fill=(255, 255, 255, 255), font=font
-        )
+        draw.text((x_offset + 4, 4), label, fill=(255, 255, 255, 255), font=font)
         composite.paste(img, (x_offset, label_height))
 
     return composite

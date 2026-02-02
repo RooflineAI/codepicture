@@ -14,8 +14,8 @@ from pygments.token import (
     Text,
 )
 
-from codepicture.highlight.custom_lexers.mlir_lexer import MlirLexer
 from codepicture.highlight import PygmentsHighlighter
+from codepicture.highlight.custom_lexers.mlir_lexer import MlirLexer
 
 
 class TestMlirLexerMetadata:
@@ -92,16 +92,16 @@ class TestMlirLexerTokens:
     def test_builtin_type_float(self, lexer):
         for ftype in ["f16", "f32", "f64"]:
             tokens = self._get_tokens(lexer, ftype)
-            assert any(
-                t[0] == Keyword.Type for t in tokens
-            ), f"{ftype} should be Keyword.Type"
+            assert any(t[0] == Keyword.Type for t in tokens), (
+                f"{ftype} should be Keyword.Type"
+            )
 
     def test_builtin_type_integer(self, lexer):
         for itype in ["i8", "i32", "i64", "si32", "ui64"]:
             tokens = self._get_tokens(lexer, itype)
-            assert any(
-                t[0] == Keyword.Type for t in tokens
-            ), f"{itype} should be Keyword.Type"
+            assert any(t[0] == Keyword.Type for t in tokens), (
+                f"{itype} should be Keyword.Type"
+            )
 
     def test_container_type_memref(self, lexer):
         tokens = self._get_tokens(lexer, "memref")

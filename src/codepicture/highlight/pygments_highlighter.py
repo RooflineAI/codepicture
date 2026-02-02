@@ -7,8 +7,12 @@ Tracks line:column positions for each token to support accurate rendering.
 from dataclasses import dataclass
 from typing import Any
 
-from pygments.lexers import get_all_lexers, get_lexer_by_name, get_lexer_for_filename
-from pygments.lexers import guess_lexer
+from pygments.lexers import (
+    get_all_lexers,
+    get_lexer_by_name,
+    get_lexer_for_filename,
+    guess_lexer,
+)
 from pygments.util import ClassNotFound
 
 from codepicture.errors import HighlightError
@@ -60,12 +64,12 @@ class PygmentsHighlighter:
         # Get the lexer
         try:
             lexer = get_lexer_by_name(resolved_language)
-        except ClassNotFound:
+        except ClassNotFound as err:
             available = self.list_languages()[:20]
             raise HighlightError(
                 f"Unknown language: {language}. "
                 f"Available languages include: {', '.join(sorted(available))}..."
-            )
+            ) from err
 
         # Tokenize with position tracking
         lines: list[list[TokenInfo]] = [[]]
@@ -122,11 +126,11 @@ class PygmentsHighlighter:
                 lexer = guess_lexer(code)
             # Return the first (canonical) alias
             return lexer.aliases[0] if lexer.aliases else lexer.name.lower()
-        except ClassNotFound:
+        except ClassNotFound as err:
             raise HighlightError(
-                f"Could not detect language"
+                "Could not detect language"
                 + (f" for file: {filename}" if filename else " from content")
-            )
+            ) from err
 
     def list_languages(self) -> list[str]:
         """Return sorted list of all available language aliases.

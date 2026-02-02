@@ -14,7 +14,6 @@ from pydantic import ValidationError
 from ..errors import ConfigError
 from .schema import RenderConfig
 
-
 DEFAULT_GLOBAL_CONFIG_PATH = Path.home() / ".config" / "codepicture" / "config.toml"
 DEFAULT_LOCAL_CONFIG_PATH = Path("codepicture.toml")
 

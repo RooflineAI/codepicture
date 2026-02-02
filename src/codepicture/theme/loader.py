@@ -4,6 +4,7 @@ Provides get_theme() for loading themes by name and list_themes() for
 discovering available themes.
 """
 
+import contextlib
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -11,7 +12,7 @@ from pygments.styles import get_all_styles
 
 from ..errors import ThemeError
 from .pygments_theme import PygmentsTheme
-from .toml_theme import TomlTheme, load_toml_theme
+from .toml_theme import load_toml_theme
 
 if TYPE_CHECKING:
     from ..core.protocols import Theme
@@ -81,11 +82,11 @@ def get_theme(
     # Try as built-in or Pygments style
     try:
         return PygmentsTheme(name)
-    except Exception:
+    except Exception as err:
         available = list_themes()
         raise ThemeError(
             f"Unknown theme: {name}. Available: {', '.join(sorted(available))}"
-        )
+        ) from err
 
 
 def list_themes() -> list[str]:
@@ -116,22 +117,17 @@ def _get_base_themes() -> dict[str, "Theme"]:
     Returns:
         Dictionary mapping theme names to Theme instances
     """
-    base_themes: dict[str, "Theme"] = {}
+    base_themes: dict[str, Theme] = {}
 
     # Add built-in themes
     for name in BUILTIN_THEMES:
-        try:
+        with contextlib.suppress(Exception):
             base_themes[name] = PygmentsTheme(name)
-        except Exception:
-            # Skip themes that fail to load
-            pass
 
     # Add all Pygments styles
     for name in get_all_styles():
         if name not in base_themes:
-            try:
+            with contextlib.suppress(Exception):
                 base_themes[name] = PygmentsTheme(name)
-            except Exception:
-                pass
 
     return base_themes

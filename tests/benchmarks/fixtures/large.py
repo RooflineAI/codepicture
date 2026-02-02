@@ -5,9 +5,10 @@ from __future__ import annotations
 import logging
 import time
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Protocol, TypeVar, Generic, Iterator
+from typing import Any, Generic, Protocol, TypeVar
 from urllib.parse import urljoin, urlparse
 
 logger = logging.getLogger(__name__)
@@ -88,22 +89,25 @@ class Transport(Protocol):
 
 class RetryStrategy(ABC):
     @abstractmethod
-    def should_retry(self, attempt: int, response: HttpResponse | None,
-                     error: Exception | None) -> bool: ...
+    def should_retry(
+        self, attempt: int, response: HttpResponse | None, error: Exception | None
+    ) -> bool: ...
 
     @abstractmethod
     def get_delay(self, attempt: int) -> float: ...
 
 
 class ExponentialBackoff(RetryStrategy):
-    def __init__(self, max_retries: int = 3, base_delay: float = 0.5,
-                 max_delay: float = 30.0) -> None:
+    def __init__(
+        self, max_retries: int = 3, base_delay: float = 0.5, max_delay: float = 30.0
+    ) -> None:
         self.max_retries = max_retries
         self.base_delay = base_delay
         self.max_delay = max_delay
 
-    def should_retry(self, attempt: int, response: HttpResponse | None,
-                     error: Exception | None) -> bool:
+    def should_retry(
+        self, attempt: int, response: HttpResponse | None, error: Exception | None
+    ) -> bool:
         if attempt >= self.max_retries:
             return False
         if error is not None:
@@ -113,7 +117,7 @@ class ExponentialBackoff(RetryStrategy):
         return False
 
     def get_delay(self, attempt: int) -> float:
-        delay = self.base_delay * (2 ** attempt)
+        delay = self.base_delay * (2**attempt)
         return min(delay, self.max_delay)
 
 
@@ -157,7 +161,7 @@ class ResponseIterator(Generic[T]):
     def __next__(self) -> list[T]:
         if self._offset >= len(self._items):
             raise StopIteration
-        page = self._items[self._offset:self._offset + self._page_size]
+        page = self._items[self._offset : self._offset + self._page_size]
         self._offset += self._page_size
         return page
 
@@ -189,10 +193,14 @@ class HttpClient:
     def add_interceptor(self, interceptor: RequestInterceptor) -> None:
         self._interceptors.append(interceptor)
 
-    def _build_request(self, method: HttpMethod, path: str,
-                       headers: dict[str, str] | None = None,
-                       body: bytes | None = None,
-                       timeout: float = 30.0) -> HttpRequest:
+    def _build_request(
+        self,
+        method: HttpMethod,
+        path: str,
+        headers: dict[str, str] | None = None,
+        body: bytes | None = None,
+        timeout: float = 30.0,
+    ) -> HttpRequest:
         url = urljoin(self.base_url + "/", path.lstrip("/"))
         request = HttpRequest(method=method, url=url, body=body, timeout=timeout)
 

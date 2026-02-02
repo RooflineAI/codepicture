@@ -6,13 +6,11 @@ Tests verify:
 - Explicit config_path skips default search
 """
 
-import os
 from pathlib import Path
 
 import pytest
 
 from codepicture.config.loader import (
-    DEFAULT_GLOBAL_CONFIG_PATH,
     DEFAULT_LOCAL_CONFIG_PATH,
     load_config,
 )
@@ -84,7 +82,7 @@ class TestLoadConfig:
         """Invalid values raise ConfigError."""
         # Create config with invalid value
         bad_config = tmp_path / "bad.toml"
-        bad_config.write_text('font_size = 100\n')  # > 72 max
+        bad_config.write_text("font_size = 100\n")  # > 72 max
         with pytest.raises(ConfigError) as exc_info:
             load_config(config_path=bad_config)
         assert "Invalid configuration" in str(exc_info.value)
@@ -96,23 +94,23 @@ class TestLoadConfig:
         global_dir = tmp_path / ".config" / "codepicture"
         global_dir.mkdir(parents=True)
         global_config = global_dir / "config.toml"
-        global_config.write_text('''
+        global_config.write_text("""
 theme = "nord"
 font_size = 12
 padding = 20
-''')
+""")
         # Set up local config with only one value
         local_config = tmp_path / "codepicture.toml"
-        local_config.write_text('''
+        local_config.write_text("""
 font_size = 16
-''')
+""")
         # Change to tmp_path and set HOME
         monkeypatch.chdir(tmp_path)
         monkeypatch.setenv("HOME", str(tmp_path))
 
         # Reload module to pick up new HOME for DEFAULT_GLOBAL_CONFIG_PATH
-        import importlib
         import codepicture.config.loader as loader_module
+
         original_global = loader_module.DEFAULT_GLOBAL_CONFIG_PATH
         loader_module.DEFAULT_GLOBAL_CONFIG_PATH = global_config
 
@@ -132,14 +130,15 @@ font_size = 16
         global_dir = tmp_path / ".config" / "codepicture"
         global_dir.mkdir(parents=True)
         global_config = global_dir / "config.toml"
-        global_config.write_text('''
+        global_config.write_text("""
 theme = "nord"
 font_size = 12
-''')
+""")
         # Change to tmp_path (no local config)
         monkeypatch.chdir(tmp_path)
 
         import codepicture.config.loader as loader_module
+
         original_global = loader_module.DEFAULT_GLOBAL_CONFIG_PATH
         loader_module.DEFAULT_GLOBAL_CONFIG_PATH = global_config
 
@@ -154,13 +153,14 @@ font_size = 12
     def test_enum_conversion_from_toml(self, tmp_path: Path):
         """TOML string values convert to enums."""
         config_file = tmp_path / "config.toml"
-        config_file.write_text('''
+        config_file.write_text("""
 output_format = "svg"
 window_style = "linux"
-''')
+""")
         config = load_config(config_path=config_file)
         assert config.output_format == OutputFormat.SVG
         from codepicture.core.types import WindowStyle
+
         assert config.window_style == WindowStyle.LINUX
 
     def test_cli_overrides_only(self, tmp_path: Path, monkeypatch):
@@ -177,5 +177,5 @@ window_style = "linux"
 
     def test_default_local_config_path_is_codepicture_toml(self):
         """DEFAULT_LOCAL_CONFIG_PATH is codepicture.toml (not .codepicture.toml)."""
-        assert DEFAULT_LOCAL_CONFIG_PATH == Path("codepicture.toml")
+        assert Path("codepicture.toml") == DEFAULT_LOCAL_CONFIG_PATH
         assert not str(DEFAULT_LOCAL_CONFIG_PATH).startswith(".")

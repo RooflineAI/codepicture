@@ -108,7 +108,6 @@ class TestDimensions:
 
     def test_is_named_tuple(self):
         """Dimensions is a NamedTuple."""
-        from typing import NamedTuple
 
         dims = Dimensions(width=100, height=100)
         # NamedTuples are tuples

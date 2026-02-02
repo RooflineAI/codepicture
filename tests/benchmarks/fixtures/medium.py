@@ -1,8 +1,9 @@
 """A simple task queue with priority support."""
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import IntEnum
-from typing import Any, Callable
+from typing import Any
 
 
 class Priority(IntEnum):
@@ -30,8 +31,12 @@ class TaskQueue:
         self._tasks: list[Task] = []
         self._completed: int = 0
 
-    def enqueue(self, name: str, callback: Callable[[], Any],
-                priority: Priority = Priority.NORMAL) -> None:
+    def enqueue(
+        self,
+        name: str,
+        callback: Callable[[], Any],
+        priority: Priority = Priority.NORMAL,
+    ) -> None:
         """Add a task to the queue."""
         task = Task(priority=priority, name=name, callback=callback)
         self._tasks.append(task)

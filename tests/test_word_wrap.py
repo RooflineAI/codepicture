@@ -2,9 +2,8 @@
 
 import pytest
 
-from codepicture import LayoutEngine, PangoTextMeasurer
+from codepicture import LayoutEngine
 from codepicture.config import RenderConfig
-from codepicture.core.types import DisplayLine, LayoutMetrics
 from codepicture.highlight import TokenInfo
 
 
@@ -28,7 +27,7 @@ class TestWindowWidthNone:
     """Tests for default behavior when window_width is None."""
 
     def test_window_width_none_produces_empty_display_lines(self, measurer):
-        """RenderConfig with default window_width=None produces empty display_lines tuple."""
+        """RenderConfig with default window_width=None produces empty display_lines."""
         config = RenderConfig()
         engine = LayoutEngine(measurer, config)
         lines = [_make_line("hello")]
@@ -62,7 +61,7 @@ class TestWindowWidthAutoSize:
     """Tests when window_width is wide enough for all content."""
 
     def test_window_width_auto_sizes_without_wrap(self, measurer):
-        """When window_width is wide enough, display_lines maps 1:1 with source lines."""
+        """When window_width is wide enough, display_lines maps 1:1."""
         config = RenderConfig(window_width=2000)
         engine = LayoutEngine(measurer, config)
         lines = [_make_line("short", 0), _make_line("also short", 1)]
@@ -162,12 +161,16 @@ class TestDisplayLinesContentHeight:
         lines = [_make_long_line(200)]
 
         # Narrow window forces wrapping
-        config_narrow = RenderConfig(window_width=300, padding=10, show_line_numbers=False)
+        config_narrow = RenderConfig(
+            window_width=300, padding=10, show_line_numbers=False
+        )
         engine_narrow = LayoutEngine(measurer, config_narrow)
         metrics_narrow = engine_narrow.calculate_metrics(lines)
 
         # Wide window avoids wrapping
-        config_wide = RenderConfig(window_width=5000, padding=10, show_line_numbers=False)
+        config_wide = RenderConfig(
+            window_width=5000, padding=10, show_line_numbers=False
+        )
         engine_wide = LayoutEngine(measurer, config_wide)
         metrics_wide = engine_wide.calculate_metrics(lines)
 

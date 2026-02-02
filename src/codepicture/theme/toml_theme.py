@@ -8,7 +8,7 @@ import tomllib
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from pygments.token import STANDARD_TYPES, Token, string_to_tokentype
+from pygments.token import string_to_tokentype
 
 from ..core.types import Color, TextStyle
 from ..errors import ThemeError
@@ -70,12 +70,12 @@ class TomlTheme:
     """
 
     __slots__ = (
-        "_name",
-        "_base_theme",
         "_background",
+        "_base_theme",
         "_foreground",
-        "_line_number_fg",
         "_line_number_bg",
+        "_line_number_fg",
+        "_name",
         "_token_styles",
     )
 
@@ -154,10 +154,7 @@ class TomlTheme:
             TextStyle instance
         """
         color_hex = style_data.get("color")
-        if color_hex:
-            color = Color.from_hex(color_hex)
-        else:
-            color = self._foreground
+        color = Color.from_hex(color_hex) if color_hex else self._foreground
 
         return TextStyle(
             color=color,
@@ -251,10 +248,8 @@ def load_toml_theme(
     if "extends" in data:
         base_name = data["extends"]
         if base_themes is None or base_name not in base_themes:
-            raise ThemeError(
-                f"Unknown base theme: {base_name}. "
-                f"Available: {', '.join(sorted(base_themes.keys())) if base_themes else 'none'}"
-            )
+            available = ", ".join(sorted(base_themes.keys())) if base_themes else "none"
+            raise ThemeError(f"Unknown base theme: {base_name}. Available: {available}")
         base_theme = base_themes[base_name]
 
     # Derive name from filename (without extension)

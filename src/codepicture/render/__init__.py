@@ -20,15 +20,15 @@ from .shadow import (
 )
 
 __all__ = [
-    "CairoCanvas",
-    "Renderer",
-    "TITLE_BAR_HEIGHT",
-    "draw_title_bar",
-    "draw_traffic_lights",
-    "apply_shadow",
-    "calculate_shadow_margin",
     "SHADOW_BLUR_RADIUS",
+    "SHADOW_COLOR",
     "SHADOW_OFFSET_X",
     "SHADOW_OFFSET_Y",
-    "SHADOW_COLOR",
+    "TITLE_BAR_HEIGHT",
+    "CairoCanvas",
+    "Renderer",
+    "apply_shadow",
+    "calculate_shadow_margin",
+    "draw_title_bar",
+    "draw_traffic_lights",
 ]

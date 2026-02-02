@@ -279,7 +279,7 @@ class Renderer:
 
             # Find end of this chunk by looking at next display line with same source
             char_end = len(source_chars)
-            for next_dline in metrics.display_lines[display_idx + 1:]:
+            for next_dline in metrics.display_lines[display_idx + 1 :]:
                 if next_dline.source_line_idx == dline.source_line_idx:
                     char_end = next_dline.char_offset
                     break
@@ -295,7 +295,10 @@ class Renderer:
             current_x = x_start
             span_start = 0
             for i in range(1, len(chunk_chars) + 1):
-                if i == len(chunk_chars) or chunk_chars[i][1] != chunk_chars[span_start][1]:
+                if (
+                    i == len(chunk_chars)
+                    or chunk_chars[i][1] != chunk_chars[span_start][1]
+                ):
                     # Emit span
                     span_text = "".join(c[0] for c in chunk_chars[span_start:i])
                     token_type = chunk_chars[span_start][1]

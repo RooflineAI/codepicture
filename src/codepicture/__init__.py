@@ -22,34 +22,27 @@ from .render import CairoCanvas, Renderer
 from .theme import get_theme, list_themes
 
 __all__ = [
-    "__version__",
-    # Config
-    "RenderConfig",
-    "load_config",
-    # Errors
+    "CairoCanvas",
     "CodepictureError",
     "ConfigError",
+    "DisplayLine",
     "HighlightError",
-    "LayoutError",
-    "RenderError",
-    "ThemeError",
-    # Fonts
-    "register_bundled_fonts",
-    "resolve_font_family",
-    # Highlight
-    "PygmentsHighlighter",
-    "TokenInfo",
-    # Layout
     "LayoutEngine",
+    "LayoutError",
     "LayoutMetrics",
-    "PangoTextMeasurer",
-    # Core Types
     "OutputFormat",
+    "PangoTextMeasurer",
+    "PygmentsHighlighter",
+    "RenderConfig",
+    "RenderError",
     "RenderResult",
-    # Render
-    "CairoCanvas",
     "Renderer",
-    # Theme
+    "ThemeError",
+    "TokenInfo",
+    "__version__",
     "get_theme",
     "list_themes",
+    "load_config",
+    "register_bundled_fonts",
+    "resolve_font_family",
 ]

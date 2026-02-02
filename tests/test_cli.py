@@ -14,13 +14,13 @@ from typer.testing import CliRunner
 from codepicture import __version__
 from codepicture.cli import app
 
-
 runner = CliRunner()
 
 
 # =============================================================================
 # Fixtures
 # =============================================================================
+
 
 @pytest.fixture
 def sample_py(tmp_path: Path) -> Path:
@@ -41,6 +41,7 @@ def sample_config(tmp_path: Path) -> Path:
 # =============================================================================
 # Unit Tests - CliRunner
 # =============================================================================
+
 
 class TestCliHelp:
     """Tests for CLI help and meta options."""
@@ -70,7 +71,7 @@ class TestCliErrors:
     """Tests for CLI error handling."""
 
     def test_no_args_shows_help(self):
-        """Running with no args shows help (exit code 0 or 2 depending on typer version)."""
+        """Running with no args shows help (exit 0 or 2 per typer version)."""
         result = runner.invoke(app, [])
         # no_args_is_help=True causes exit code 0 on some typer versions, 2 on others
         assert result.exit_code in (0, 2)
@@ -90,7 +91,9 @@ class TestCliErrors:
 
     def test_stdin_requires_language(self, tmp_path: Path):
         """stdin input (-) requires --language flag."""
-        result = runner.invoke(app, ["-", "-o", str(tmp_path / "out.png")], input="print('hi')")
+        result = runner.invoke(
+            app, ["-", "-o", str(tmp_path / "out.png")], input="print('hi')"
+        )
         assert result.exit_code != 0
         assert "language" in result.output.lower()
 
@@ -114,7 +117,7 @@ class TestCliGeneration:
         assert result.exit_code == 0, f"CLI failed: {result.output}"
         assert output.exists()
         # Check PNG magic bytes
-        assert output.read_bytes()[:8] == b'\x89PNG\r\n\x1a\n'
+        assert output.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
 
     @pytest.mark.slow
     @pytest.mark.timeout(15)
@@ -145,7 +148,9 @@ class TestCliGeneration:
     def test_theme_flag(self, sample_py: Path, tmp_path: Path):
         """--theme flag changes output colors."""
         output = tmp_path / "output.png"
-        result = runner.invoke(app, [str(sample_py), "-o", str(output), "-t", "dracula"])
+        result = runner.invoke(
+            app, [str(sample_py), "-o", str(output), "-t", "dracula"]
+        )
 
         assert result.exit_code == 0, f"CLI failed: {result.output}"
         assert output.exists()
@@ -155,10 +160,9 @@ class TestCliGeneration:
     def test_config_file(self, sample_py: Path, sample_config: Path, tmp_path: Path):
         """--config flag loads config from file."""
         output = tmp_path / "output.png"
-        result = runner.invoke(app, [
-            str(sample_py), "-o", str(output),
-            "--config", str(sample_config)
-        ])
+        result = runner.invoke(
+            app, [str(sample_py), "-o", str(output), "--config", str(sample_config)]
+        )
 
         assert result.exit_code == 0, f"CLI failed: {result.output}"
         assert output.exists()
@@ -179,9 +183,7 @@ class TestCliGeneration:
         """stdin input works with --language flag."""
         output = tmp_path / "output.png"
         result = runner.invoke(
-            app,
-            ["-", "-o", str(output), "-l", "python"],
-            input='print("hello")'
+            app, ["-", "-o", str(output), "-l", "python"], input='print("hello")'
         )
 
         assert result.exit_code == 0, f"CLI failed: {result.output}"
@@ -200,12 +202,17 @@ class TestCliVerbose:
 
         assert result.exit_code == 0
         # Verbose output should mention reading/loading/rendering
-        assert "Reading" in result.output or "Loading" in result.output or "Rendering" in result.output
+        assert (
+            "Reading" in result.output
+            or "Loading" in result.output
+            or "Rendering" in result.output
+        )
 
 
 # =============================================================================
 # Integration Tests - subprocess
 # =============================================================================
+
 
 class TestCliTimeout:
     """Tests for CLI --timeout flag."""
@@ -221,7 +228,9 @@ class TestCliTimeout:
     def test_timeout_flag_accepted(self, sample_py: Path, tmp_path: Path):
         """--timeout flag is accepted and renders successfully."""
         output = tmp_path / "out.png"
-        result = runner.invoke(app, [str(sample_py), "-o", str(output), "--timeout", "5"])
+        result = runner.invoke(
+            app, [str(sample_py), "-o", str(output), "--timeout", "5"]
+        )
         assert result.exit_code == 0, f"CLI failed: {result.output}"
         assert output.exists()
 
@@ -230,7 +239,9 @@ class TestCliTimeout:
     def test_timeout_zero_disables(self, sample_py: Path, tmp_path: Path):
         """--timeout 0 disables timeout and renders successfully."""
         output = tmp_path / "out.png"
-        result = runner.invoke(app, [str(sample_py), "-o", str(output), "--timeout", "0"])
+        result = runner.invoke(
+            app, [str(sample_py), "-o", str(output), "--timeout", "0"]
+        )
         assert result.exit_code == 0, f"CLI failed: {result.output}"
         assert output.exists()
 
@@ -247,7 +258,14 @@ class TestCliExitCodes:
         output_file = tmp_path / "output.png"
 
         result = subprocess.run(
-            [sys.executable, "-m", "codepicture", str(input_file), "-o", str(output_file)],
+            [
+                sys.executable,
+                "-m",
+                "codepicture",
+                str(input_file),
+                "-o",
+                str(output_file),
+            ],
             capture_output=True,
             text=True,
         )
@@ -258,7 +276,14 @@ class TestCliExitCodes:
         output_file = tmp_path / "output.png"
 
         result = subprocess.run(
-            [sys.executable, "-m", "codepicture", "nonexistent.py", "-o", str(output_file)],
+            [
+                sys.executable,
+                "-m",
+                "codepicture",
+                "nonexistent.py",
+                "-o",
+                str(output_file),
+            ],
             capture_output=True,
             text=True,
         )
@@ -269,7 +294,14 @@ class TestCliExitCodes:
         output_file = tmp_path / "output.png"
 
         result = subprocess.run(
-            [sys.executable, "-m", "codepicture", "nonexistent.py", "-o", str(output_file)],
+            [
+                sys.executable,
+                "-m",
+                "codepicture",
+                "nonexistent.py",
+                "-o",
+                str(output_file),
+            ],
             capture_output=True,
             text=True,
         )
@@ -338,7 +370,14 @@ class TestCliIntegration:
         output_file = tmp_path / "output.png"
 
         result = subprocess.run(
-            [sys.executable, "-m", "codepicture", str(input_file), "-o", str(output_file)],
+            [
+                sys.executable,
+                "-m",
+                "codepicture",
+                str(input_file),
+                "-o",
+                str(output_file),
+            ],
             capture_output=True,
             text=True,
         )
@@ -346,14 +385,21 @@ class TestCliIntegration:
         assert result.returncode == 0, f"CLI failed: {result.stderr}"
         assert output_file.exists()
         # Check PNG magic bytes
-        assert output_file.read_bytes()[:8] == b'\x89PNG\r\n\x1a\n'
+        assert output_file.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
 
     def test_cli_error_subprocess(self, tmp_path: Path):
         """CLI error handling via subprocess."""
         output_file = tmp_path / "output.png"
 
         result = subprocess.run(
-            [sys.executable, "-m", "codepicture", "nonexistent.py", "-o", str(output_file)],
+            [
+                sys.executable,
+                "-m",
+                "codepicture",
+                "nonexistent.py",
+                "-o",
+                str(output_file),
+            ],
             capture_output=True,
             text=True,
         )
@@ -371,7 +417,14 @@ class TestCliIntegration:
         output_file = tmp_path / "output.png"
 
         result = subprocess.run(
-            [sys.executable, "-m", "codepicture", str(input_file), "-o", str(output_file)],
+            [
+                sys.executable,
+                "-m",
+                "codepicture",
+                str(input_file),
+                "-o",
+                str(output_file),
+            ],
             capture_output=True,
             text=True,
         )

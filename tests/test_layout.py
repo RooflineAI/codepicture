@@ -2,7 +2,7 @@
 
 import pytest
 
-from codepicture import LayoutEngine, LayoutMetrics, PangoTextMeasurer, LayoutError
+from codepicture import LayoutEngine, LayoutError, LayoutMetrics
 from codepicture.config import RenderConfig
 from codepicture.highlight import TokenInfo
 
@@ -47,13 +47,16 @@ class TestPangoTextMeasurer:
     def test_measure_font_fallback(self, pango_measurer, caplog):
         """Unknown font falls back to JetBrains Mono with warning."""
         import logging
+
         with caplog.at_level(logging.WARNING):
             width, height = pango_measurer.measure_text(
                 "Hello", "NonexistentFontXYZ", 16
             )
         assert width > 0
         assert height > 0
-        assert "not found" in caplog.text.lower() or "falling back" in caplog.text.lower()
+        assert (
+            "not found" in caplog.text.lower() or "falling back" in caplog.text.lower()
+        )
 
 
 class TestLayoutEngine:
@@ -170,7 +173,6 @@ class TestLayoutEngine:
         # Code area within content
         assert metrics.code_x >= metrics.content_x
         assert metrics.code_y >= metrics.content_y
-
 
     def test_window_width_none_backward_compatible(self, pango_measurer, sample_tokens):
         """Setting window_width=None produces identical LayoutMetrics as default."""

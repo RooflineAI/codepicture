@@ -1,8 +1,9 @@
 """Tests for CairoCanvas."""
 
 import pytest
-from codepicture.render import CairoCanvas
+
 from codepicture.core.types import Color, OutputFormat
+from codepicture.render import CairoCanvas
 
 
 class TestCairoCanvasCreation:
@@ -71,21 +72,21 @@ class TestCairoCanvasSave:
         canvas = CairoCanvas.create(100, 100, OutputFormat.PNG, scale=1.0)
         canvas.draw_rectangle(0, 0, 100, 100, Color(100, 100, 100))
         data = canvas.save()
-        assert data[:8] == b'\x89PNG\r\n\x1a\n'  # PNG magic bytes
+        assert data[:8] == b"\x89PNG\r\n\x1a\n"  # PNG magic bytes
 
     def test_save_svg_bytes(self):
         """SVG save returns valid SVG content."""
         canvas = CairoCanvas.create(100, 100, OutputFormat.SVG)
         canvas.draw_rectangle(0, 0, 100, 100, Color(100, 100, 100))
         data = canvas.save()
-        assert b'<svg' in data or b'<?xml' in data
+        assert b"<svg" in data or b"<?xml" in data
 
     def test_save_pdf_bytes(self):
         """PDF save returns valid PDF content."""
         canvas = CairoCanvas.create(100, 100, OutputFormat.PDF)
         canvas.draw_rectangle(0, 0, 100, 100, Color(100, 100, 100))
         data = canvas.save()
-        assert data[:4] == b'%PDF'  # PDF magic bytes
+        assert data[:4] == b"%PDF"  # PDF magic bytes
 
 
 class TestCairoCanvasClipping:

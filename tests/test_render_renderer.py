@@ -1,11 +1,12 @@
 """Tests for Renderer class."""
 
 import pytest
+
 from codepicture import Renderer, RenderResult
 from codepicture.config import RenderConfig
-from codepicture.core.types import OutputFormat, WindowStyle
-from codepicture.theme import get_theme
+from codepicture.core.types import OutputFormat
 from codepicture.fonts import register_bundled_fonts
+from codepicture.theme import get_theme
 
 
 # Ensure fonts are registered for all tests in this module
@@ -45,7 +46,7 @@ class TestRendererPNG:
 
         assert isinstance(result, RenderResult)
         assert result.format == OutputFormat.PNG
-        assert result.data[:8] == b'\x89PNG\r\n\x1a\n'
+        assert result.data[:8] == b"\x89PNG\r\n\x1a\n"
         assert result.width > 0
         assert result.height > 0
 
@@ -59,6 +60,7 @@ class TestRendererPNG:
         renderer = Renderer(config)
         # Need to recalculate metrics with this config
         from codepicture.layout import LayoutEngine, PangoTextMeasurer
+
         measurer = PangoTextMeasurer()
         engine = LayoutEngine(measurer, config)
         metrics = engine.calculate_metrics(render_tokens)
@@ -76,6 +78,7 @@ class TestRendererPNG:
         )
         theme = get_theme("catppuccin-mocha")
         from codepicture.layout import LayoutEngine, PangoTextMeasurer
+
         measurer = PangoTextMeasurer()
         engine = LayoutEngine(measurer, config)
         metrics = engine.calculate_metrics(render_tokens)
@@ -97,6 +100,7 @@ class TestRendererSVG:
         )
         theme = get_theme("catppuccin-mocha")
         from codepicture.layout import LayoutEngine, PangoTextMeasurer
+
         measurer = PangoTextMeasurer()
         engine = LayoutEngine(measurer, config)
         metrics = engine.calculate_metrics(render_tokens)
@@ -104,7 +108,7 @@ class TestRendererSVG:
 
         result = renderer.render(render_tokens, metrics, theme)
         assert result.format == OutputFormat.SVG
-        assert b'<svg' in result.data or b'<?xml' in result.data
+        assert b"<svg" in result.data or b"<?xml" in result.data
 
 
 class TestRendererPDF:
@@ -119,6 +123,7 @@ class TestRendererPDF:
         )
         theme = get_theme("catppuccin-mocha")
         from codepicture.layout import LayoutEngine, PangoTextMeasurer
+
         measurer = PangoTextMeasurer()
         engine = LayoutEngine(measurer, config)
         metrics = engine.calculate_metrics(render_tokens)
@@ -126,7 +131,7 @@ class TestRendererPDF:
 
         result = renderer.render(render_tokens, metrics, theme)
         assert result.format == OutputFormat.PDF
-        assert result.data[:4] == b'%PDF'
+        assert result.data[:4] == b"%PDF"
 
 
 class TestRendererWithShadow:
@@ -147,6 +152,7 @@ class TestRendererWithShadow:
         )
         theme = get_theme("catppuccin-mocha")
         from codepicture.layout import LayoutEngine, PangoTextMeasurer
+
         measurer = PangoTextMeasurer()
 
         engine = LayoutEngine(measurer, config_no_shadow)
@@ -179,6 +185,7 @@ class TestRendererIntegration:
         )
         theme = get_theme("catppuccin-mocha")
         from codepicture.layout import LayoutEngine, PangoTextMeasurer
+
         measurer = PangoTextMeasurer()
         engine = LayoutEngine(measurer, config)
         metrics = engine.calculate_metrics(render_tokens)
@@ -187,17 +194,19 @@ class TestRendererIntegration:
         result = renderer.render(render_tokens, metrics, theme)
 
         assert result.format == OutputFormat.PNG
-        assert result.data[:8] == b'\x89PNG\r\n\x1a\n'
+        assert result.data[:8] == b"\x89PNG\r\n\x1a\n"
         assert result.width > 0
         assert result.height > 0
 
     @pytest.mark.slow
     @pytest.mark.timeout(15)
-    def test_render_different_themes(self, render_tokens, minimal_render_config, render_metrics):
+    def test_render_different_themes(
+        self, render_tokens, minimal_render_config, render_metrics
+    ):
         """Test rendering with different themes."""
         renderer = Renderer(minimal_render_config)
 
         for theme_name in ["catppuccin-mocha", "dracula", "one-dark"]:
             theme = get_theme(theme_name)
             result = renderer.render(render_tokens, render_metrics, theme)
-            assert result.data[:8] == b'\x89PNG\r\n\x1a\n'
+            assert result.data[:8] == b"\x89PNG\r\n\x1a\n"

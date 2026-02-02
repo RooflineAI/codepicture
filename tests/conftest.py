@@ -39,11 +39,11 @@ def sample_text_style(sample_color: Color) -> TextStyle:
 def valid_config_toml(tmp_path: Path) -> Path:
     """Create a valid config.toml file and return its path."""
     config_file = tmp_path / "config.toml"
-    config_file.write_text('''
+    config_file.write_text("""
 theme = "catppuccin-mocha"
 font_size = 14
 padding = 20
-''')
+""")
     return config_file
 
 
@@ -59,12 +59,12 @@ def invalid_config_toml(tmp_path: Path) -> Path:
 def config_with_overrides(tmp_path: Path) -> Path:
     """Create a config.toml with non-default values."""
     config_file = tmp_path / "config.toml"
-    config_file.write_text('''
+    config_file.write_text("""
 theme = "dracula"
 font_size = 16
 padding = 60
 show_line_numbers = false
-''')
+""")
     return config_file
 
 
@@ -78,6 +78,7 @@ def fixtures_dir() -> Path:
 def render_config():
     """Default render configuration for tests."""
     from codepicture.config import RenderConfig
+
     return RenderConfig()
 
 
@@ -86,6 +87,7 @@ def pango_measurer():
     """Pango-based text measurer for layout tests."""
     from codepicture import PangoTextMeasurer
     from codepicture.fonts import register_bundled_fonts
+
     register_bundled_fonts()
     return PangoTextMeasurer()
 
@@ -94,6 +96,7 @@ def pango_measurer():
 def layout_engine(pango_measurer, render_config):
     """Layout engine with default config for tests."""
     from codepicture import LayoutEngine
+
     return LayoutEngine(pango_measurer, render_config)
 
 
@@ -101,9 +104,16 @@ def layout_engine(pango_measurer, render_config):
 def sample_tokens():
     """Sample tokenized lines for layout tests."""
     from codepicture.highlight import TokenInfo
+
     return [
-        [TokenInfo("def ", "Token.Keyword", 0, 0), TokenInfo("foo():", "Token.Name.Function", 0, 4)],
-        [TokenInfo("    ", "Token.Text", 1, 0), TokenInfo("pass", "Token.Keyword", 1, 4)],
+        [
+            TokenInfo("def ", "Token.Keyword", 0, 0),
+            TokenInfo("foo():", "Token.Name.Function", 0, 4),
+        ],
+        [
+            TokenInfo("    ", "Token.Text", 1, 0),
+            TokenInfo("pass", "Token.Keyword", 1, 4),
+        ],
     ]
 
 
@@ -111,6 +121,7 @@ def sample_tokens():
 def minimal_render_config():
     """Minimal render config (no chrome, no shadow)."""
     from codepicture.config import RenderConfig
+
     return RenderConfig(
         window_controls=False,
         shadow=False,
@@ -121,8 +132,10 @@ def minimal_render_config():
 @pytest.fixture
 def render_tokens():
     """Sample tokenized lines for render testing (uses real Pygments tokens)."""
-    from codepicture.highlight import TokenInfo
     from pygments.token import Token
+
+    from codepicture.highlight import TokenInfo
+
     return [
         [
             TokenInfo("def", Token.Keyword, 0, 0),
@@ -140,8 +153,9 @@ def render_tokens():
 @pytest.fixture
 def render_metrics(minimal_render_config, render_tokens):
     """Sample layout metrics for render testing."""
-    from codepicture.layout import LayoutEngine, PangoTextMeasurer
     from codepicture.fonts import register_bundled_fonts
+    from codepicture.layout import LayoutEngine, PangoTextMeasurer
+
     register_bundled_fonts()
     measurer = PangoTextMeasurer()
     engine = LayoutEngine(measurer, minimal_render_config)

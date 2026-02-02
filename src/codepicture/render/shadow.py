@@ -14,12 +14,12 @@ from PIL import Image, ImageFilter
 from codepicture.core.types import Color
 
 __all__ = [
-    "apply_shadow",
-    "calculate_shadow_margin",
     "SHADOW_BLUR_RADIUS",
+    "SHADOW_COLOR",
     "SHADOW_OFFSET_X",
     "SHADOW_OFFSET_Y",
-    "SHADOW_COLOR",
+    "apply_shadow",
+    "calculate_shadow_margin",
 ]
 
 # macOS-style shadow constants (fixed, not configurable per CONTEXT.md)
