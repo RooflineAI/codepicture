@@ -6,7 +6,7 @@ One command turns code into a slide-ready image.
 __version__ = "0.1.0"
 
 from .config import RenderConfig, load_config
-from .core.types import LayoutMetrics, OutputFormat, RenderResult
+from .core.types import DisplayLine, LayoutMetrics, OutputFormat, RenderResult
 from .errors import (
     CodepictureError,
     ConfigError,

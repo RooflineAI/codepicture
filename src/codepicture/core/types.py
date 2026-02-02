@@ -139,6 +139,17 @@ class TextStyle:
 
 
 @dataclass(frozen=True, slots=True)
+class DisplayLine:
+    """A visual line on screen (may be a source line or a wrap continuation)."""
+
+    source_line_idx: int  # Index into original `lines` list
+    token_start: int  # Start index into source line's token list
+    token_end: int  # End index (exclusive) into source line's token list
+    char_offset: int  # Character offset within source line where this display line starts
+    is_continuation: bool  # True if this is a wrapped continuation (no line number)
+
+
+@dataclass(frozen=True, slots=True)
 class LayoutMetrics:
     """Complete layout measurements for rendering.
 
@@ -168,6 +179,10 @@ class LayoutMetrics:
     line_height_px: float
     char_width: float
     baseline_offset: float
+
+    # Word wrap
+    display_lines: tuple[DisplayLine, ...] = ()
+    wrap_indent_chars: int = 2
 
 
 @dataclass(frozen=True, slots=True)

@@ -44,6 +44,8 @@ class RenderConfig(BaseModel):
     # Visual
     padding: Annotated[int, Field(ge=0, le=500)] = 40
     corner_radius: Annotated[int, Field(ge=0, le=50)] = 12
+    window_width: Annotated[int | None, Field(ge=100, le=10000)] = None
+    window_height: Annotated[int | None, Field(ge=50, le=10000)] = None
     show_line_numbers: bool = True
     line_number_offset: Annotated[int, Field(ge=0)] = 1
 
