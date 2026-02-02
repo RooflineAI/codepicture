@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 Phase: All phases complete (v1.0 + v1.1 shipped)
 Plan: N/A
 Status: Ready for next milestone
-Last activity: 2026-02-02 — Completed quick-003 (fix PNG colour difference vs SVG/PDF)
+Last activity: 2026-02-02 — Completed quick-004 (add window width/height and word wrap)
 
 Progress: [############################################] 100% (v1.0 + v1.1 complete)
 
@@ -47,6 +47,7 @@ None — all known issues resolved in v1.1.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 003 | Fix PNG colour difference vs SVG/PDF (BGRA channel swap) | 2026-02-02 | b25efe0 | [003-fix-png-colour-difference-vs-svg-pdf-sha](./quick/003-fix-png-colour-difference-vs-svg-pdf-sha/) |
+| 004 | Add window width/height and word wrap | 2026-02-02 | 6e8243b | [004-add-window-width-height-and-word-wrap](./quick/004-add-window-width-height-and-word-wrap/) |
 
 ### Roadmap Evolution
 
@@ -57,5 +58,5 @@ None — all known issues resolved in v1.1.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick-003 (fix PNG BGRA channel swap)
+Stopped at: Completed quick-004 (add window width/height and word wrap)
 Resume file: None
