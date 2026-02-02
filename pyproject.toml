@@ -36,6 +36,7 @@ dev = [
     "pixelmatch>=0.3.0",
     "pymupdf>=1.26.7",
     "pytest>=9.0.2",
+    "pytest-benchmark>=5.2.3",
     "pytest-cov>=7.0.0",
     "pytest-randomly>=4.0.1",
     "pytest-timeout>=2.4.0",
@@ -43,7 +44,7 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-v --tb=short"
+addopts = "-v --tb=short --benchmark-skip"
 timeout = 5
 timeout_method = "signal"
 markers = [
