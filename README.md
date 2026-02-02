@@ -227,9 +227,16 @@ pytest
 
 # Run with coverage
 pytest --cov
+
+# Update visual regression reference images
+pytest --snapshot-update
 ```
 
-The project has 260+ tests with an 80% coverage requirement.
+The project has 260+ tests with an 80% coverage requirement. Visual regression
+tests compare rendered output against stored reference images in
+`tests/visual/references/`. When rendering changes intentionally (e.g. new
+defaults, bug fixes), regenerate the baselines with `pytest --snapshot-update`
+and commit the updated PNGs.
 
 ## License
 
