@@ -14,7 +14,7 @@ from pygments.token import (
     Text,
 )
 
-from codepicture.highlight.mlir_lexer import MlirLexer
+from codepicture.highlight.custom_lexers.mlir_lexer import MlirLexer
 from codepicture.highlight import PygmentsHighlighter
 
 

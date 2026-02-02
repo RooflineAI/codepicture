@@ -18,7 +18,7 @@ dependencies = [
 codepicture = "codepicture.cli:app"
 
 [project.entry-points."pygments.lexers"]
-mlir = "codepicture.highlight.mlir_lexer:MlirLexer"
+mlir = "codepicture.highlight.custom_lexers.mlir_lexer:MlirLexer"
 
 [build-system]
 requires = ["hatchling"]

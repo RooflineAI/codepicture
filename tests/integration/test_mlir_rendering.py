@@ -8,7 +8,7 @@ with minimal lexer errors.
 import pytest
 from pathlib import Path
 
-from codepicture.highlight.mlir_lexer import MlirLexer
+from codepicture.highlight.custom_lexers.mlir_lexer import MlirLexer
 from codepicture.cli.orchestrator import generate_image
 from codepicture.config.schema import RenderConfig
 from pygments.token import Error
