@@ -1,290 +1,210 @@
-# Technology Stack: v1.1 Reliability Milestone Additions
+# Technology Stack: Line Highlighting Feature
 
 **Project:** codepicture
-**Milestone:** v1.1 -- Reliability, Visual Regression, Performance
-**Researched:** 2026-01-30
+**Milestone:** v2.0 -- Line highlighting with multiple styles (add/remove/focus)
+**Researched:** 2026-02-02
 **Overall confidence:** HIGH
 
-## Context
+## Executive Finding
 
-The v1.0 stack is validated and shipping (Python 3.13+, PyCairo, Pygments, Typer, Pydantic, pytest). This document covers ONLY the stack additions needed for three new capabilities:
+**No new dependencies are needed.** Line highlighting is a pure rendering feature -- colored background rectangles drawn behind specific lines of code. The existing Cairo/Pango stack already provides every required primitive. The work is entirely in new application code (config modeling, rendering logic, line range parsing), not in adding libraries.
 
-1. Visual regression testing (image comparison in CI)
-2. Performance profiling (benchmark rendering, detect regressions)
-3. Rendering reliability (timeouts for hanging renders)
+## Existing Stack (Relevant to Line Highlighting)
 
-## Recommended Additions
+| Technology | Current Pin | Role in Line Highlighting | Confidence |
+|------------|-------------|---------------------------|------------|
+| pycairo | >=1.25 (latest: 1.29.0) | `CairoCanvas.draw_rectangle()` draws highlight background rectangles. Already exists with alpha support. | HIGH |
+| Pydantic | >=2.5 (latest: 2.12.5) | Model new config fields: highlight style definitions, line-to-style mappings. `RenderConfig` extends naturally with nested models. | HIGH |
+| Typer | >=0.21.1 | New CLI options for specifying highlighted lines (e.g., `--highlight-add 3,5,7-9`). | HIGH |
+| Pygments | >=2.19 | No changes needed. Syntax highlighting is orthogonal to line background highlighting. | HIGH |
+| TOML (stdlib `tomllib`) | Python 3.13 stdlib | Highlight styles definable in TOML config files. No new parser needed. | HIGH |
 
-### Visual Regression Testing
+## What NOT to Add (and Why)
 
-| Library | Version | Purpose | Why This One |
-|---------|---------|---------|--------------|
-| pixelmatch | 0.3.0 | Pixel-level image comparison | Purpose-built for screenshot comparison in tests. Anti-aliasing detection prevents false positives on font rendering differences. Perceptual color difference metrics. Works with PIL.Image (Pillow already in deps). No heavyweight dependencies like OpenCV. |
-| Pillow | (already in deps) | Image loading, diff visualization | Already a project dependency (>=10.0). `ImageChops.difference()` provides quick diff images. `Image.open()` loads reference snapshots. |
-
-**Why pixelmatch over alternatives:**
-
-| Option | Verdict | Reason |
-|--------|---------|--------|
-| **pixelmatch** | **USE** | Lightweight (pure Python), anti-aliasing aware, configurable threshold, returns mismatch count for assertions. Originally built for screenshot testing. |
-| pytest-image-snapshot | SKIP | Adds a fixture layer on top of pixelmatch. We want direct control over comparison logic (threshold per test, custom diff output). Adding our own thin wrapper around pixelmatch is ~20 lines and avoids a plugin dependency. |
-| pytest-image-diff | SKIP | Depends on Pillow + additional dependencies. Less popular. Plugin-based approach limits flexibility. |
-| Pillow ImageChops only | SKIP | `ImageChops.difference().getbbox()` works for exact matches but has no anti-aliasing tolerance. Font rendering on different platforms produces anti-aliased pixels that differ by 1-2 values -- this causes false failures without pixelmatch's AA detection. |
-| OpenCV (cv2) | SKIP | Massive dependency (~50MB). SSIM comparison is overkill for pixel-exact screenshot testing. Adds native compilation complexity to CI. |
-| visual-comparison | SKIP | Requires OpenCV. Draws rectangles on differences -- visual but not useful for CI assertions. |
-
-**Integration pattern:**
-
-```python
-# tests/conftest.py or tests/visual/conftest.py
-import pytest
-from pathlib import Path
-from PIL import Image
-from pixelmatch.contrib.PIL import pixelmatch
-
-SNAPSHOT_DIR = Path(__file__).parent / "snapshots"
-
-@pytest.fixture
-def assert_image_match():
-    """Compare a rendered image against a reference snapshot."""
-    def _compare(actual: Image.Image, snapshot_name: str, threshold: float = 0.1):
-        ref_path = SNAPSHOT_DIR / f"{snapshot_name}.png"
-        if not ref_path.exists():
-            # First run: save as reference
-            actual.save(ref_path)
-            pytest.skip(f"Created reference snapshot: {ref_path}")
-
-        expected = Image.open(ref_path)
-        assert actual.size == expected.size, (
-            f"Size mismatch: {actual.size} vs {expected.size}"
-        )
-
-        # Create diff image for debugging
-        diff = Image.new("RGBA", actual.size)
-        num_diff = pixelmatch(actual, expected, diff, threshold=threshold)
-
-        if num_diff > 0:
-            diff_path = ref_path.with_suffix(".diff.png")
-            diff.save(diff_path)
-
-        assert num_diff == 0, (
-            f"{num_diff} pixels differ. Diff saved to {diff_path}"
-        )
-    return _compare
-```
-
-**Snapshot management in CI:**
-- Store reference snapshots in `tests/snapshots/` under version control
-- Generate on one platform only (macOS or Linux) to avoid cross-platform font rendering differences
-- Use `--update-snapshots` flag (custom pytest flag) to regenerate references
-- Save diff images as CI artifacts on failure for debugging
-
-### Performance Profiling
-
-| Library | Version | Purpose | Why This One |
-|---------|---------|---------|--------------|
-| pytest-benchmark | 5.2.3 | Benchmark rendering functions | Native pytest integration. Calibrated timing with statistical rigor (rounds, warmup, outlier detection). Regression detection via `--benchmark-compare`. Built-in cProfile integration via `--benchmark-cprofile`. Actively maintained (Nov 2025 release). |
-| snakeviz | 2.2.2 | Profile visualization (dev only) | Browser-based visualization of cProfile output. Icicle charts make hotspots obvious. Not a test dependency -- developer tool for investigating slow paths. |
-
-**Why pytest-benchmark over alternatives:**
-
-| Option | Verdict | Reason |
-|--------|---------|--------|
-| **pytest-benchmark** | **USE** | Already uses pytest (260 tests). Statistical rigor (min/max/mean/stddev). `--benchmark-compare` detects regressions in CI. `--benchmark-cprofile` gives per-function breakdown. Python 3.13 fixes landed in v5.2.x. |
-| time.perf_counter manually | SKIP | No statistical rigor. No CI regression detection. Reinventing the wheel. |
-| asv (airspeed velocity) | SKIP | Designed for long-running benchmark suites across git history. Overkill for a CLI tool. Separate from pytest -- would need parallel test infrastructure. |
-| perftester | SKIP | Lightweight but too simple. No regression detection. No pytest integration. |
-| scalene | SKIP | Full profiler (CPU+memory+GPU). Great for investigation but not for CI regression testing. Use ad-hoc, not as a dependency. |
-
-**Integration pattern:**
-
-```python
-# tests/benchmarks/test_render_performance.py
-import pytest
-
-def test_render_simple_python(benchmark, tmp_path):
-    """Benchmark rendering a small Python file."""
-    from codepicture.render import render_code_to_image
-
-    code = "def hello():\n    print('world')\n"
-    output = tmp_path / "bench.png"
-
-    benchmark(render_code_to_image, code=code, output=output, language="python")
-
-def test_render_large_file(benchmark, tmp_path):
-    """Benchmark rendering a large file (100 lines)."""
-    from codepicture.render import render_code_to_image
-
-    code = "\n".join(f"line_{i} = {i}" for i in range(100))
-    output = tmp_path / "bench.png"
-
-    benchmark(render_code_to_image, code=code, output=output, language="python")
-```
-
-**CI integration:**
-
-```yaml
-# In GitHub Actions workflow
-- name: Run benchmarks
-  run: pytest tests/benchmarks/ --benchmark-only --benchmark-json=benchmark.json
-
-- name: Compare with baseline (optional, on PR)
-  run: pytest tests/benchmarks/ --benchmark-only --benchmark-compare=0001
-```
-
-**pytest configuration:**
-
-```toml
-# pyproject.toml addition
-[tool.pytest.ini_options]
-markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "benchmark: marks benchmark tests",
-]
-# Exclude benchmarks from normal test runs
-addopts = "-v --tb=short --benchmark-disable"
-```
-
-This way `pytest` runs all tests WITHOUT benchmarks (fast CI), and `pytest --benchmark-only` runs ONLY benchmarks (performance CI step).
-
-### Rendering Reliability (Timeouts)
-
-| Library | Version | Purpose | Why This One |
-|---------|---------|---------|--------------|
-| stdlib `signal` | (built-in) | SIGALRM-based render timeouts | Zero dependencies. Python stdlib. Works on macOS and Linux (CI targets). Main thread only -- which is fine for a CLI tool. Simple decorator pattern. |
-| stdlib `concurrent.futures` | (built-in) | Thread-based timeout fallback | Cross-platform fallback. `ThreadPoolExecutor` with `future.result(timeout=N)` works on Windows too. Useful if signal approach has issues with Cairo's C code. |
-
-**Why stdlib over third-party timeout libraries:**
-
-| Option | Verdict | Reason |
-|--------|---------|--------|
-| **signal.SIGALRM** | **USE (primary)** | Zero deps. CLI runs in main thread. Works on macOS/Linux (our CI). Simple and debuggable. |
-| **concurrent.futures** | **USE (fallback)** | Stdlib. Cross-platform. Needed if SIGALRM can't interrupt Cairo C code (Cairo holds the GIL during rendering -- signal delivery may be delayed until Cairo returns to Python). |
-| timeout-decorator | SKIP | Unmaintained (no releases in 12+ months). Wraps signal.SIGALRM anyway -- we can write 15 lines ourselves. |
-| wrapt-timeout-decorator | SKIP | Adds `dill` and `multiprocess` deps for subprocess-based timeouts. Overkill for a CLI tool running in main thread. |
-| asyncio.timeout | SKIP | Would require making rendering async. Entire codebase is sync. Not worth the refactor. |
-
-**Critical caveat -- Cairo and SIGALRM:**
-
-Cairo rendering happens in C code. `signal.SIGALRM` is delivered when Python regains control. If Cairo is stuck in a C-level loop (e.g., complex shadow blur), the signal won't fire until Cairo returns. This means:
-
-- **For Pygments lexer hangs** (Python code, regex backtracking): SIGALRM works perfectly.
-- **For Cairo rendering hangs** (C code): SIGALRM may be delayed. Use `concurrent.futures.ThreadPoolExecutor` with `future.result(timeout=N)` as the robust approach. The thread won't be killed, but we can raise `TimeoutError` and move on.
-- **Nuclear option**: `multiprocessing.Process` with `process.join(timeout=N)` then `process.terminate()`. Kills the entire subprocess including C code. Use only if thread-based timeout is insufficient.
-
-**Recommended implementation (two-tier):**
-
-```python
-# codepicture/safety.py
-import signal
-from concurrent.futures import ThreadPoolExecutor, TimeoutError
-from functools import wraps
-
-DEFAULT_RENDER_TIMEOUT = 30  # seconds
-
-def with_timeout(timeout_seconds: int = DEFAULT_RENDER_TIMEOUT):
-    """Timeout decorator using ThreadPoolExecutor (works with C extensions)."""
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            with ThreadPoolExecutor(max_workers=1) as executor:
-                future = executor.submit(func, *args, **kwargs)
-                try:
-                    return future.result(timeout=timeout_seconds)
-                except TimeoutError:
-                    raise RenderTimeoutError(
-                        f"Rendering timed out after {timeout_seconds}s. "
-                        f"This may indicate a lexer backtracking issue or "
-                        f"overly complex rendering operation."
-                    )
-        return wrapper
-    return decorator
-
-class RenderTimeoutError(Exception):
-    """Raised when rendering exceeds the allowed time."""
-    pass
-```
-
-**Why ThreadPoolExecutor over signal.SIGALRM as primary:**
-
-The known hang issue is with MLIR lexer/rendering. Pygments lexing uses regex which IS interruptible by signals, but Cairo shadow blur is C code which is NOT. Using ThreadPoolExecutor as the primary approach covers both cases uniformly, at the cost of not being able to truly kill a stuck thread. For a CLI tool, this is acceptable -- the process exits anyway.
-
-## Complete v1.1 Dev Dependencies Addition
-
-```toml
-# pyproject.toml [dependency-groups] update
-[dependency-groups]
-dev = [
-    "pytest>=9.0.2",
-    "pytest-cov>=7.0.0",
-    "pytest-randomly>=4.0.1",
-    "pytest-benchmark>=5.2.3",
-    "pixelmatch>=0.3.0",
-    "snakeviz>=2.2.2",
-]
-```
-
-```bash
-# Install new dev dependencies
-uv add --dev pytest-benchmark pixelmatch snakeviz
-```
-
-**No new runtime dependencies.** All timeout/reliability code uses stdlib only.
-
-## What NOT to Add
-
-| Do Not Add | Why Not | What to Use Instead |
+| Do Not Add | Why Not | What Exists Instead |
 |------------|---------|---------------------|
-| OpenCV (cv2) | 50MB+ dependency for image comparison. Overkill. Adds native build complexity. | pixelmatch (pure Python, 0.3MB) |
-| pytest-image-snapshot | Plugin abstraction over pixelmatch. Hides control over thresholds and diff output. | Direct pixelmatch usage with custom fixture (~20 lines) |
-| timeout-decorator | Unmaintained. Just wraps signal.SIGALRM. | stdlib signal + concurrent.futures |
-| wrapt-timeout-decorator | Pulls in dill + multiprocess. Designed for complex subprocess scenarios we don't need. | stdlib concurrent.futures |
-| hypothesis | Property-based testing is valuable but not the focus of this milestone. Add in a future milestone. | Direct pytest tests for known edge cases |
-| memray / scalene | Memory profilers. Useful for investigation but not for CI regression tests. Run ad-hoc. | pytest-benchmark for timing regressions; cProfile for hotspots |
-| asv (airspeed velocity) | Separate benchmark infrastructure. Designed for tracking across git history. Overkill. | pytest-benchmark with --benchmark-compare |
+| Color manipulation library (`colour`, `colormath`) | Highlight colors are user-specified RGBA hex values. `Color.from_hex()` already handles `#RRGGBB` and `#RRGGBBAA`. Alpha for semi-transparent overlays (e.g., `#00FF0033`) is already supported by both `Color` and `CairoCanvas.draw_rectangle()`. | `Color.from_hex()` in `core/types.py` |
+| Diff parsing library (`unidiff`, stdlib `difflib`) | Highlight styles (add/remove/focus) are user-specified line ranges, not computed from diffs. The user says "lines 3-5 are additions" -- the tool does not parse unified diff format. Diff-based highlighting would be a separate feature built on top of this line-range primitive. | Simple line range parser (~30 lines) |
+| New rendering library | Cairo's `rectangle()` + `set_source_rgba()` + `fill()` is the exact primitive needed. Semi-transparent rectangle behind a line of code is a single call to an existing method. | `CairoCanvas.draw_rectangle()` in `render/canvas.py` |
+| Animation/transition library | codepicture produces static images (PNG/SVG/PDF). Highlights are static colored rectangles. | N/A |
+
+## Integration Points with Existing Stack
+
+### 1. Config Schema (`config/schema.py`)
+
+The `RenderConfig` Pydantic model needs new fields. Two design options evaluated:
+
+**Option A (Recommended): Structured highlight styles as nested Pydantic models**
+
+```python
+class HighlightStyle(BaseModel):
+    """A named highlight style with background color."""
+    color: str  # hex color with alpha, e.g. "#00FF0033"
+
+class RenderConfig(BaseModel):
+    # ... existing fields ...
+    highlight_lines: dict[str, list[int | str]] | None = None
+    # e.g. {"add": [3, 5, "7-9"], "remove": [12], "focus": [1]}
+    highlight_styles: dict[str, HighlightStyle] | None = None
+    # Custom style colors; sensible defaults for add/remove/focus
+```
+
+Maps cleanly to TOML config:
+
+```toml
+[highlight_styles.add]
+color = "#00FF0033"
+
+[highlight_styles.remove]
+color = "#FF000033"
+
+[highlight_lines]
+add = [3, 5, "7-9"]
+remove = [12]
+```
+
+**Option B (Rejected): Flat CLI-oriented fields**
+
+```python
+highlight_add: list[str] | None = None      # --highlight-add 3,5,7-9
+highlight_remove: list[str] | None = None   # --highlight-remove 12
+highlight_focus: list[str] | None = None     # --highlight-focus 1
+```
+
+**Why Option A:** More extensible. Users can define arbitrary custom styles in TOML (not just the three built-in ones). Pydantic v2 handles `dict[str, BaseModel]` validation natively.
+
+**Why not Option B:** Hard-codes three styles. Adding a new style means adding a new CLI flag and a new config field. Does not scale.
+
+### 2. Core Types (`core/types.py`)
+
+A small addition for highlight data flowing through the rendering pipeline:
+
+```python
+@dataclass(frozen=True, slots=True)
+class LineHighlight:
+    """A highlight applied to a specific source line."""
+    line_index: int      # 0-based source line index
+    color: Color         # Background color (typically semi-transparent)
+    style_name: str      # e.g. "add", "remove", "focus"
+```
+
+This is the intermediate representation between config parsing and rendering. The renderer receives a `list[LineHighlight]` alongside the existing `lines`, `metrics`, and `theme` parameters.
+
+### 3. Rendering Pipeline (`render/renderer.py`)
+
+Line highlight rectangles must be drawn **after** the full background but **before** code text, so text remains readable on top of the colored rectangle. The insertion point in the existing flow is unambiguous:
+
+```
+1. draw_rectangle (full background with rounded corners)  -- existing
+2. draw_title_bar (window chrome)                         -- existing
+3. >>> DRAW LINE HIGHLIGHT RECTANGLES <<<                 -- NEW STEP
+4. draw line numbers                                      -- existing
+5. draw code tokens                                       -- existing
+```
+
+Each highlight rectangle:
+- **X position:** `0` (full canvas width) or `content_x` (content area only) -- design choice
+- **Y position:** `content_y + code_y_offset + line_idx * line_height_px` -- same formula used by line numbers and code tokens
+- **Width:** `canvas_width` (full bleed) or `content_width` (within padding)
+- **Height:** `line_height_px` (from `LayoutMetrics`)
+- **Color:** From `LineHighlight.color` (semi-transparent RGBA)
+
+The existing `CairoCanvas.draw_rectangle()` method already accepts `Color` with alpha channel. No canvas API changes needed.
+
+**Word-wrap interaction:** For wrapped code, highlights should cover ALL display lines belonging to a highlighted source line. The `DisplayLine.source_line_idx` field already maps display lines back to source lines, making this lookup trivial:
+
+```python
+for dline_idx, dline in enumerate(metrics.display_lines):
+    if dline.source_line_idx in highlighted_source_lines:
+        # draw rectangle at this display line position
+```
+
+### 4. Layout Engine (`layout/engine.py`)
+
+**No changes needed.** Highlight rectangles use the same `content_x`, `content_y`, `line_height_px`, and `canvas_width` metrics already computed by `calculate_metrics()`. Highlighting is a rendering concern, not a layout concern -- it does not change the size or position of any existing element.
+
+### 5. CLI (`cli/app.py`)
+
+Typer options for specifying highlighted lines per style:
+
+```
+codepicture render code.py --highlight-add 3,5,7-9 --highlight-remove 12 --highlight-focus 1
+```
+
+Line range parsing (`"3,5,7-9"` to `[3, 5, 7, 8, 9]`) is trivial string parsing -- no library needed. Approximately 20-30 lines of code including error handling.
+
+### 6. Default Highlight Colors
+
+Sensible defaults with low alpha (20% opacity) that work as overlays on both light and dark theme backgrounds:
+
+| Style | Default Color | Hex | Visual |
+|-------|---------------|-----|--------|
+| add | Green, 20% alpha | `#00FF0033` | Light green overlay |
+| remove | Red, 20% alpha | `#FF000033` | Light red overlay |
+| focus | Yellow, 20% alpha | `#FFFF0033` | Light yellow overlay |
+
+These defaults are overridable in TOML config. They are NOT theme-dependent -- highlights overlay on top of whatever theme background is active.
 
 ## Version Compatibility
 
-| New Package | Min Python | Requires | Notes |
-|-------------|------------|----------|-------|
-| pytest-benchmark 5.2.3 | 3.9 | pytest>=8.1 | Fixed Python 3.13 counter overflow bug in v5.2.x |
-| pixelmatch 0.3.0 | 3.7 | Pillow (already in deps) | Pure Python, no native deps |
-| snakeviz 2.2.2 | 3.9 | tornado | Dev-only, browser-based viewer |
+No version bumps required. No new dependencies.
 
-All compatible with Python 3.13+ and existing pytest 9.0.2.
+| Dependency | Current Pin | Latest Verified | Needed API | Status |
+|------------|-------------|-----------------|------------|--------|
+| pycairo | >=1.25 | 1.29.0 (Nov 2025) | `draw_rectangle()` with alpha Color | Already exists |
+| pydantic | >=2.5 | 2.12.5 (Jan 2026) | Nested `BaseModel`, `dict[str, Model]` | Supported since v2.0 |
+| typer | >=0.21.1 | 0.21.1+ | `list[str]` option type | Already supported |
+| pygments | >=2.19 | 2.19+ | No changes | N/A |
+| pillow | >=10.0 | 10.0+ | No changes (shadow only) | N/A |
 
-## CI Integration Summary
+## Files to Create or Modify
 
-```
-Normal CI (every push):
-  pytest                          # 260+ tests, benchmarks disabled
-  pytest --benchmark-only         # benchmarks only (separate step)
+| Action | File | What Changes |
+|--------|------|--------------|
+| Modify | `config/schema.py` | Add `highlight_lines`, `highlight_styles`, `HighlightStyle` model |
+| Modify | `core/types.py` | Add `LineHighlight` dataclass |
+| Modify | `render/renderer.py` | Add highlight rectangle drawing step between background and code |
+| Modify | `cli/app.py` | Add `--highlight-add`, `--highlight-remove`, `--highlight-focus` options |
+| Create | `highlight/line_ranges.py` (or similar) | Line range parser: `"3,5,7-9"` to `[3, 5, 7, 8, 9]` |
+| Modify | `config/loader.py` | Wire highlight config from TOML into `RenderConfig` (may work automatically via Pydantic) |
 
-PR CI (compare performance):
-  pytest --benchmark-only --benchmark-compare=baseline.json
+## Risk Assessment
 
-Visual regression:
-  pytest tests/visual/            # compare against snapshots/
-  Upload diff images as artifacts on failure
-```
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| Alpha blending looks wrong on some themes | Low | Low | Test with 3+ themes (dark, light, colorful). Adjust default alpha if needed. |
+| Highlights obscure text readability | Low | Medium | Use low alpha (20%). Document that users should keep alpha below 40%. |
+| Word-wrap + highlighting edge cases | Medium | Low | Test wrapped lines with highlights. `DisplayLine.source_line_idx` mapping handles this. |
+| Overlapping highlight styles on same line | Low | Low | Last-specified style wins (simple), or blend colors (complex). Start with last-wins. |
+
+## Summary
+
+| Question | Answer |
+|----------|--------|
+| New runtime dependencies? | **None** |
+| New dev dependencies? | **None** |
+| Dependency upgrades? | **None required** |
+| New files? | Line range parser module (~1 file) |
+| Modified files? | `config/schema.py`, `core/types.py`, `render/renderer.py`, `cli/app.py` |
+| Cairo API used? | `draw_rectangle()` with alpha `Color` -- already exists in `CairoCanvas` |
+| Pydantic API used? | Nested `BaseModel`, `dict[str, Model]` validation -- supported since v2.0 |
+| Risk level? | **Low** -- pure additive feature using existing primitives |
 
 ## Sources
 
-**Verified via PyPI/official docs (HIGH confidence):**
-- [pixelmatch 0.3.0 on PyPI](https://pypi.org/project/pixelmatch/) -- Python port of mapbox/pixelmatch, PIL.Image support
-- [pixelmatch-py GitHub](https://github.com/whtsky/pixelmatch-py) -- API docs, threshold/AA options
-- [pytest-benchmark 5.2.3 docs](https://pytest-benchmark.readthedocs.io/) -- cProfile integration, compare mode
-- [pytest-benchmark PyPI](https://pypi.org/project/pytest-benchmark/) -- v5.2.3, Python 3.9+, pytest 8.1+
-- [snakeviz 2.2.2 on PyPI](https://pypi.org/project/snakeviz/) -- Python 3.9+, BSD licensed
-- [Python signal module docs](https://docs.python.org/3/library/signal.html) -- SIGALRM limitations with C extensions
-- [Pillow ImageChops docs](https://pillow.readthedocs.io/en/stable/reference/ImageChops.html) -- difference() for diff visualization
+**Verified via PyPI (HIGH confidence):**
+- [pycairo 1.29.0 on PyPI](https://pypi.org/project/pycairo/) -- latest release Nov 2025
+- [Pydantic 2.12.5 on PyPI](https://pypi.org/project/pydantic/) -- latest release Jan 2026
 
-**Verified via web search (MEDIUM confidence):**
-- [pytest-benchmark patterns (Dec 2025)](https://medium.com/@sparknp1/10-pytest-benchmark-patterns-for-honest-performance-claims-6cc674893494) -- Best practices for honest benchmarking
-- [Python timeout best practices](https://betterstack.com/community/guides/scaling-python/python-timeouts/) -- ThreadPoolExecutor as robust timeout approach
-- [pytest-image-snapshot 0.4.5](https://github.com/bmihelac/pytest-image-snapshot) -- Evaluated, decided against (see rationale above)
+**Verified via codebase inspection (HIGH confidence):**
+- `CairoCanvas.draw_rectangle()` with alpha `Color` support: `src/codepicture/render/canvas.py` lines 162-192
+- `Color.from_hex()` with `#RRGGBBAA` support: `src/codepicture/core/types.py` lines 35-98
+- `RenderConfig` Pydantic model: `src/codepicture/config/schema.py`
+- `LayoutMetrics` with `line_height_px`, `content_x`, `content_y`: `src/codepicture/core/types.py` lines 154-188
+- `DisplayLine.source_line_idx` for word-wrap mapping: `src/codepicture/core/types.py` lines 141-152
+- Rendering pipeline order: `src/codepicture/render/renderer.py` lines 47-153
 
 ---
-*Stack research for: codepicture v1.1 reliability milestone*
-*Researched: 2026-01-30*
-*Overall confidence: HIGH -- All versions verified via PyPI; integration patterns validated against official documentation*
+*Stack research for: codepicture v2.0 line highlighting feature*
+*Researched: 2026-02-02*
+*Overall confidence: HIGH -- No new dependencies needed; all required primitives verified in existing codebase*

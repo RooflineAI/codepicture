@@ -1,275 +1,289 @@
-# Feature Landscape: v1.1 Hardening
+# Feature Landscape: v2.0 Line Highlighting
 
-**Domain:** Hardening a Python image-generation CLI (visual regression testing, rendering reliability, performance optimization)
-**Project:** codepicture v1.1
-**Researched:** 2026-01-30
-**Confidence:** HIGH (patterns verified against existing codebase, tool documentation, and ecosystem research)
+**Domain:** Line highlighting in code screenshot / code-to-image tools
+**Project:** codepicture v2.0
+**Researched:** 2026-02-02
+**Confidence:** HIGH (cross-referenced 7+ tools across CLI, web, and library ecosystems)
 
 ---
 
-## Context: What Exists Today
+## Competitive Landscape Summary
 
-Before defining what to build, here is what v1.0 already has:
+Before defining features, here is how existing tools handle line highlighting:
 
-- **260 tests, 80%+ coverage** across unit, integration, and CLI layers
-- **Test fixtures** for 5 languages: Python, Rust, C++, JavaScript, MLIR (`tests/fixtures/`)
-- **Rendering tests** that verify PNG magic bytes, SVG `<svg` tags, PDF `%PDF` headers, and dimensional correctness
-- **CLI tests** via both Typer's CliRunner (unit) and subprocess (integration)
-- **GitHub Actions CI** on ubuntu-latest with coverage upload to Codecov
-- **pytest markers** for `slow` tests, randomized test ordering (`pytest-randomly`)
-- **Known bug:** `test.mlir` at project root hangs the rendering pipeline indefinitely
+| Tool | Type | Highlight Styles | CLI Syntax | Color Control | Dim/Blur Unfocused |
+|------|------|-----------------|------------|---------------|-------------------|
+| **Silicon** | Rust CLI | Single (overlay) | `--highlight-lines '1-3; 4'` | No (theme-derived) | No |
+| **Carbon** | Web + CLI | Single (selected lines) | `selectedLines: "3,4,5,6"` in preset JSON | No | Yes (dims non-selected) |
+| **Snappify** | Web + API | Added, Removed, Blur, Gray, Opacity | Per-line in API payload | Yes (full control) | Yes (blur + gray-out) |
+| **Chalk.ist** | Web | Added (+), Removed (-) | N/A (GUI only) | No (green/red convention) | No |
+| **CodeSnap/VSCodeSnap** | VS Code ext | Blue (focus), Green (+), Red (-) | Click line numbers | 3 preset colors | No |
+| **Shiki** | JS library | Highlight, Diff (+/-), Focus, Error, Warning | Inline comments `// [!code highlight]` | CSS-customizable | Yes (focus blurs others) |
+| **Reveal.js** | JS library | Single (highlight) | `data-line-numbers="3,8-10"` | CSS-customizable | No |
 
-**What is missing:** No test verifies that rendered images look *correct*. No timeout protection. No performance baselines. The test suite can hang indefinitely if a lexer or renderer stalls.
+**Key insight:** The ecosystem has converged on a small set of highlight categories: **highlight** (generic emphasis), **add/remove** (diff-style), and **focus** (dim everything else). No CLI tool offers all three -- this is a clear differentiation opportunity.
 
 ---
 
 ## Table Stakes
 
-Features the project must have for v1.1 to claim "hardened." Missing any of these means the reliability story is incomplete.
+Features users expect from any line highlighting implementation. Missing any of these means the feature feels incomplete or broken.
 
-### 1. Test Timeouts (pytest-timeout)
+### 1. Highlight Specific Lines via CLI Flag
 
 | Aspect | Detail |
 |--------|--------|
-| **Why Expected** | Without per-test timeouts, a single hanging test blocks the entire CI run. The existing `test.mlir` hang would stall GitHub Actions indefinitely. This is the simplest, highest-value safety net. |
+| **Why Expected** | Every tool that supports line highlighting accepts line numbers as input. This is the fundamental interaction. |
 | **Complexity** | Low |
-| **Existing Infrastructure** | `pyproject.toml` already has `[tool.pytest.ini_options]` with markers. Just add `timeout = 30`. Dev deps use `pytest>=9.0.2`. |
-| **What to Build** | Add `pytest-timeout` to dev dependencies. Set global default timeout (30s) in `pyproject.toml`. Use `@pytest.mark.timeout(60)` for known-slow rendering tests if needed. The existing `slow` marker can coexist. |
-| **Implementation Notes** | `pytest-timeout` uses SIGALRM on POSIX by default, which cleanly interrupts hanging tests without killing the process. The thread method is available as fallback. Current version is 2.4.0+. |
+| **Existing Dependencies** | CLI already built with Typer; adding a new flag is straightforward. Line numbers already tracked for the gutter feature. |
+| **What to Build** | A `--highlight-lines` CLI flag that accepts a line specification string. |
 | **Confidence** | HIGH |
 
-### 2. CI Job Timeout
+### 2. Range Syntax: Individual Lines and Ranges
 
 | Aspect | Detail |
 |--------|--------|
-| **Why Expected** | The GitHub Actions workflow (`test.yml`) has no `timeout-minutes`. If every test hangs, the runner burns for 6 hours (GitHub's default). This costs runner minutes and blocks the pipeline. |
-| **Complexity** | Trivial |
-| **Existing Infrastructure** | `.github/workflows/test.yml` exists with a single `test` job. |
-| **What to Build** | Add `timeout-minutes: 10` to the job definition. This is defense-in-depth alongside pytest-timeout. |
+| **Why Expected** | Every tool supports ranges. Nobody wants to type `3,4,5,6,7,8` when `3-8` works. Mixed individual+range is universal. |
+| **Complexity** | Low |
+| **Syntax Convention** | The ecosystem is split between comma-separated (`1,3-5,7` -- Reveal.js, Docusaurus, Carbon) and semicolon-separated (`1-3; 4` -- Silicon). **Recommend comma-separated** because it matches the broader convention: `cut`, `sed`, print page ranges, and most documentation tools all use commas. Silicon's semicolons are the outlier. |
+| **What to Build** | Parser for `"1,3-5,7,12-15"` syntax. 1-indexed, inclusive ranges. Validate that line numbers are positive integers within file bounds. |
 | **Confidence** | HIGH |
 
-### 3. MLIR Lexer Hang Fix
+### 3. Visual Overlay on Highlighted Lines
 
 | Aspect | Detail |
 |--------|--------|
-| **Why Expected** | Known bug. `test.mlir` at project root contains real-world MLIR (device topology, HAL attributes, flow transfers) that hangs the custom lexer indefinitely. The simpler `tests/fixtures/sample_mlir.mlir` works fine. This is the specific reliability failure motivating v1.1. |
-| **Complexity** | Medium |
-| **Existing Infrastructure** | `codepicture/highlight/mlir_lexer.py` is a Pygments `RegexLexer`. The test suite (`tests/highlight/test_mlir_lexer.py`) has 25+ token tests but only exercises the simple fixture, not the adversarial `test.mlir`. |
-| **What to Build** | (a) Diagnose which regex pattern causes catastrophic backtracking on `test.mlir` content -- likely nested attribute patterns like `#hal.device.topology<links = [...]>` with recursive angle brackets. (b) Fix the regex to avoid exponential backtracking. (c) Add `test.mlir` as a test fixture with a timeout assertion. (d) Add additional adversarial MLIR patterns as regression tests. |
-| **Implementation Notes** | Pygments `RegexLexer` processes input line-by-line with regex patterns. Catastrophic backtracking happens when a pattern like `<[^>]*>` encounters nested `<` characters. The fix is typically to use non-greedy quantifiers or explicitly enumerate expected characters. The `re` module has no built-in timeout; the fix must be in the regex itself. |
-| **Confidence** | HIGH -- catastrophic regex backtracking is well-understood |
-
-### 4. Rendering Timeout Guards (Application-Level)
-
-| Aspect | Detail |
-|--------|--------|
-| **Why Expected** | Even after fixing the MLIR lexer, future inputs could trigger new hangs in the lexer, layout engine, or Cairo renderer. A hardened CLI must have a maximum execution time for any render operation. |
+| **Why Expected** | The visual effect of highlighting is a colored background band spanning the full width of the code area behind the highlighted line(s). This is universal across all tools. |
 | **Complexity** | Low-Medium |
-| **Existing Infrastructure** | The rendering pipeline flows: CLI -> highlight (Pygments) -> layout (Pango) -> render (Cairo) -> save. All synchronous, single-threaded. |
-| **What to Build** | A timeout wrapper around the full rendering pipeline. If any stage exceeds a configurable limit (default 30s, overridable via `--timeout`), abort with a clear error message and non-zero exit code. |
-| **Implementation Notes** | On POSIX: `signal.alarm(N)` with a SIGALRM handler that raises `TimeoutError`. Simple, zero-overhead, works for the CLI path. For library usage or non-POSIX: `concurrent.futures.ProcessPoolExecutor` with `.result(timeout=N)` is more portable but heavier. Recommend signal-based for CLI, with a clean `RenderTimeoutError` exception type. |
+| **Existing Dependencies** | Cairo rendering pipeline already draws line-by-line. Need to insert a background rectangle draw before the text draw for highlighted lines. Must span the full code content width (not just text width). |
+| **What to Build** | Semi-transparent colored rectangle behind each highlighted line. Default color should be theme-aware (e.g., a muted yellow/amber for dark themes, a muted blue for light themes). |
 | **Confidence** | HIGH |
 
-### 5. Visual Regression Test Suite (Golden Image Snapshots)
+### 4. Works Across All Output Formats (PNG, SVG, PDF)
 
 | Aspect | Detail |
 |--------|--------|
-| **Why Expected** | Current rendering tests only check output format headers (PNG magic bytes, SVG tags). They do NOT verify the image *looks correct*. A regression that produces valid-but-wrong images (wrong colors, broken layout, missing text) passes all current tests silently. This is the biggest gap in the existing test suite. |
-| **Complexity** | Medium |
-| **Existing Infrastructure** | Fixture files exist for 5 languages. Rendering pipeline produces `RenderResult` with `.data` bytes. `Pillow` is already a dependency. CI runs on ubuntu-latest (single platform). |
-| **What to Build** | For each core language fixture, render a reference PNG image (golden file) and store it in `tests/snapshots/`. On each test run, re-render and compare pixel-by-pixel using `pixelmatch-py` or `pytest-image-snapshot`. Fail if difference exceeds threshold. Provide `--snapshot-update` flag for intentional baseline updates. |
-| **Key Design Decisions** | |
-| *Format* | PNG only for comparisons. SVG text varies across platforms. PDF is binary-opaque. |
-| *Platform* | Generate goldens in CI (Linux only). Developer machines (macOS) will not match exactly due to different Pango/fontconfig/FreeType rendering. Run visual regression only in CI, or use generous thresholds locally. |
-| *Threshold* | Start with `threshold=0.1` in pixelmatch (range 0-1, lower = stricter). Tune based on actual cross-run variance. Font anti-aliasing can cause 1-2% pixel differences even on the same platform. |
-| *Test Matrix* | 5 languages x 2 themes (dark + light) x 1 config (default) = 10 golden images. Optionally: +5 images for chrome/shadow/line-number variants = 15 total. This is manageable in git storage (~50-200KB per PNG). |
-| *Tool Choice* | `pytest-image-snapshot` (0.4.5) provides a pytest fixture that handles snapshot creation, comparison, diff image generation, and `--snapshot-update` CLI flag. Uses `pixelmatch` under the hood when installed. Recommend this over rolling custom comparison logic. |
-| **Confidence** | HIGH for approach; MEDIUM for cross-platform pixel matching (known hard problem) |
-
-### 6. Rendering Reliability Matrix (Parametrized Integration Tests)
-
-| Aspect | Detail |
-|--------|--------|
-| **Why Expected** | The project supports 5 core languages x 3 output formats (PNG/SVG/PDF) x several feature toggles (shadow, chrome, line numbers). Current tests exercise some combinations but not systematically. A regression in one combination could go undetected. |
-| **Complexity** | Medium |
-| **Existing Infrastructure** | `tests/test_render_renderer.py` tests PNG/SVG/PDF individually. `conftest.py` provides `render_tokens` and `render_metrics` fixtures. Fixture files exist for all 5 languages. |
-| **What to Build** | Parametrized tests using `@pytest.mark.parametrize` across: (a) 5 language fixtures, (b) 3 output formats, (c) 2-3 feature configs (minimal, full-chrome, line-numbers-only). Assert: completes within timeout, produces valid output (format headers), non-zero dimensions. This is ~30-45 test cases from a single test function. |
-| **Implementation Notes** | Use indirect fixtures to load each language's source from `tests/fixtures/`. Highlight with the appropriate lexer. Render with each config. This tests the full pipeline end-to-end for each combination. |
+| **Why Expected** | codepicture supports PNG, SVG, and PDF. Line highlighting must work in all three. Users will be frustrated if highlights appear in PNG but not SVG. |
+| **Complexity** | Low (if architecture is clean) |
+| **Existing Dependencies** | Rendering uses a protocol-based architecture with CairoCanvas. All three formats go through Cairo, so a single rectangle-draw implementation should propagate to all formats. SVG may need an explicit `<rect>` element for clean output. |
+| **What to Build** | Ensure the highlight rectangle is drawn via the canvas abstraction, not format-specific code. Verify with visual regression tests across all three formats. |
 | **Confidence** | HIGH |
 
-### 7. Error Handling Audit
+### 5. TOML Config File Support
 
 | Aspect | Detail |
 |--------|--------|
-| **Why Expected** | A hardened CLI must not crash with Python tracebacks. Every failure mode should produce a clear error message and non-zero exit code. Current `test_errors.py` covers some cases but rendering failures (timeout, OOM, corrupt input) are not tested. |
-| **Complexity** | Low-Medium |
-| **Existing Infrastructure** | `src/codepicture/errors.py` exists. `tests/test_errors.py` (3KB) and `tests/test_cli.py` error class both test some error paths. |
-| **What to Build** | (a) Catalog all failure modes: bad input file, unsupported language, lexer timeout/crash, layout failure, render failure, disk write failure, invalid config. (b) Ensure each produces a user-friendly error via `typer.Exit(code=1)` or equivalent. (c) Add tests for the newly possible `RenderTimeoutError` path. (d) Verify no Python tracebacks leak to users in any error scenario. |
+| **Why Expected** | codepicture already supports TOML config for all other settings. Line highlighting config should follow the same pattern. Users expect to set default highlight colors in config rather than passing long CLI flags every time. |
+| **Complexity** | Low |
+| **Existing Dependencies** | Pydantic config model already exists. Add highlight-related fields. |
+| **What to Build** | Config keys for default highlight color, style, and possibly named style presets. CLI flags override config as with all other settings. |
+| **Confidence** | HIGH |
+
+### 6. Configurable Highlight Color
+
+| Aspect | Detail |
+|--------|--------|
+| **Why Expected** | Silicon notably does NOT support this, and it is a common complaint. Users want control over highlight colors to match their theme, brand, or presentation style. Snappify's full color control is a key selling point. |
+| **Complexity** | Low |
+| **What to Build** | A `--highlight-color` flag accepting hex colors (e.g., `#FFEB3B80` with alpha channel). Default to a sensible semi-transparent yellow/amber. Support alpha in the hex value for transparency control. |
 | **Confidence** | HIGH |
 
 ---
 
 ## Differentiators
 
-Features that go beyond basic hardening. Not required for v1.1 but demonstrate engineering maturity.
+Features that set codepicture apart from competitors. Not universally expected, but high value for the target use case (presentations, tutorials, documentation).
 
-### 1. Fuzz Testing for Lexer Robustness (hypothesis)
+### 1. Multiple Named Highlight Styles (add/remove/focus)
 
 | Aspect | Detail |
 |--------|--------|
-| **Value Proposition** | The MLIR lexer hang is exactly the class of bug that fuzz testing catches. Property-based testing with `hypothesis` can generate adversarial inputs that exercise pathological regex patterns. |
+| **Value Proposition** | This is the single biggest differentiator. No CLI tool currently supports multiple highlight categories in one command. Silicon has one style. Carbon has one style. Only web tools (Snappify, Chalk.ist) and JS libraries (Shiki) offer multiple styles, and they are not CLI tools. |
 | **Complexity** | Medium |
-| **What to Build** | `@given(st.text())` tests asserting: for any string input, the MLIR lexer terminates within 5 seconds and does not raise unhandled exceptions. Combine with `@pytest.mark.timeout(10)`. |
-| **Notes** | Very high value-per-effort for the custom MLIR lexer. Low priority for Pygments built-in lexers (already battle-tested by the Pygments community). Could be marked `slow` and run only in CI. |
+| **What to Build** | Named styles with distinct colors and semantics. Recommended set based on ecosystem consensus: |
+| | - **highlight** (default): Generic emphasis. Yellow/amber overlay. |
+| | - **add**: Line was added. Green overlay (convention from git diff, GitHub, Chalk.ist, Shiki). |
+| | - **remove**: Line was removed. Red overlay (convention from git diff, GitHub, Chalk.ist, Shiki). |
+| | - **focus**: Draw attention here. Blue overlay or dim everything else (convention from Shiki, Snappify). |
+| **CLI Syntax Options** | Two viable approaches, recommend Option A: |
+| | **Option A -- Repeated flags:** `--highlight '3-5:add' --highlight '8:remove' --highlight '12-14:focus'` |
+| | **Option B -- Multiple flags:** `--highlight-add '3-5' --highlight-remove '8' --highlight-focus '12-14'` |
+| | Option A is more flexible (easy to add new styles without new flags) and follows the pattern of tools like `docker run -e` and `curl -H` for repeated key-value flags. Option B is more discoverable via `--help` but rigid. |
+| **Confidence** | HIGH for the feature concept; MEDIUM for exact CLI syntax (needs user testing) |
 
-### 2. Performance Benchmarks (pytest-benchmark)
+### 2. Focus Mode: Dim Unfocused Lines
 
 | Aspect | Detail |
 |--------|--------|
-| **Value Proposition** | Track rendering time across commits. Detect regressions where a change makes rendering 2x slower. Establishes a performance baseline for each fixture. |
+| **Value Proposition** | When "focus" style is used, dim or reduce opacity of all non-focused lines. This is what Carbon does with `selectedLines` and what Shiki does with `transformerNotationFocus`. Extremely effective for presentations and tutorials where you want to draw the eye to specific lines. |
 | **Complexity** | Medium |
-| **What to Build** | Benchmark tests for: (a) lexing time per language fixture, (b) layout calculation, (c) full PNG render. Use `pytest-benchmark` with `--benchmark-json` for CI artifact storage. |
-| **Notes** | The primary performance concern now is infinite time (hang), not slow-but-finite rendering. Benchmarks are more valuable *after* fixing the hang. Typical code screenshot rendering should be <1s; set assertions at <5s as a regression guard. |
+| **What to Build** | When any line has the `focus` style, reduce the opacity of all other lines (e.g., render text at 30-40% opacity). The focused lines remain at full brightness. This requires modifying the text rendering for non-focused lines, not just adding background rectangles. |
+| **Notes** | This is a distinct rendering mode -- it changes how OTHER lines look, not just the highlighted ones. Must be carefully implemented to avoid breaking the visual balance. |
+| **Confidence** | HIGH (well-established pattern in Carbon and Shiki) |
 
-### 3. Memory Usage Guards for Large Files
+### 3. Theme-Aware Default Colors
 
 | Aspect | Detail |
 |--------|--------|
-| **Value Proposition** | Cairo surfaces for 1000+ line files can consume significant memory. A large-file test with `tracemalloc` assertions prevents silent memory regressions. |
+| **Value Proposition** | Instead of hardcoded highlight colors, derive sensible defaults from the active theme. A yellow highlight on a yellow-background theme looks terrible. Auto-adapting colors remove this footgun. |
+| **Complexity** | Medium |
+| **What to Build** | Analyze the theme's background color and select a contrasting highlight color automatically. For dark backgrounds: lighter, warm overlays. For light backgrounds: darker, cooler overlays. User-specified `--highlight-color` overrides this. |
+| **Notes** | Snappify handles this by giving users full control. A better DX is smart defaults with override capability. |
+| **Confidence** | MEDIUM (heuristics may not work for all 55+ themes; fallback to manual override needed) |
+
+### 4. Gutter Indicators for Highlight Style
+
+| Aspect | Detail |
+|--------|--------|
+| **Value Proposition** | In addition to (or instead of) background highlighting, show diff-style indicators in the line number gutter: `+` for add, `-` for remove, a colored dot or bar for focus. This mirrors GitHub's diff view and is immediately recognizable. |
 | **Complexity** | Low-Medium |
-| **What to Build** | Test that renders a 500-line and 1000-line file, asserts peak memory stays below threshold (e.g., 100MB). Use `tracemalloc` snapshots. |
-| **Notes** | Only relevant if users render large files. For typical 10-50 line code screenshots, memory is not a concern. Low priority for v1.1. |
+| **Existing Dependencies** | Line number gutter already rendered. Need to add a small symbol or colored bar beside the line number. |
+| **What to Build** | Optional gutter markers that appear when named styles are used. `+`/`-` for add/remove (green/red). Colored bar for focus/highlight. Controlled via a `--highlight-gutter` flag or auto-enabled when named styles are used. |
+| **Confidence** | MEDIUM |
 
-### 4. Diff Image Artifact Upload in CI
-
-| Aspect | Detail |
-|--------|--------|
-| **Value Proposition** | When a visual regression test fails in CI, upload the actual image, expected image, and diff image as GitHub Actions artifacts. Makes debugging visual failures trivial without reproducing locally. |
-| **Complexity** | Low |
-| **What to Build** | Add `actions/upload-artifact@v4` step in `test.yml` that uploads `tests/snapshots/*_diff.png` on test failure. `pytest-image-snapshot` generates diff images automatically. |
-| **Notes** | Near-zero effort if using `pytest-image-snapshot`, which writes diff images to a predictable path. |
-
-### 5. Structured Verbose/Debug Output
+### 5. Highlight Line Specification via File Annotations
 
 | Aspect | Detail |
 |--------|--------|
-| **Value Proposition** | When rendering fails or is slow, structured timing output per pipeline stage (lex: 0.2s, layout: 0.1s, render: 4.5s) makes diagnosis immediate. |
-| **Complexity** | Low |
-| **What to Build** | Extend the existing `--verbose` flag to include timing per stage. Format: `[lex] 0.23s | [layout] 0.11s | [render] 2.45s | [save] 0.08s`. |
-| **Notes** | `--verbose` already exists and shows processing steps. Adding timing is a small extension. |
+| **Value Proposition** | Instead of specifying line numbers on the CLI (which break when code changes), allow inline comments in the source file to mark highlights: `// [highlight]`, `// [add]`, `// [remove]`. Inspired by Shiki's `// [!code highlight]` pattern. |
+| **Complexity** | Medium-High |
+| **What to Build** | A preprocessor that scans for annotation comments, strips them from the rendered output, and applies the corresponding highlight style to those lines. Must handle comment syntax for different languages (`//`, `#`, `--`, `/**/`). |
+| **Notes** | This is a v2.1+ feature. It adds significant complexity (language-aware comment parsing) and is a different UX paradigm from CLI flags. Worth noting as a future direction but not for the initial line highlighting release. |
+| **Confidence** | HIGH for concept; LOW for v2.0 inclusion |
 
 ---
 
 ## Anti-Features
 
-Features to deliberately NOT build for v1.1. Common over-engineering traps for testing and reliability work.
+Features to deliberately NOT build. Common over-engineering traps for line highlighting.
 
-### 1. DO NOT: Build a Custom Image Diff Viewer
+### 1. DO NOT: Build Word-Level Highlighting
 
-| **Why Avoid** | Tempting to create a web UI or terminal-based diff viewer for visual regression results. This is scope creep for a hardening milestone. |
-| **What to Do Instead** | Use `pytest-image-snapshot`'s built-in diff image output. Upload as CI artifacts. View in the GitHub Actions artifact browser or locally in any image viewer. |
+| **Why Avoid** | Shiki supports `// [!code word:Hello]` to highlight specific words within lines. This requires sub-line rendering control, complex text measurement, and significantly complicates the rendering pipeline. It is a different feature category entirely from line highlighting. |
+| **What to Do Instead** | Stick to full-line highlighting. If word highlighting is needed later, it is a separate milestone with its own research. |
 
-### 2. DO NOT: Test Every Theme in Visual Regression
+### 2. DO NOT: Support Step-Through Animation Syntax
 
-| **Why Avoid** | There are 55+ Pygments themes. Testing every theme x every language x every config is a combinatorial explosion (~800+ golden images). Storage bloat, 10+ minute CI, brittle tests that break on Pygments upgrades. |
-| **What to Do Instead** | Test 2 representative themes: one dark (catppuccin-mocha, the default), one light or high-contrast (dracula). This covers the color mapping path without explosion. Theme loading is already unit-tested separately. |
+| **Why Avoid** | Reveal.js uses `data-line-numbers="3-5|8-10|13-15"` where `|` separates animation steps. codepicture produces static images, not presentations. Animation steps have no meaning in a PNG/SVG/PDF. |
+| **What to Do Instead** | If users want multiple highlight states, they run codepicture multiple times with different `--highlight` flags. One command = one image. |
 
-### 3. DO NOT: Chase Pixel-Perfect Cross-Platform Matching
+### 3. DO NOT: Support Inline Annotations in v2.0
 
-| **Why Avoid** | Cairo/Pango renders differently on macOS vs Linux due to font rendering backends (CoreText vs FreeType/fontconfig). Chasing pixel-perfect parity across platforms is an endless rabbit hole. Different FreeType versions on different Ubuntu releases also produce subtly different results. |
-| **What to Do Instead** | Generate golden images on a single platform (ubuntu-latest in CI). Run visual regression tests only in CI. Use a tolerance threshold. Accept that local macOS development may produce slightly different pixels. |
+| **Why Avoid** | Shiki-style `// [!code highlight]` inline annotations require language-aware comment parsing, which is complex and error-prone across 50+ languages. It is a fundamentally different input mechanism from CLI flags. Mixing both in the initial release creates UX confusion. |
+| **What to Do Instead** | Ship CLI flag-based line specification first. Inline annotations can be a v2.1 follow-up after the core highlighting rendering is solid. |
 
-### 4. DO NOT: Add Parallel/Async Rendering
+### 4. DO NOT: Build a Color Picker / Theme Builder
 
-| **Why Avoid** | The CLI processes one file at a time. Adding asyncio or multiprocessing for parallel rendering adds complexity with zero user-facing benefit for the current use case. |
-| **What to Do Instead** | Keep the single-threaded pipeline. The signal-based timeout guard is sufficient. If batch processing is needed later, that is a feature milestone, not hardening. |
+| **Why Avoid** | Scope creep. Snappify has a full-featured web editor with color pickers. codepicture is a CLI tool. Users who need fine-grained color control can specify hex values. |
+| **What to Do Instead** | Accept hex colors with alpha via `--highlight-color '#RRGGBBAA'`. Document the default colors for each named style. |
 
-### 5. DO NOT: Over-Engineer the Timeout Architecture
+### 5. DO NOT: Add Blur/Grayscale Effects for Unfocused Lines
 
-| **Why Avoid** | Tempting to build per-stage timeouts (lexer: 5s, layout: 5s, render: 10s, save: 5s) with retry logic and escalating termination strategies. This adds complexity without proportional reliability gain. |
-| **What to Do Instead** | One timeout wrapping the entire render pipeline. If it exceeds the limit, fail with a clear message. Fix root causes (regex backtracking) rather than papering over them with elaborate timeout hierarchies. |
+| **Why Avoid** | Snappify supports blur and grayscale filters on unfocused lines. These are computationally expensive in Cairo (requires post-processing the rendered surface), look inconsistent across output formats (blur in SVG vs PNG is very different), and add visual complexity without proportional value. |
+| **What to Do Instead** | Use opacity reduction for unfocused lines (focus mode). This is simpler, consistent across formats, and achieves the same goal of drawing attention to focused lines. Carbon and Shiki both use opacity, not blur. |
 
-### 6. DO NOT: Build a Performance Dashboard
+### 6. DO NOT: Support Overlapping Highlight Styles on the Same Line
 
-| **Why Avoid** | Tools like Bencher for tracking benchmark history across commits are valuable for large projects but overkill for a CLI tool. The main issue is not "rendering got 10% slower" but "rendering hangs forever." |
-| **What to Do Instead** | Fix the hang. Add simple threshold assertions (render < 5s) if needed. Use `pytest-benchmark` locally for one-off profiling. A dashboard is warranted only if performance regressions become a recurring problem. |
-
-### 7. DO NOT: Add Multi-OS CI Matrix for Visual Tests
-
-| **Why Avoid** | Running visual regression on macOS + Linux + Windows triples CI time and requires per-platform golden images. Platform rendering differences are expected and not bugs. |
-| **What to Do Instead** | Single platform (ubuntu-latest). Unit tests and CLI tests can run on multiple platforms. Visual regression is Linux-only. |
+| **Why Avoid** | What happens when line 5 is both "add" and "focus"? Blending two semi-transparent overlays creates unpredictable colors. The UX for specifying this is confusing. No tool in the ecosystem supports this. |
+| **What to Do Instead** | Last style wins, or first style wins (pick one and document it). If a line appears in multiple `--highlight` flags, the last one takes precedence. Warn in verbose mode. |
 
 ---
 
 ## Feature Dependencies
 
 ```
-Test Timeouts (pytest-timeout) -----> ALL other test features
-  [Safety net -- must be first]        (prevents CI hangs during development of new tests)
+Highlight Line Parser -----> All highlight features
+  [Parse "1,3-5,7" syntax]     (everything needs line numbers)
 
-CI Job Timeout -----> ALL CI features
-  [5-minute fix]      (prevents runaway CI regardless of test-level timeouts)
+Highlight Renderer -----> Multiple Styles, Focus Mode, Gutter Indicators
+  [Draw background rects]     (styles are variations of the renderer)
 
-MLIR Lexer Hang Fix -----> Visual Regression Tests
-  [Root cause fix]         (cannot generate correct golden images if MLIR hangs)
-                    \
-                     +---> Rendering Reliability Matrix
-                           (cannot parametrize MLIR tests if lexer hangs)
+Configurable Colors -----> Theme-Aware Defaults
+  [Accept hex colors]           (theme-aware defaults need color infrastructure)
 
-Rendering Timeout Guards -----> Error Handling Audit
-  [New error type]               (must test the timeout error path)
+Named Styles (add/remove/focus) -----> Gutter Indicators
+  [Style categories exist]            (gutter shows style-specific markers)
 
-Visual Regression Suite -----> CI Diff Artifact Upload
-  [Generates diff images]       (upload only makes sense if VRT exists)
+Named Styles -----> Focus Mode (Dim Unfocused)
+  [Focus is a named style]     (dimming is focus-specific behavior)
 ```
 
-**Critical path:** Test timeouts -> MLIR fix -> rendering timeout guards -> visual regression suite -> CI artifact upload
+**Critical path:** Line parser -> Highlight renderer -> Configurable colors -> Named styles -> Focus mode
 
 ---
 
 ## MVP Recommendation
 
-For v1.1 hardening milestone, prioritize in this order:
+For v2.0 line highlighting, prioritize in this order:
 
-**Phase 1: Safety nets (immediate)**
-1. Test timeouts (`pytest-timeout`) -- 30 minutes of work, immediate CI protection
-2. CI job timeout -- 5 minutes of work, prevents runaway GitHub Actions
+**Phase 1: Core highlighting (must ship)**
+1. `--highlight-lines '1,3-5,7'` CLI flag with comma-separated range syntax
+2. Semi-transparent background overlay on highlighted lines (single color)
+3. `--highlight-color '#RRGGBBAA'` for user-specified color
+4. Works across PNG, SVG, PDF
+5. TOML config support for default highlight color
 
-**Phase 2: Root cause fix**
-3. MLIR lexer hang fix -- the specific bug motivating this milestone
-4. Application-level rendering timeout guards -- defense in depth
+**Phase 2: Named styles (the differentiator)**
+6. Multiple named styles: `--highlight '3-5:add' --highlight '8:remove' --highlight '12-14:focus'`
+7. Default colors per style: green (add), red (remove), yellow (highlight), blue (focus)
+8. Focus mode: dim unfocused lines when focus style is active
 
-**Phase 3: Correctness verification**
-5. Rendering reliability matrix -- parametrized tests across languages/formats/configs
-6. Visual regression test suite -- golden image snapshot comparisons
-7. Error handling audit -- clean error messages for all failure modes
+**Phase 3: Polish (if time permits)**
+9. Theme-aware default highlight colors
+10. Gutter indicators (`+`/`-`/colored bar) for named styles
 
-**Defer to post-v1.1:**
-- Performance benchmarks (pytest-benchmark) -- fix reliability first, optimize later
-- Fuzz testing (hypothesis) -- high value but separate effort after lexer stabilized
-- Memory profiling -- only relevant for large-file use cases
-- Cross-platform visual consistency -- only if users report platform-specific issues
-- Diff artifact upload -- nice CI convenience, add after VRT is stable
+**Defer to post-v2.0:**
+- Inline source annotations (`// [highlight]`) -- different input paradigm, needs its own design
+- Word-level highlighting -- different feature category
+- Blur/grayscale effects -- opacity reduction is sufficient
+
+---
+
+## Recommended CLI Syntax
+
+Based on ecosystem research, the recommended syntax for codepicture:
+
+```bash
+# Basic: highlight lines 3-5 and 7 with default color
+codepicture snippet.py -o slide.png --highlight-lines '3-5,7'
+
+# Custom color (hex with alpha)
+codepicture snippet.py -o slide.png --highlight-lines '3-5,7' --highlight-color '#FFEB3B80'
+
+# Named styles (the differentiator)
+codepicture snippet.py -o slide.png \
+  --highlight '3-5:add' \
+  --highlight '8-9:remove' \
+  --highlight '12:focus'
+
+# Short form for common case (no style = "highlight")
+codepicture snippet.py -o slide.png --highlight '3-5'
+```
+
+**Rationale for syntax choices:**
+- **Commas** for separating line specs (not semicolons): matches broader CLI convention (`cut`, `sed`, print ranges)
+- **Colon** for style separator: visually distinct from range hyphen, familiar from key:value patterns
+- **Repeated `--highlight` flag**: extensible (new styles require no new flags), follows `docker -e`, `curl -H` pattern
+- **`--highlight-lines`** as simple mode: no styles, just lines. `--highlight` as full mode with style support. Both can coexist.
 
 ---
 
 ## Sources
 
 **Tool Documentation (HIGH confidence):**
-- [pytest-timeout on PyPI](https://pypi.org/project/pytest-timeout/) -- v2.4.0, SIGALRM and thread methods
-- [pytest-image-snapshot on GitHub](https://github.com/bmihelac/pytest-image-snapshot) -- v0.4.5, pytest fixture for image snapshot comparison
-- [pixelmatch-py on GitHub](https://github.com/whtsky/pixelmatch-py) -- pixel-level image comparison with anti-aliasing detection
-- [pytest-benchmark on PyPI](https://pypi.org/project/pytest-benchmark/) -- v5.2.3, benchmarking fixture
+- [Silicon GitHub](https://github.com/Aloxaf/silicon) -- `--highlight-lines` flag, semicolon-separated syntax
+- [Carbon GitHub](https://github.com/carbon-app/carbon) -- `selectedLines` parameter dims non-selected lines
+- [carbon-now-cli GitHub](https://github.com/mixn/carbon-now-cli) -- `selectedLines: "3,4,5,6"` in preset config
+- [Shiki transformers docs](https://shiki.style/packages/transformers) -- `transformerNotationHighlight`, `transformerNotationDiff`, `transformerNotationFocus`
+- [Reveal.js code docs](https://revealjs.com/code/) -- `data-line-numbers="3,8-10"` comma-separated syntax
+- [Material for MkDocs code blocks](https://squidfunk.github.io/mkdocs-material/reference/code-blocks/) -- `hl_lines` space-separated syntax
 
-**Pattern Research (MEDIUM confidence):**
-- [pytest-timeout usage patterns](https://pytest-with-eric.com/pytest-best-practices/pytest-timeout/) -- SIGALRM vs thread method tradeoffs
-- [Golden file testing patterns 2025](https://johal.in/pytest-regressions-data-golden-file-updates-2025/) -- snapshot testing evolution in Python
+**Tool Feature Analysis (MEDIUM confidence):**
+- [Snappify docs](https://snappify.com/docs/api/simple-snap) -- API with per-line opacity, blur, gray, add/remove
+- [Chalk.ist](https://chalk.ist/) -- diff view with `+`/`-` line markers
+- [VSCodeSnap GitHub](https://github.com/luisllamasbinaburo/VSCodeSnap) -- blue/green/red click-to-highlight modes
+- [CodeSnap-plus GitHub](https://github.com/wacns/CodeSnap-plus) -- click-to-highlight line feature
 
-**Codebase Analysis (HIGH confidence):**
-- `tests/conftest.py` -- 13 fixtures, rendering helpers, font registration
-- `tests/test_render_renderer.py` -- current rendering tests (format headers only)
-- `tests/test_cli.py` -- CLI unit + integration tests
-- `tests/fixtures/` -- 5 language fixture files (Python, Rust, C++, JavaScript, MLIR)
-- `.github/workflows/test.yml` -- CI config (no timeout, single ubuntu-latest runner)
-- `pyproject.toml` -- dev deps, pytest config, coverage settings
-- `test.mlir` (project root) -- the file that triggers the known hang bug
+**Convention Research (MEDIUM confidence):**
+- Line range syntax conventions across Reveal.js, Docusaurus, Zola, MkDocs -- comma-separated is most common
+- [Snappify blog: best screenshot tools 2026](https://snappify.com/blog/best-screenshot-tools) -- competitive landscape overview

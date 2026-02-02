@@ -1,358 +1,248 @@
 # Project Research Summary
 
-**Project:** codepicture v1.1 — Reliability & Testing Hardening
-**Domain:** Visual regression testing, rendering reliability, and performance profiling for Python image generation CLI
-**Researched:** 2026-01-30
+**Project:** codepicture v2.0 Line Highlighting
+**Domain:** Code-to-image rendering with line highlighting
+**Researched:** 2026-02-02
 **Confidence:** HIGH
 
 ## Executive Summary
 
-The v1.1 milestone is a pure hardening effort for codepicture, a Python CLI that converts code to stylized images. The project has a solid v1.0 foundation (260 tests, 80%+ coverage, Cairo/Pygments stack validated), but lacks critical reliability safeguards and visual verification. Research reveals three specific problems: (1) a known rendering hang on test.mlir caused by Pygments regex catastrophic backtracking, (2) no automated verification that images look correct (tests only verify PNG magic bytes, not visual correctness), and (3) no timeout protection anywhere in the pipeline.
+Line highlighting for codepicture is a pure rendering feature that requires no new dependencies. The existing Cairo/Pango/Pydantic stack provides all required primitives for drawing semi-transparent colored rectangles behind specific lines of code. This milestone positions codepicture as the first CLI code-to-image tool to support multiple named highlight styles (add/remove/focus) in a single render, a clear differentiator in a market where competitors like Silicon and Carbon support only single-style highlighting.
 
-The recommended approach is to harden in three sequential phases. First, diagnose and fix the immediate hang issue with instrumentation and subprocess-based timeouts (signal-based timeouts cannot interrupt C extensions like Pygments' regex engine). Second, establish visual regression testing with pytest-image-snapshot and reference images generated in the CI environment (macOS vs Linux font rendering differences will cause false failures otherwise). Third, add performance profiling with pytest-benchmark to detect future regressions. This ordering is critical: fix the rendering pipeline before adding visual tests to lock in correct behavior.
+The recommended implementation leverages existing infrastructure: `CairoCanvas.draw_rectangle()` already supports alpha transparency, `Color.from_hex()` handles RGBA values, and the layout engine provides all needed geometry through `LayoutMetrics`. The core challenge is not technical stack integration but careful design of the rendering pipeline insertion point and handling of word-wrapped lines. Research across 7+ competing tools establishes clear user expectations: comma-separated line range syntax, configurable highlight colors, and visual overlays that work across PNG/SVG/PDF output formats.
 
-The major risk is choosing the wrong timeout mechanism. Signal-based timeouts (signal.SIGALRM) appear to work in tests but fail on the actual hang because Pygments regex backtracking occurs in C code that blocks signal handlers. The robust solution is concurrent.futures.ThreadPoolExecutor with future.result(timeout=N), accepting that hung threads cannot be killed but the CLI can proceed with a clear error. All new test infrastructure must use real pathological inputs (like test.mlir), not synthetic time.sleep() delays that test the wrong thing.
+Critical risks center on visual correctness rather than functional implementation: wrong z-order (highlights over text), incomplete wrapping support (partial line highlighting), and theme color clashing. All three are addressable through clear architectural boundaries and test-driven development. The research identifies a clean 3-phase delivery path: core highlighting, named styles with focus mode, and theme-aware polish.
 
 ## Key Findings
 
-### Stack Additions (from STACK.md)
+### Recommended Stack
 
-Research focused solely on additions for v1.1 hardening. The v1.0 stack (Python 3.13+, PyCairo, Pygments, Typer, pytest) is validated and requires no changes.
+**No new dependencies required.** Line highlighting uses existing primitives from the current stack. The feature is 100% additive application code built on verified existing APIs.
 
-**New development dependencies:**
-- **pytest-benchmark 5.2.3** — Benchmark rendering functions with statistical rigor, detect performance regressions in CI via --benchmark-compare, built-in cProfile integration
-- **pixelmatch 0.3.0** — Pixel-level image comparison with anti-aliasing detection, prevents font rendering false positives, works with existing Pillow dependency
-- **snakeviz 2.2.2** — Browser-based cProfile visualization for development (not CI)
+**Core technologies:**
+- **pycairo >=1.25** (current: 1.29.0): `CairoCanvas.draw_rectangle()` draws highlight backgrounds with alpha support — API verified in codebase at `src/codepicture/render/canvas.py` lines 162-192
+- **Pydantic >=2.5** (current: 2.12.5): Nested `BaseModel` for highlight style definitions, `dict[str, list[str]]` for line-to-style mappings — supported since v2.0
+- **Typer >=0.21.1**: New CLI flags for highlight line specification (`--highlight-lines`, `--highlight-add`, etc.) — existing flag pattern extends naturally
+- **Pygments >=2.19**: No changes needed — syntax highlighting is orthogonal to line background highlighting
 
-**Timeout implementation (stdlib only):**
-- **concurrent.futures.ThreadPoolExecutor** — Primary timeout mechanism; works with C extensions (Pygments/Cairo), cross-platform, stdlib
-- **signal.SIGALRM** — Fallback only; POSIX-only, cannot interrupt C code, not recommended as primary solution
+**What NOT to add:**
+- Color manipulation libraries (`colour`, `colormath`) — `Color.from_hex()` already handles `#RRGGBBAA` with alpha
+- Diff parsing libraries (`unidiff`, `difflib`) — highlights are user-specified line ranges, not computed from diffs
+- New rendering libraries — Cairo's existing rectangle primitives are exactly what's needed
 
-**Key decisions:**
-- Rejected pytest-image-snapshot plugin in favor of direct pixelmatch usage for threshold control
-- Rejected OpenCV (50MB, overkill), timeout-decorator (unmaintained), wrapt-timeout-decorator (pulls multiprocess for no benefit)
-- No new runtime dependencies — all reliability code uses stdlib
+### Expected Features
 
-**Confidence:** HIGH — all versions verified via PyPI, integration patterns validated against official docs
+**Must have (table stakes):**
+- **Line range syntax** — `1,3-5,7` with comma-separated individual lines and inclusive ranges (universal across all tools)
+- **Visual overlay** — Semi-transparent colored background spanning full width of code area (universal pattern)
+- **CLI flag input** — `--highlight-lines` or similar for specifying lines (expected in every CLI tool)
+- **Multi-format support** — Highlights must work in PNG, SVG, and PDF output (codepicture's existing promise)
+- **Configurable colors** — `--highlight-color '#RRGGBBAA'` for user control (Silicon lacks this; common complaint)
+- **TOML config support** — Default colors and settings in config file (consistency with codepicture's existing config system)
 
-### Expected Features (from FEATURES.md)
+**Should have (competitive differentiator):**
+- **Multiple named styles** — `add` (green), `remove` (red), `focus` (yellow/blue), `highlight` (default) — NO CLI tool currently supports all three in one command; only web tools (Snappify, Chalk.ist) and JS libraries (Shiki) offer this
+- **Focus mode** — Dim unfocused lines when `focus` style is active (pattern from Carbon's `selectedLines` and Shiki's `transformerNotationFocus`)
+- **Theme-aware default colors** — Derive sensible highlight colors from active theme background for automatic contrast
+- **Gutter indicators** — Optional `+`/`-` symbols or colored bars in line number gutter (GitHub diff convention)
 
-v1.1 is purely hardening — no new user-facing features. Research focused on test infrastructure and reliability features.
+**Defer (v2+):**
+- **Inline annotations** — Shiki-style `// [!code highlight]` comments in source files (requires language-aware parsing; fundamentally different input paradigm)
+- **Word-level highlighting** — Sub-line precision (different feature category; complicates rendering significantly)
+- **Animation/step syntax** — Multiple highlight states for presentations (codepicture produces static images)
+- **Blur/grayscale effects** — For unfocused lines (opacity reduction achieves same goal with simpler implementation)
 
-**Must have (table stakes for claiming "hardened"):**
-- Test timeouts (pytest-timeout) — prevents CI hangs, 30-minute implementation
-- CI job timeout — GitHub Actions defense-in-depth, 5-minute change
-- MLIR lexer hang fix — the specific bug motivating this milestone
-- Rendering timeout guards — application-level protection beyond test timeouts
-- Visual regression test suite — 5 core languages x 2 themes = 10 golden images
-- Rendering reliability matrix — parametrized tests across languages/formats/configs
-- Error handling audit — clean error messages for all failure modes including new RenderTimeoutError
+### Architecture Approach
 
-**Should have (differentiators):**
-- Performance benchmarks (pytest-benchmark) — track render times, detect regressions
-- Diff image artifact upload — upload visual diffs to GitHub Actions on failure
-- Fuzz testing for MLIR lexer (hypothesis) — property-based testing catches pathological inputs
-- Memory usage guards — tracemalloc assertions for large files
-- Structured verbose output — timing per pipeline stage
+**Insertion point:** Line highlight rectangles must be drawn after the main background but before line numbers and code tokens. The modified render order is: (1) canvas background, (2) window chrome, (3) **line highlight rectangles** [NEW], (4) line numbers, (5) syntax tokens. This ensures text remains readable on top of colored overlays.
 
-**Defer to post-v1.1:**
-- Performance dashboard (Bencher) — overkill for current scale
-- Multi-OS CI for visual tests — platform rendering differences are expected, not bugs
-- Parallel/async rendering — single-threaded pipeline is sufficient
+**Major components:**
+1. **Config schema** (`config/schema.py`) — Add `highlight_lines: dict[str, list[str]]` and `highlight_styles: dict[str, HighlightStyle]` fields to `RenderConfig` Pydantic model
+2. **Resolution layer** (`render/highlights.py` NEW) — Parse line ranges (`"3,5,7-9"` → `[3,5,7,8,9]`), map style names to colors, produce `dict[int, Color]` consumed by renderer
+3. **Renderer integration** (`render/renderer.py`) — Call resolution at render start, insert rectangle draw into both `_render_wrapped()` and `_render_legacy()` before line number/token loops
+4. **CLI flags** (`cli/app.py`) — Add `--highlight-lines` with style syntax parsing (`add:1-3,5;remove:10`)
 
-**Anti-features (explicitly avoid):**
-- Custom image diff viewer — use pytest-image-snapshot's built-in diffs
-- Testing all 55+ Pygments themes — test 2 representative themes (dark + light)
-- Pixel-perfect cross-platform matching — different font rendering is reality, not a bug
-- Per-stage timeout hierarchy — one pipeline-level timeout, fix root causes not symptoms
+**Data flow:** CLI input → Config model → Resolution layer → Renderer consumes `dict[source_line_num: Color]` → Draw rectangles in display line loop using `DisplayLine.source_line_idx` mapping.
 
-**Critical path:** Test timeouts -> MLIR fix -> rendering timeout guards -> visual regression suite
+**Highlight geometry:** X=`content_x`, Y=`content_y + code_y_offset + display_idx * line_height_px`, Width=`content_width`, Height=`line_height_px`. All values already computed by `LayoutEngine` in `LayoutMetrics`.
 
-**Confidence:** HIGH — based on codebase analysis (260 existing tests, test fixtures for 5 languages, known test.mlir hang bug)
+**Word wrap handling:** Highlight lookups operate on source line indices. When drawing, check each `DisplayLine.source_line_idx` against the highlight map — ALL display lines belonging to a highlighted source line get rectangles. This matches VS Code's behavior after their [issue #85530](https://github.com/microsoft/vscode/issues/85530) fix.
 
-### Architecture Approach (from ARCHITECTURE-HARDENING.md)
+**Components NOT modified:** `layout/engine.py` (geometry already available), `render/canvas.py` (existing `draw_rectangle()` sufficient), `core/types.py` (existing `Color` supports alpha), `render/chrome.py` (independent), `render/shadow.py` (post-process, unaffected).
 
-The existing pipeline is linear and protocol-based (Highlighter -> LayoutEngine -> Renderer). No architectural changes are needed; three new subsystems wrap the existing pipeline externally.
+### Critical Pitfalls
 
-**Subsystem 1: Rendering Timeouts and Safety**
-- New `safety.py` module with timeout context manager
-- Modified `orchestrator.py` wraps each pipeline stage with timeout
-- New `RenderTimeoutError` exception in existing error hierarchy
-- Implementation: ThreadPoolExecutor-based timeout (primary) or signal.SIGALRM (POSIX fallback)
-- Critical: Timeouts wrap orchestrator, NOT individual protocol implementations (preserves protocol purity)
+1. **Wrong z-order (drawing highlights over text)** — Highlight rectangles drawn AFTER tokens paint over text, making it invisible. **Prevention:** Insert highlight draw immediately after establishing `code_y_offset`, before line number loop. Test with semi-transparent highlights to verify text remains visible.
 
-**Subsystem 2: Visual Regression Testing**
-- New `tests/visual/` package with pytest fixtures
-- Reference images in `tests/snapshots/` (committed to repo, generated in CI environment)
-- Integration: pytest-image-snapshot OR raw pixelmatch with ~30-line custom fixture
-- Platform consistency: Generate golden images on ubuntu-latest only (macOS font rendering differs)
-- CI workflow: upload diff images as artifacts on failure
+2. **Partial word-wrapped line highlighting** — Wrapped source line spans multiple display lines, but only first display line gets highlighted. **Prevention:** Use `DisplayLine.source_line_idx` to map display lines to source lines. Highlight ALL display lines belonging to highlighted source indices. Test with long wrapped lines.
 
-**Subsystem 3: Performance Profiling**
-- New `tests/benchmarks/` package with pytest-benchmark tests
-- Benchmark fixtures: small/medium/large code samples
-- Per-stage benchmarks (highlight, layout, render) + end-to-end pipeline
-- CI integration: --benchmark-json artifact upload, optional --benchmark-compare for regression detection
+3. **Highlight width inconsistency** — Rectangles too narrow (code area only, leaving gutter unhighlighted) or too wide (bleeding into rounded corners). **Prevention:** Use `content_x` and `content_width` from `LayoutMetrics` — covers gutter + code area but respects outer padding. Verify with line numbers enabled.
 
-**Key architectural principles:**
-- Safety and observability are orchestration concerns, not component concerns
-- Protocol implementations (Highlighter, Renderer, Canvas) remain unchanged
-- All new code is additive, no refactoring of v1.0 pipeline
+4. **Semi-transparent highlights differ across PNG/SVG/PDF** — Cairo alpha compositing behaves differently in vector vs raster backends. **Prevention:** Either pre-blend highlight colors with theme background to produce opaque results, OR test all three formats explicitly and document viewer-dependent behavior.
 
-**Build order (minimizes risk):**
-1. Phase 1: Rendering timeouts (small surface area, unblocks testing)
-2. Phase 2: Visual regression tests (requires non-hanging pipeline from Phase 1)
-3. Phase 3: Performance profiling (lowest urgency, benefits from Phases 1+2)
+5. **Theme color clashing** — Fixed green "add" highlight makes green string tokens invisible on certain themes. **Prevention:** Derive highlight colors from theme background using low-saturation tints (`lerp(theme.background, tint_color, 0.15)`). Test contrast ratios against token colors (WCAG AA 3:1 minimum).
 
-**Confidence:** HIGH — architecture patterns well-understood from codebase analysis, timeout/profiling integration validated against stdlib docs
+6. **Rectangle height doesn't match line spacing** — Using `char_height` instead of `line_height_px` creates gaps between consecutive highlighted lines with line height multipliers >1.0. **Prevention:** Rectangle height = `metrics.line_height_px` exactly. Y-position is top of line slot, not baseline.
 
-### Critical Pitfalls (from PITFALLS.md)
-
-Research identified 12 pitfalls specific to v1.1 hardening work. Top 5 critical:
-
-1. **Signal-based timeouts cannot interrupt C-extension hangs** — signal.SIGALRM only fires between Python bytecodes. Pygments regex backtracking (C code), Cairo rendering (C code), and Pillow blur (C code) block signal delivery indefinitely. **Solution:** Use concurrent.futures.ProcessPoolExecutor with future.result(timeout=N) or multiprocessing.Process.terminate() for true killing. **Phase impact:** Directly blocks the test.mlir fix.
-
-2. **Diagnosing the hang in the wrong pipeline stage** — Assuming the hang is in the lexer without profiling could lead to days spent fixing the wrong component. **Solution:** Instrument each pipeline stage with timing before any fixes. Use py-spy dump to get stack traces of hanging processes. **Phase impact:** First step in v1.1 before any fixes.
-
-3. **Visual regression tests that are flaky across environments** — Font rendering differs between macOS CoreText and Linux FreeType. Tests pass locally, fail in CI. **Solution:** Generate reference images in the same environment as CI (ubuntu-latest Docker). Use perceptual comparison with threshold (pixelmatch), never pixel-perfect. Bundle fonts (already done). **Phase impact:** Design visual regression approach before generating reference images.
-
-4. **Reference image bloat in Git history** — 50+ PNGs updated on every visual change balloons repo size. **Solution:** Use Git LFS for tests/**/*.png tracking BEFORE committing first reference. Use small image dimensions for tests. Minimize reference count (10-15 well-chosen images). **Phase impact:** Set up LFS before visual regression phase.
-
-5. **Testing timeouts with synthetic delays instead of real pathological input** — time.sleep() tests Python-level timeout behavior but not the ability to interrupt C extensions. Tests pass, feature is broken. **Solution:** Test with actual pathological input (test.mlir content). Keep hanging inputs as test fixtures. **Phase impact:** When implementing timeouts, write tests with real input FIRST.
-
-**Moderate pitfalls:**
-- Profiling wrong metric (CPU time vs wall time, small inputs vs realistic inputs)
-- Pillow GaussianBlur scaling surprise at 2x HiDPI (blur operates on physical pixels, not logical)
-- Over-engineering visual regression framework (weeks on infrastructure, zero bugs fixed)
-- MLIR lexer regex fix introduces new backtracking (fix one pattern, break another)
-
-**Phase-specific warnings:**
-- Diagnosing test.mlir hang: Instrument first, profile with py-spy, confirm stage before fixing
-- Adding timeouts: Use subprocess-based, not signal-based; test with real input, not sleep()
-- Fixing MLIR lexer: Test with corpus of 10+ MLIR files, add fuzzing tests
-- Visual regression: Generate references in CI environment, start with 5-8 images, use LFS
-- Performance profiling: Profile realistic inputs, measure wall time per stage first, then drill into bottlenecks
-
-**Confidence:** HIGH — pitfalls verified against Python signal docs, multiple Pygments issues documenting catastrophic backtracking, visual regression testing literature
+7. **Forgetting legacy (non-wrapped) render path** — Implementing highlights only in `_render_wrapped()` means they don't appear when `window_width` is unset. **Prevention:** Implement highlight drawing in BOTH `_render_wrapped()` and `_render_legacy()`. Test with and without `--window-width`.
 
 ## Implications for Roadmap
 
-Based on research findings, recommended phase structure for v1.1:
+Based on research, suggested phase structure:
 
-### Phase 1: Diagnose and Fix Hang
-**Rationale:** The known test.mlir hang is the primary motivator for v1.1. Must diagnose the root cause before implementing fixes. Cannot build visual tests or performance benchmarks on a hanging pipeline.
+### Phase 1: Core Highlighting Infrastructure
+**Rationale:** Foundation must be solid before differentiated features. Establishes data flow, config schema, and basic rendering. Dependencies-first: config → resolution → rendering → CLI.
 
-**Delivers:**
-- Instrumented pipeline with timing per stage
-- Diagnosis of which stage (highlight/layout/render/shadow) causes the hang
-- Fix for the root cause (likely MLIR lexer regex backtracking)
-- Subprocess-based timeout wrapper in safety.py
-- RenderTimeoutError exception type
-- Tests using real pathological input (test.mlir as fixture)
+**Delivers:** Single-style line highlighting with configurable color, working across all output formats.
 
-**Addresses features:**
-- MLIR lexer hang fix (table stakes)
-- Rendering timeout guards (table stakes)
+**Addresses:**
+- Line range parser (`"1,3-5,7"` syntax)
+- Config schema fields (`highlight_lines`, `highlight_colors`)
+- Resolution layer (`render/highlights.py`)
+- Renderer integration (both wrapped and legacy paths)
+- CLI flag (`--highlight-lines` basic form)
+- Works in PNG, SVG, PDF
 
-**Avoids pitfalls:**
-- Pitfall 2: Diagnose before fixing (instrument first)
-- Pitfall 1: Use subprocess-based timeout, not signal-based
-- Pitfall 7: Test with real pathological input, not synthetic delays
-- Pitfall 9: Test regex changes with corpus of MLIR files
+**Avoids:**
+- Pitfall 1 (z-order) — design decision made upfront
+- Pitfall 6 (height) — geometry correct from start
+- Pitfall 7 (legacy path) — both paths implemented together
 
-**Stack used:**
-- concurrent.futures.ThreadPoolExecutor (stdlib)
-- pytest for testing timeout behavior
-- py-spy for profiling (optional, dev tool)
+**Research flag:** No additional research needed — all patterns documented in ARCHITECTURE-LINE-HIGHLIGHTING.md
 
-**Research flag:** LOW — Timeout patterns are well-documented stdlib functionality. MLIR regex debugging is manual but straightforward.
+### Phase 2: Named Styles and Focus Mode
+**Rationale:** The competitive differentiator. Builds on Phase 1 infrastructure. Named styles require style-to-color mapping and CLI syntax extension. Focus mode adds opacity modification to non-focused lines.
 
-### Phase 2: Visual Regression Test Suite
-**Rationale:** Once the pipeline is stable (Phase 1), establish visual verification to catch future regressions. Current tests verify output format but not correctness. This is the biggest gap in v1.0 test coverage.
+**Delivers:** `--highlight-add`, `--highlight-remove`, `--highlight-focus` with distinct colors and focus mode dimming.
 
-**Delivers:**
-- tests/visual/ package with pytest fixtures
-- tests/snapshots/ directory with 10-15 reference images (committed via Git LFS)
-- Reference images for 5 core languages (Python, Rust, C++, JavaScript, MLIR) x 2 themes (dark + light)
-- Edge case references (empty input, long lines, unicode)
-- CI workflow step to run visual tests and upload diff artifacts on failure
-- pytest marker for visual tests
+**Uses:**
+- Pydantic `dict[str, BaseModel]` validation for style definitions
+- Existing `resolve_highlights()` extended for multi-style resolution
+- Renderer opacity control for non-focused lines
 
-**Addresses features:**
-- Visual regression test suite (table stakes)
-- Rendering reliability matrix (table stakes via parametrized tests)
-- Diff image artifact upload (should-have differentiator)
+**Implements:**
+- Default color constants for each style (green, red, yellow/blue)
+- CLI syntax parsing (`add:1-3,5;remove:10` format)
+- Focus mode: reduce opacity of lines not in focus set
+- TOML config for per-style color overrides
 
-**Avoids pitfalls:**
-- Pitfall 3: Generate references in CI environment (ubuntu-latest), not macOS
-- Pitfall 4: Set up Git LFS BEFORE committing first reference image
-- Pitfall 8: Start with 5-8 images, not custom framework
-- Pitfall 10: Compare pixel data only, strip metadata
+**Avoids:**
+- Pitfall 5 (color clashing) — use low-saturation defaults, defer theme-awareness to Phase 3
 
-**Stack used:**
-- pixelmatch 0.3.0 for anti-aliasing-aware comparison
-- Pillow (existing) for image loading and diff visualization
-- Git LFS for reference image storage
-- pytest parametrize for language/theme/config matrix
+**Research flag:** No additional research needed — patterns established in FEATURES.md and competitive analysis
 
-**Research flag:** MEDIUM — Font rendering cross-platform differences may require iteration on threshold values. Plan for 1-2 rounds of tuning.
+### Phase 3: Theme Integration and Polish
+**Rationale:** Refinement after core functionality proven. Theme-aware colors require analyzing background luminance and deriving contrasting tints. Gutter indicators are visual enhancement.
 
-### Phase 3: Test Hardening and CI Protection
-**Rationale:** Add defense-in-depth test timeouts and CI safeguards now that pipeline is fixed and visual tests are in place.
+**Delivers:** Automatic highlight color derivation from theme, optional gutter indicators, contrast validation.
 
-**Delivers:**
-- pytest-timeout added to dev dependencies with global 30s default in pyproject.toml
-- CI job timeout-minutes: 10 in .github/workflows/test.yml
-- Error handling audit — verify all failure modes produce clean error messages
-- Tests for timeout behavior and error paths
+**Addresses:**
+- Theme-aware default colors (blend formula based on background)
+- Gutter indicators (`+`/`-` symbols or colored bars)
+- Contrast ratio testing against all 55+ themes
+- Pre-blended opaque colors for consistent cross-format appearance
 
-**Addresses features:**
-- Test timeouts (table stakes)
-- CI job timeout (table stakes)
-- Error handling audit (table stakes)
+**Avoids:**
+- Pitfall 4 (SVG/PDF alpha) — pre-blending eliminates alpha compositing differences
+- Pitfall 5 (color clashing) — computed tints maintain readability across themes
 
-**Avoids pitfalls:**
-- None specifically, this is defense-in-depth after root causes fixed
-
-**Stack used:**
-- pytest-timeout (dev dependency)
-- Existing error hierarchy in errors.py
-
-**Research flag:** LOW — pytest-timeout is straightforward pytest plugin.
-
-### Phase 4: Performance Profiling (Optional/Future)
-**Rationale:** Lowest urgency. Pipeline stability and correctness (Phases 1-3) must come first. Performance profiling is most valuable after reliability is established.
-
-**Delivers:**
-- tests/benchmarks/ package with pytest-benchmark tests
-- Benchmark fixtures for small/medium/large code samples
-- Per-stage benchmarks (highlight, layout, render) and end-to-end pipeline
-- CI workflow step to run benchmarks and upload JSON artifacts
-- Optional: --benchmark-compare for regression detection
-
-**Addresses features:**
-- Performance benchmarks (should-have differentiator)
-- Memory usage guards (should-have, via tracemalloc in benchmark tests)
-
-**Avoids pitfalls:**
-- Pitfall 5: Profile realistic inputs, measure wall time first
-- Pitfall 6: If shadow is bottleneck, investigate 2x HiDPI blur scaling
-- Pitfall 11: Use pytest-benchmark for statistical rigor, not single runs
-
-**Stack used:**
-- pytest-benchmark 5.2.3
-- snakeviz 2.2.2 (dev tool for visualization)
-- cProfile (stdlib, via --benchmark-cprofile)
-
-**Research flag:** LOW — pytest-benchmark is mature and well-integrated.
+**Research flag:** NEEDS RESEARCH — Theme color analysis heuristics not fully documented. Use `/gsd:research-phase` for color theory and WCAG contrast calculations if automatic derivation is complex.
 
 ### Phase Ordering Rationale
 
-1. **Phase 1 must come first** — Cannot build tests on a hanging pipeline. Diagnosis reveals whether the hang is lexer/layout/render/shadow, informing the fix.
+**Why this order:**
+- **Phase 1 before 2:** Named styles are a parameter to the resolution function — the resolution function must exist first
+- **Phase 2 before 3:** Theme integration adjusts color inputs to resolution; resolution and rendering must be working before color derivation can be validated
+- **Dependencies respected:** Config → Resolution → Rendering → CLI → Theme integration
 
-2. **Phase 2 requires Phase 1** — Visual regression tests lock in correct rendering behavior. If the pipeline is broken (hanging or producing wrong output), visual tests lock in broken behavior.
+**Why this grouping:**
+- **Phase 1 (foundation):** All components touched once, integration validated across formats
+- **Phase 2 (differentiation):** User-facing value delivered; competitive positioning achieved
+- **Phase 3 (polish):** Optional enhancements that improve UX but don't block launch
 
-3. **Phase 3 is defense-in-depth** — Test timeouts and CI timeouts prevent future hangs, but only after root causes are fixed. Adding them before Phase 1 would mask the symptoms without fixing the cause.
-
-4. **Phase 4 is optional** — Performance profiling has value but is not essential for "hardening." Can be deferred to v1.2 if time-constrained.
-
-**Dependency graph:**
-```
-Phase 1 (Diagnose & Fix) ---> Phase 2 (Visual Regression)
-        |                             |
-        v                             v
-Phase 3 (Test Hardening) ---> Phase 4 (Performance) [optional]
-```
-
-**Critical path:** Phases 1-3 (Phase 4 can run in parallel or be deferred)
+**Pitfall avoidance:**
+- Critical pitfalls (z-order, word wrap, width) addressed in Phase 1 design
+- Moderate pitfalls (alpha differences, color clashing) addressed in Phase 3
+- Minor pitfalls (off-by-one, corner clipping) deferred to testing/polish
 
 ### Research Flags
 
-**Phases needing deeper research during planning:**
-- Phase 2 (Visual Regression): Font rendering cross-platform differences may require iteration. Budget time for threshold tuning.
+**Phases with standard patterns (skip additional research):**
+- **Phase 1:** Config, resolution, rendering — all patterns documented in existing codebase. `draw_rectangle()` API verified. No unknowns.
+- **Phase 2:** Named styles pattern well-established across competing tools. Focus mode implementation clear from Carbon/Shiki examples.
 
-**Phases with standard patterns (skip research-phase):**
-- Phase 1 (Timeouts): Well-documented stdlib patterns
-- Phase 3 (Test Hardening): pytest-timeout is straightforward
-- Phase 4 (Performance): pytest-benchmark is mature
+**Phases likely needing deeper research:**
+- **Phase 3 (theme integration):** If theme-aware color derivation proves complex, use `/gsd:research-phase` to investigate:
+  - Color luminance calculation formulas (HSL/LAB color spaces)
+  - Contrast ratio computation (WCAG formulas)
+  - Tinting algorithms that preserve readability across light/dark themes
+  - Whether to add highlight color fields to Theme protocol vs. runtime derivation
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All versions verified via PyPI. Integration patterns validated against stdlib and pytest-benchmark docs. No new runtime dependencies. |
-| Features | HIGH | Based on codebase analysis (260 existing tests, 5 language fixtures, known test.mlir bug). v1.1 scope is clear: fix hang, add visual tests, guard against regressions. |
-| Architecture | HIGH | Existing pipeline architecture understood via codebase analysis. All new subsystems are additive wrappers, no refactoring needed. Build order minimizes risk. |
-| Pitfalls | HIGH | Signal vs subprocess timeout limitations verified in Python docs. Catastrophic backtracking documented in multiple Pygments issues. Visual regression cross-platform issues are well-known. |
+| Stack | HIGH | No new dependencies. All required APIs verified in existing codebase source. Version compatibility confirmed via PyPI. |
+| Features | HIGH | Cross-referenced 7+ tools (Silicon, Carbon, Snappify, Chalk.ist, CodeSnap, Shiki, Reveal.js). User expectations clear. MVP scope well-defined. |
+| Architecture | HIGH | Direct source code analysis of rendering pipeline. Integration points identified. Data flow designed. Geometry formulas derived from existing `LayoutMetrics`. |
+| Pitfalls | HIGH | 10 pitfalls identified from Cairo documentation, VS Code issue tracker, and domain experience. Prevention strategies concrete and testable. |
 
 **Overall confidence:** HIGH
 
-The v1.1 scope is well-defined (hardening only, no new features), the existing codebase is well-structured and testable, and all research findings are validated against official documentation or multiple corroborating sources.
-
 ### Gaps to Address
 
-**Medium-priority gaps:**
-- Exact threshold values for pixelmatch visual comparison — will require tuning during Phase 2 based on actual CI rendering variance
-- Whether test.mlir hang is in lexer vs layout vs render — must be diagnosed in Phase 1 before proceeding
+**Minor uncertainty:**
+- **Theme-aware color derivation heuristics:** Research documents the GOAL (derive contrasting tints from background) but not the exact FORMULA. Phase 3 may need color theory research if simple linear interpolation doesn't produce good results across all themes.
+- **Handling:** Start Phase 3 with `lerp(background, tint, 0.15)` approach. If visual testing across themes shows poor results, trigger `/gsd:research-phase` for color space analysis (HSL vs. LAB for perceptual uniformity).
 
-**Low-priority gaps:**
-- Cross-platform font rendering behavior if macOS developers want to run visual tests locally — accept as known limitation, CI is source of truth
-- Performance optimization strategy if shadow blur is bottleneck — defer to Phase 4, only relevant if profiling confirms it is the issue
+**SVG/PDF alpha blending variability:**
+- Research notes potential differences in alpha compositing across Cairo backends.
+- **Handling:** Phase 1 includes explicit visual regression tests for all three formats. If differences appear, Phase 3 pivots to pre-blended opaque colors as primary recommendation.
 
-**No blocking gaps.** All critical questions have clear answers or investigation paths.
+**Gutter indicator rendering details:**
+- Research identifies the UX goal (diff-style markers) but not the exact rendering approach (text glyphs vs. geometric shapes).
+- **Handling:** Phase 3 implementation decision. Try Unicode characters (`+`/`-`) first for simplicity. If alignment issues arise, use Cairo line drawing for colored bars.
 
 ## Sources
 
 ### Primary (HIGH confidence)
 
-**Official documentation:**
-- [Python signal module docs](https://docs.python.org/3/library/signal.html) — Signal limitations with C extensions
-- [Python concurrent.futures docs](https://docs.python.org/3/library/concurrent.futures.html) — ThreadPoolExecutor timeout patterns
-- [Python cProfile docs](https://docs.python.org/3/library/profile.html) — Built-in profiler
-- [Pillow ImageChops docs](https://pillow.readthedocs.io/en/stable/reference/ImageChops.html) — Image comparison operations
+**Technology stack:**
+- [pycairo 1.29.0 on PyPI](https://pypi.org/project/pycairo/) — Version compatibility verified
+- [Pydantic 2.12.5 on PyPI](https://pypi.org/project/pydantic/) — Nested model validation confirmed
 
-**Verified via PyPI:**
-- [pytest-benchmark 5.2.3](https://pypi.org/project/pytest-benchmark/) — Python 3.9+, pytest 8.1+, cProfile integration
-- [pytest-benchmark docs](https://pytest-benchmark.readthedocs.io/) — --benchmark-compare, --benchmark-cprofile
-- [pixelmatch 0.3.0](https://pypi.org/project/pixelmatch/) — Python port of mapbox/pixelmatch
-- [pixelmatch-py GitHub](https://github.com/whtsky/pixelmatch-py) — API docs, threshold/AA options
-- [snakeviz 2.2.2](https://pypi.org/project/snakeviz/) — Python 3.9+, BSD licensed
-- [pytest-timeout](https://pypi.org/project/pytest-timeout/) — v2.4.0, SIGALRM and thread methods
+**Codebase verification (direct source analysis):**
+- `src/codepicture/render/canvas.py` lines 162-192 — `CairoCanvas.draw_rectangle()` with alpha Color support
+- `src/codepicture/core/types.py` lines 35-98 — `Color.from_hex()` with `#RRGGBBAA` support
+- `src/codepicture/core/types.py` lines 141-152 — `DisplayLine.source_line_idx` for word-wrap mapping
+- `src/codepicture/core/types.py` lines 154-188 — `LayoutMetrics` geometry fields
+- `src/codepicture/config/schema.py` — `RenderConfig` Pydantic model structure
+- `src/codepicture/render/renderer.py` lines 47-317 — Rendering pipeline order
 
-**Codebase analysis (HIGH confidence):**
-- All source files under `src/codepicture/` — existing pipeline architecture
-- `tests/conftest.py` — 13 fixtures, rendering helpers, font registration
-- `tests/fixtures/` — 5 language fixture files
-- `.github/workflows/test.yml` — CI configuration
-- `pyproject.toml` — dev dependencies, pytest config
+**Competitive analysis:**
+- [Silicon GitHub](https://github.com/Aloxaf/silicon) — `--highlight-lines` flag, single style, semicolon syntax
+- [Carbon GitHub](https://github.com/carbon-app/carbon) — `selectedLines` with dimming, single style
+- [carbon-now-cli GitHub](https://github.com/mixn/carbon-now-cli) — Comma-separated line syntax
+- [Shiki transformers docs](https://shiki.style/packages/transformers) — Multiple styles (highlight, diff, focus), inline annotations
+- [Reveal.js code docs](https://revealjs.com/code/) — `data-line-numbers` comma-separated syntax
+- [Snappify docs](https://snappify.com/docs/api/simple-snap) — Full color control, blur/gray effects
+- [Chalk.ist](https://chalk.ist/) — Diff view with `+`/`-` markers
 
 ### Secondary (MEDIUM confidence)
 
-**Pygments issues (multiple corroborating sources):**
-- [Pygments Issue #2356](https://github.com/pygments/pygments/issues/2356) — Java properties lexer catastrophic backtracking
-- [Pygments Issue #2355](https://github.com/pygments/pygments/issues/2355) — SQL lexer catastrophic backtracking
-- [Pygments Issue #2053](https://github.com/pygments/pygments/issues/2053) — Elpi lexer pathological backtracking
-- [Pygments Issue #1065](https://github.com/pygments/pygments/issues/1065) — JSON lexer backtracking fix
-- [Pygments lexer development docs](https://pygments.org/docs/lexerdevelopment/) — "Beware of catastrophic backtracking"
+**Pitfalls documentation:**
+- [VS Code issue #85530](https://github.com/microsoft/vscode/issues/85530) — Word wrap + line highlighting interaction
+- [Cairo compositing operators](https://www.cairographics.org/operators/) — Z-order and alpha blending behavior
+- [Pycairo transparency examples](https://zetcode.com/gfx/pycairo/transparency/) — `set_source_rgba` patterns
 
-**Visual regression patterns:**
-- [pytest-image-snapshot](https://github.com/bmihelac/pytest-image-snapshot) — Visual regression library with pixelmatch
-- [Playwright visual tests with Docker](https://medium.com/@adam_pajda/playwright-visual-tests-with-git-lfs-and-docker-d537ddd6e86a) — Environment consistency
-- [Base Web visual regression](https://baseweb.design/blog/visual-regression-testing/) — CI workflow patterns
-- [Visual Regression Testing with GitHub Actions](https://www.duncanmackenzie.net/blog/visual-regression-testing/) — CI integration patterns
+**Accessibility and color contrast:**
+- [Syntax highlighting and color contrast accessibility](https://maxchadwick.xyz/blog/syntax-highlighting-and-color-contrast-accessibility) — WCAG requirements
+- [a11y-syntax-highlighting](https://github.com/ericwbailey/a11y-syntax-highlighting) — Contrast ratio patterns
 
-**Performance and profiling:**
-- [pytest-benchmark patterns (Dec 2025)](https://medium.com/@sparknp1/10-pytest-benchmark-patterns-for-honest-performance-claims-6cc674893494) — Best practices
-- [Python timeout best practices](https://betterstack.com/community/guides/scaling-python/python-timeouts/) — ThreadPoolExecutor as robust approach
-- [Real Python profiling guide](https://realpython.com/python-profiling/) — Profiling workflow
-
-### Tertiary (LOW confidence)
-
-**Reference for comparison, not used:**
-- [timeout-decorator](https://github.com/pnpnpn/timeout-decorator) — Signal vs multiprocessing tradeoffs (unmaintained, not recommended)
-- [pytest-image-diff](https://github.com/Apkawa/pytest-image-diff) — Alternative visual regression library (less popular)
-- [reg-viz/reg-actions](https://github.com/reg-viz/reg-actions) — CI visual regression pattern reference
+**Cairo backend differences:**
+- [Cairo PDF opacity issues](https://github.com/GiovineItalia/Compose.jl/issues/181) — PDF alpha rendering quirks
+- [Emacs Cairo SVG transparency fix](https://lists.gnu.org/archive/html/bug-gnu-emacs/2019-05/msg01122.html) — Premultiplied alpha correction
 
 ---
-*Research completed: 2026-01-30*
+*Research completed: 2026-02-02*
 *Ready for roadmap: yes*
