@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 Phase: All phases complete (v1.0 + v1.1 shipped)
 Plan: N/A
 Status: Ready for next milestone
-Last activity: 2026-02-02 — Completed quick-009 (move test.mlir to fixtures)
+Last activity: 2026-02-02 — Completed quick-010 (add benchmark instructions to README)
 
 Progress: [############################################] 100% (v1.0 + v1.1 complete)
 
@@ -53,6 +53,7 @@ None — all known issues resolved in v1.1.
 | 007 | Add visual reference update command to README | 2026-02-02 | 38633ed | [007-add-readme-reference-update-command](./quick/007-add-readme-reference-update-command/) |
 | 008 | Fix cairocffi discovery, regenerate baselines, update README | 2026-02-02 | 3c70695 | [008-fix-pytest-snapshot-update](./quick/008-fix-pytest-snapshot-update/) |
 | 009 | Move test.mlir from project root to tests/fixtures/mlir/ | 2026-02-02 | 9df2b4c | [009-move-the-top-level-test-mlir-file-into-a](./quick/009-move-the-top-level-test-mlir-file-into-a/) |
+| 010 | Add benchmark instructions to README | 2026-02-02 | a158e38 | [010-add-to-the-readme-how-to-run-the-benchma](./quick/010-add-to-the-readme-how-to-run-the-benchma/) |
 
 ### Roadmap Evolution
 
@@ -63,5 +64,5 @@ None — all known issues resolved in v1.1.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed quick-009 (move test.mlir to fixtures)
+Stopped at: Completed quick-010 (add benchmark instructions to README)
 Resume file: None
