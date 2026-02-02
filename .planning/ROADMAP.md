@@ -103,7 +103,11 @@ Plans:
   1. Per-stage benchmarks (highlight, layout, render) run for each core language fixture with statistical rigor (pytest-benchmark)
   2. End-to-end pipeline benchmarks exist for small, medium, and large inputs
   3. CI runs benchmarks as an informational step and uploads results as artifacts
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 11-01-PLAN.md — Install pytest-benchmark, create benchmark infrastructure and fixtures
+- [ ] 11-02-PLAN.md — Per-stage benchmarks (highlight, layout, render) for 5 languages
+- [ ] 11-03-PLAN.md — End-to-end pipeline benchmarks and CI workflow
 
 ## Progress
 
@@ -122,7 +126,7 @@ Plans:
 | 8. MLIR Hang Fix | v1.1 | 2/2 | Complete | 2026-01-30 |
 | 9. Rendering Timeout Guards | v1.1 | 3/3 | Complete | 2026-01-30 |
 | 10. Visual Regression & Reliability | v1.1 | 4/4 | Complete | 2026-01-31 |
-| 11. Performance Benchmarks | v1.1 | 0/TBD | Not started | - |
+| 11. Performance Benchmarks | v1.1 | 0/3 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-28*
