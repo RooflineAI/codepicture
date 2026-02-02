@@ -150,3 +150,58 @@ def test_visual_config_variant(
         f"Visual regression failed for {test_name}: "
         f"{mismatch_pct:.4f}% pixels differ (threshold: 0.001%)"
     )
+
+
+# ---------------------------------------------------------------------------
+# Word wrap and fixed size tests (Python fixture only, PNG format)
+# ---------------------------------------------------------------------------
+
+WORDWRAP_FIXEDSIZE_VARIANTS = [
+    ("wordwrap-600", {"window_width": 600}),
+    ("wordwrap-400", {"window_width": 400}),
+    ("fixed-800x300", {"window_width": 800, "window_height": 300}),
+    ("fixed-600x400_wordwrap", {"window_width": 600, "window_height": 400}),
+]
+
+
+@pytest.mark.timeout(30)
+@pytest.mark.parametrize(
+    "variant_name,overrides",
+    WORDWRAP_FIXEDSIZE_VARIANTS,
+    ids=[name for name, _ in WORDWRAP_FIXEDSIZE_VARIANTS],
+)
+def test_visual_wordwrap_fixedsize(
+    variant_name: str,
+    overrides: dict,
+    snapshot_update: bool,
+    visual_fixtures_dir: Path,
+    references_dir: Path,
+    diff_output_dir: Path,
+) -> None:
+    """Compare word wrap / fixed size rendering against reference snapshot.
+
+    Tests word wrapping at various widths and fixed window dimensions
+    using the Python fixture in PNG format only.
+    """
+    fixture_path = visual_fixtures_dir / "python_visual.py"
+    test_name = f"python_png_{variant_name}"
+    reference_path = references_dir / f"{test_name}.png"
+
+    config = RenderConfig(output_format="png", **overrides)
+    data, _ext = render_fixture(fixture_path, config, language="python")
+    actual = Image.open(BytesIO(data)).convert("RGBA")
+
+    if snapshot_update or not reference_path.exists():
+        actual.save(reference_path)
+        pytest.skip(
+            f"Reference image {'updated' if snapshot_update else 'created'}: "
+            f"{reference_path.name}"
+        )
+
+    passed, mismatch_pct = compare_images(
+        actual, reference_path, diff_output_dir, test_name
+    )
+    assert passed, (
+        f"Visual regression failed for {test_name}: "
+        f"{mismatch_pct:.4f}% pixels differ (threshold: 0.001%)"
+    )
