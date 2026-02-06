@@ -164,6 +164,21 @@ def main(
     shadow: Annotated[
         bool | None, typer.Option("--shadow/--no-shadow", help="Enable drop shadow")
     ] = None,
+    # Highlighting
+    highlight_lines: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--highlight-lines",
+            help="Lines to highlight (e.g. 3 or 7-12). Repeatable.",
+        ),
+    ] = None,
+    highlight_color: Annotated[
+        str | None,
+        typer.Option(
+            "--highlight-color",
+            help="Highlight color (#RRGGBB or #RRGGBBAA)",
+        ),
+    ] = None,
     # Timeout
     timeout: Annotated[
         float,
@@ -234,6 +249,10 @@ def main(
             cli_overrides["window_width"] = window_width
         if window_height is not None:
             cli_overrides["window_height"] = window_height
+        if highlight_lines is not None:
+            cli_overrides["highlight_lines"] = highlight_lines
+        if highlight_color is not None:
+            cli_overrides["highlight_color"] = highlight_color
 
         # Infer output format and add to overrides
         output_format = infer_format(output, format)
