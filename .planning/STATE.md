@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 12 of 14 (Core Highlighting Infrastructure)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-06 -- Completed 12-02-PLAN.md (highlight config and CLI flags)
+Last activity: 2026-02-06 -- Completed 12-03-PLAN.md (renderer highlight integration)
 
-Progress: [#####.....] 2/4 plans in phase 12 (v2.0)
+Progress: [#######...] 3/4 plans in phase 12 (v2.0)
 
 ## Performance Metrics
 
@@ -41,6 +41,8 @@ Decisions are logged in PROJECT.md Key Decisions table (15 decisions total).
 - 12-02: highlight_color rejects #RGB (3-char hex ambiguous for alpha); only #RRGGBB/#RRGGBBAA
 - 12-02: highlight_lines validator auto-converts integers to strings for TOML compatibility
 - 12-02: Format validation only in validators; range resolution deferred to render time
+- 12-03: Highlight rects drawn BEFORE all text (line numbers + code) for correct z-order
+- 12-03: Wrapped path uses dline.source_line_idx to highlight ALL display lines for a source line
 
 ### Pending Todos
 
@@ -75,5 +77,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 12-02-PLAN.md (highlight config and CLI flags)
+Stopped at: Completed 12-03-PLAN.md (renderer highlight integration)
 Resume file: None
