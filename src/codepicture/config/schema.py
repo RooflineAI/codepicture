@@ -60,6 +60,10 @@ class RenderConfig(BaseModel):
     # Background
     background_color: str | None = None  # hex color or None (use theme background)
 
+    # Highlighting
+    highlight_lines: list[str] | None = None  # e.g. ["3", "7-12", "15"]
+    highlight_color: str | None = None  # e.g. "#FFE65040"
+
     @field_validator("output_format", mode="before")
     @classmethod
     def convert_output_format(cls, v: str | OutputFormat) -> OutputFormat:
@@ -108,3 +112,36 @@ class RenderConfig(BaseModel):
                 f"Invalid hex color '{v}'. Use #RGB, #RRGGBB, or #RRGGBBAA format"
             )
         return v
+
+    @field_validator("highlight_color", mode="before")
+    @classmethod
+    def validate_highlight_color(cls, v: str | None) -> str | None:
+        """Validate highlight color hex format (#RRGGBB or #RRGGBBAA only)."""
+        if v is None:
+            return None
+        if not isinstance(v, str):
+            raise ValueError(
+                f"highlight_color must be a string, got {type(v).__name__}"
+            )
+        # Only #RRGGBB and #RRGGBBAA (not #RGB -- 3-char hex is ambiguous for alpha)
+        if not re.match(r"^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$", v):
+            raise ValueError(
+                f"Invalid highlight color '{v}'. Use #RRGGBB or #RRGGBBAA format"
+            )
+        return v
+
+    @field_validator("highlight_lines", mode="before")
+    @classmethod
+    def validate_highlight_lines(cls, v: list[str] | None) -> list[str] | None:
+        """Validate highlight line specs (N or N-M format only)."""
+        if v is None:
+            return None
+        if not isinstance(v, list):
+            raise ValueError("highlight_lines must be a list of strings")
+        for spec in v:
+            s = str(spec)
+            if not re.match(r"^\d+(-\d+)?$", s):
+                raise ValueError(
+                    f"Invalid line spec '{s}'. Use N or N-M format (e.g. '3' or '7-12')"
+                )
+        return [str(s) for s in v]
