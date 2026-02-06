@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 12 of 14 (Core Highlighting Infrastructure)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-02-06 -- Completed 12-03-PLAN.md (renderer highlight integration)
+Plan: 4 of 4 in current phase
+Status: Phase complete
+Last activity: 2026-02-06 -- Completed 12-04-PLAN.md (end-to-end highlight tests)
 
-Progress: [#######...] 3/4 plans in phase 12 (v2.0)
+Progress: [##########] 4/4 plans in phase 12 (v2.0)
 
 ## Performance Metrics
 
@@ -43,6 +43,8 @@ Decisions are logged in PROJECT.md Key Decisions table (15 decisions total).
 - 12-02: Format validation only in validators; range resolution deferred to render time
 - 12-03: Highlight rects drawn BEFORE all text (line numbers + code) for correct z-order
 - 12-03: Wrapped path uses dline.source_line_idx to highlight ALL display lines for a source line
+- 12-04: Cross-format highlight tests use highlight_lines=["3"] as canonical single-line test case
+- 12-04: Integration no-change tests compare raw PNG bytes for empty/None vs no highlights
 
 ### Pending Todos
 
@@ -77,5 +79,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 12-03-PLAN.md (renderer highlight integration)
+Stopped at: Completed 12-04-PLAN.md (Phase 12 complete -- all 4 plans delivered)
 Resume file: None
