@@ -206,3 +206,112 @@ def test_visual_wordwrap_fixedsize(
         f"Visual regression failed for {test_name}: "
         f"{mismatch_pct:.4f}% pixels differ (threshold: 0.001%)"
     )
+
+
+# ---------------------------------------------------------------------------
+# Highlight variant tests (Python fixture only, PNG format)
+# ---------------------------------------------------------------------------
+
+HIGHLIGHT_VARIANTS = [
+    ("highlight-single", {"highlight_lines": ["3"]}),
+    ("highlight-range", {"highlight_lines": ["2-4"]}),
+    ("highlight-mixed", {"highlight_lines": ["1", "3-5", "7"]}),
+    ("highlight-color-red", {"highlight_lines": ["3"], "highlight_color": "#FF000040"}),
+    ("highlight-wrap", {"highlight_lines": ["1"], "window_width": 400}),
+]
+
+
+@pytest.mark.timeout(30)
+@pytest.mark.parametrize(
+    "variant_name,overrides",
+    HIGHLIGHT_VARIANTS,
+    ids=[name for name, _ in HIGHLIGHT_VARIANTS],
+)
+def test_visual_highlight_variant(
+    variant_name: str,
+    overrides: dict,
+    snapshot_update: bool,
+    visual_fixtures_dir: Path,
+    references_dir: Path,
+    diff_output_dir: Path,
+) -> None:
+    """Compare highlight variant rendering against reference snapshot.
+
+    Tests highlight combinations (single, range, mixed, custom color,
+    word-wrap) using the Python fixture in PNG format only.
+    """
+    fixture_path = visual_fixtures_dir / "python_visual.py"
+    test_name = f"python_png_{variant_name}"
+    reference_path = references_dir / f"{test_name}.png"
+
+    config = RenderConfig(output_format="png", **overrides)
+    data, _ext = render_fixture(fixture_path, config, language="python")
+    actual = Image.open(BytesIO(data)).convert("RGBA")
+
+    if snapshot_update or not reference_path.exists():
+        actual.save(reference_path)
+        pytest.skip(
+            f"Reference image {'updated' if snapshot_update else 'created'}: "
+            f"{reference_path.name}"
+        )
+
+    passed, mismatch_pct = compare_images(
+        actual, reference_path, diff_output_dir, test_name
+    )
+    assert passed, (
+        f"Visual regression failed for {test_name}: "
+        f"{mismatch_pct:.4f}% pixels differ (threshold: 0.001%)"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Cross-format highlight tests (Python fixture, PNG/SVG/PDF)
+# ---------------------------------------------------------------------------
+
+HIGHLIGHT_FORMATS = ["png", "svg", "pdf"]
+
+
+@pytest.mark.timeout(30)
+@pytest.mark.parametrize("output_format", HIGHLIGHT_FORMATS)
+def test_visual_highlight_cross_format(
+    output_format: str,
+    snapshot_update: bool,
+    visual_fixtures_dir: Path,
+    references_dir: Path,
+    diff_output_dir: Path,
+) -> None:
+    """Compare highlighted rendering across all 3 output formats.
+
+    Uses highlight_lines=["3"] on the Python fixture to verify
+    highlights render consistently in PNG, SVG, and PDF.
+    """
+    fixture_path = visual_fixtures_dir / "python_visual.py"
+    test_name = f"python_{output_format}_highlight-default"
+    reference_path = references_dir / f"{test_name}.png"
+
+    config = RenderConfig(output_format=output_format, highlight_lines=["3"])
+    data, _ext = render_fixture(fixture_path, config, language="python")
+
+    if output_format == "png":
+        actual = Image.open(BytesIO(data)).convert("RGBA")
+    elif output_format == "svg":
+        actual = svg_to_png(data)
+    elif output_format == "pdf":
+        actual = pdf_to_png(data)
+    else:
+        raise ValueError(f"Unknown format: {output_format}")
+
+    if snapshot_update or not reference_path.exists():
+        actual.save(reference_path)
+        pytest.skip(
+            f"Reference image {'updated' if snapshot_update else 'created'}: "
+            f"{reference_path.name}"
+        )
+
+    passed, mismatch_pct = compare_images(
+        actual, reference_path, diff_output_dir, test_name
+    )
+    assert passed, (
+        f"Visual regression failed for {test_name}: "
+        f"{mismatch_pct:.4f}% pixels differ (threshold: 0.001%)"
+    )
