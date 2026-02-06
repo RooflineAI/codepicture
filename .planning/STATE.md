@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 12 of 14 (Core Highlighting Infrastructure)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-02-02 -- v2.0 roadmap created (3 phases, 31 requirements)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-06 -- Completed 12-01-PLAN.md (line range parser + color resolver)
 
-Progress: [..........] 0% (v2.0)
+Progress: [###.......] 1/4 plans in phase 12 (v2.0)
 
 ## Performance Metrics
 
@@ -33,6 +33,11 @@ Progress: [..........] 0% (v2.0)
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table (15 decisions total).
+
+**v2.0 execution decisions:**
+- 12-01: DEFAULT_HIGHLIGHT_COLOR = Color(r=255, g=230, b=80, a=64) -- warm yellow #FFE65040 at ~25% opacity
+- 12-01: DEFAULT_HIGHLIGHT_ALPHA = 64 shared by default color and 6-char hex fallback
+- 12-01: HIGHLIGHT_CORNER_RADIUS = 0 (sharp rects now, constant exported for future phases)
 
 ### Pending Todos
 
@@ -66,6 +71,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-02
-Stopped at: v2.0 roadmap created, ready to plan Phase 12
+Last session: 2026-02-06
+Stopped at: Completed 12-01-PLAN.md (line range parser + color resolver)
 Resume file: None
