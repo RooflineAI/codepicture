@@ -18,10 +18,16 @@ from codepicture.core.types import (
 )
 from codepicture.render.canvas import CairoCanvas
 from codepicture.render.chrome import TITLE_BAR_HEIGHT, draw_title_bar
+from codepicture.render.highlights import (
+    DEFAULT_HIGHLIGHT_COLOR,
+    parse_line_ranges,
+    resolve_highlight_color,
+)
 from codepicture.render.shadow import apply_shadow, calculate_shadow_margin
 
 if TYPE_CHECKING:
     from codepicture.core.protocols import Theme
+    from codepicture.core.types import Color
     from codepicture.highlight import TokenInfo
 
 __all__ = ["Renderer"]
@@ -62,6 +68,17 @@ class Renderer:
         """
         config = self._config
         output_format = config.output_format
+
+        # Resolve line highlights
+        highlighted_lines: set[int] = set()
+        highlight_color: Color = DEFAULT_HIGHLIGHT_COLOR
+        if config.highlight_lines:
+            highlighted_lines = parse_line_ranges(
+                config.highlight_lines,
+                total_lines=len(lines),
+                line_number_offset=config.line_number_offset,
+            )
+            highlight_color = resolve_highlight_color(config.highlight_color)
 
         # Determine if chrome should be drawn
         has_chrome = config.window_controls and config.window_style != WindowStyle.NONE
@@ -119,10 +136,26 @@ class Renderer:
 
         if metrics.display_lines:
             # Word-wrap aware rendering path
-            self._render_wrapped(canvas, lines, metrics, theme, code_y_offset)
+            self._render_wrapped(
+                canvas,
+                lines,
+                metrics,
+                theme,
+                code_y_offset,
+                highlighted_lines,
+                highlight_color,
+            )
         else:
             # Legacy rendering path (no wrapping)
-            self._render_legacy(canvas, lines, metrics, theme, code_y_offset)
+            self._render_legacy(
+                canvas,
+                lines,
+                metrics,
+                theme,
+                code_y_offset,
+                highlighted_lines,
+                highlight_color,
+            )
 
         # --- end drawing code/line numbers ---
 
@@ -159,6 +192,8 @@ class Renderer:
         metrics: LayoutMetrics,
         theme: Theme,
         code_y_offset: float,
+        highlighted_lines: set[int],
+        highlight_color: Color,
     ) -> None:
         """Render code using the original (non-wrapped) path."""
         config = self._config
@@ -224,6 +259,8 @@ class Renderer:
         metrics: LayoutMetrics,
         theme: Theme,
         code_y_offset: float,
+        highlighted_lines: set[int],
+        highlight_color: Color,
     ) -> None:
         """Render code with word-wrap aware display lines."""
         config = self._config
