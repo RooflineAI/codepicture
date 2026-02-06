@@ -40,7 +40,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 
 **Milestone Goal:** Add the ability to highlight specific lines with colored backgrounds, supporting multiple named styles (add/remove/focus) for presentation-ready code annotations.
 
-- [ ] **Phase 12: Core Highlighting Infrastructure** - Single-style line highlighting with configurable color across all formats
+- [x] **Phase 12: Core Highlighting Infrastructure** - Single-style line highlighting with configurable color across all formats -- completed 2026-02-06
 - [ ] **Phase 13: Named Styles, Focus Mode & Gutter Indicators** - Multiple highlight styles with focus dimming and diff-style gutter markers
 - [ ] **Phase 14: Theme Integration & Documentation** - Theme-aware default colors and complete documentation
 
@@ -59,10 +59,10 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 **Plans**: 4 plans
 
 Plans:
-- [ ] 12-01-PLAN.md -- Line range parser and highlight color resolver (TDD)
-- [ ] 12-02-PLAN.md -- Config schema fields and CLI flag wiring
-- [ ] 12-03-PLAN.md -- Renderer integration (highlight rectangle drawing)
-- [ ] 12-04-PLAN.md -- Tests: CLI integration, visual regression, word-wrap integration
+- [x] 12-01-PLAN.md -- Line range parser and highlight color resolver (TDD)
+- [x] 12-02-PLAN.md -- Config schema fields and CLI flag wiring
+- [x] 12-03-PLAN.md -- Renderer integration (highlight rectangle drawing)
+- [x] 12-04-PLAN.md -- Tests: CLI integration, visual regression, word-wrap integration
 
 ### Phase 13: Named Styles, Focus Mode & Gutter Indicators
 **Goal**: Users can apply distinct highlight styles (add/remove/focus) to different line groups in a single render, with focus mode dimming and gutter indicators
@@ -114,7 +114,7 @@ Phases execute in numeric order: 12 -> 13 -> 14
 | 9. Rendering Timeout Guards | v1.1 | 3/3 | Complete | 2026-01-30 |
 | 10. Visual Regression & Reliability | v1.1 | 4/4 | Complete | 2026-01-31 |
 | 11. Performance Benchmarks | v1.1 | 3/3 | Complete | 2026-02-02 |
-| 12. Core Highlighting Infrastructure | v2.0 | 0/4 | Not started | - |
+| 12. Core Highlighting Infrastructure | v2.0 | 4/4 | Complete | 2026-02-06 |
 | 13. Named Styles, Focus & Gutter | v2.0 | 0/TBD | Not started | - |
 | 14. Theme Integration & Docs | v2.0 | 0/TBD | Not started | - |
 

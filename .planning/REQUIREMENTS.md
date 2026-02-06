@@ -9,13 +9,13 @@ Requirements for the Line Highlighting milestone. Each maps to roadmap phases.
 
 ### Core Highlighting
 
-- [ ] **HLCORE-01**: User can highlight specific lines via `--highlight-lines '1,3-5,7'` CLI flag
-- [ ] **HLCORE-02**: User can specify line ranges with comma-separated syntax (individual lines and inclusive ranges)
-- [ ] **HLCORE-03**: Highlighted lines display a semi-transparent colored background overlay spanning the full content width
-- [ ] **HLCORE-04**: User can customize highlight color via `--highlight-color '#RRGGBBAA'` flag
-- [ ] **HLCORE-05**: Line highlighting works across all output formats (PNG, SVG, PDF)
-- [ ] **HLCORE-06**: Highlight settings are configurable via TOML config file
-- [ ] **HLCORE-07**: Highlighted word-wrapped lines highlight ALL display lines for the source line
+- [x] **HLCORE-01**: User can highlight specific lines via `--highlight-lines '1,3-5,7'` CLI flag
+- [x] **HLCORE-02**: User can specify line ranges with comma-separated syntax (individual lines and inclusive ranges)
+- [x] **HLCORE-03**: Highlighted lines display a semi-transparent colored background overlay spanning the full content width
+- [x] **HLCORE-04**: User can customize highlight color via `--highlight-color '#RRGGBBAA'` flag
+- [x] **HLCORE-05**: Line highlighting works across all output formats (PNG, SVG, PDF)
+- [x] **HLCORE-06**: Highlight settings are configurable via TOML config file
+- [x] **HLCORE-07**: Highlighted word-wrapped lines highlight ALL display lines for the source line
 
 ### Named Styles
 
@@ -50,13 +50,13 @@ Requirements for the Line Highlighting milestone. Each maps to roadmap phases.
 
 ### Testing
 
-- [ ] **HLTEST-01**: Unit tests for line range parser (individual lines, ranges, mixed, edge cases)
+- [x] **HLTEST-01**: Unit tests for line range parser (individual lines, ranges, mixed, edge cases)
 - [ ] **HLTEST-02**: Unit tests for highlight resolution (style-to-color mapping, custom overrides, defaults)
-- [ ] **HLTEST-03**: Visual regression tests for highlighted output across all 3 formats (PNG, SVG, PDF)
+- [x] **HLTEST-03**: Visual regression tests for highlighted output across all 3 formats (PNG, SVG, PDF)
 - [ ] **HLTEST-04**: Visual regression tests for each named style (add, remove, focus, highlight)
-- [ ] **HLTEST-05**: Integration tests for word-wrapped highlighted lines
+- [x] **HLTEST-05**: Integration tests for word-wrapped highlighted lines
 - [ ] **HLTEST-06**: Integration tests for focus mode dimming
-- [ ] **HLTEST-07**: Tests for CLI flag parsing and TOML config loading of highlight options
+- [x] **HLTEST-07**: Tests for CLI flag parsing and TOML config loading of highlight options
 - [ ] **HLTEST-08**: Tests for gutter indicators with named styles
 
 ## Future Requirements
@@ -88,13 +88,13 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HLCORE-01 | Phase 12 | Pending |
-| HLCORE-02 | Phase 12 | Pending |
-| HLCORE-03 | Phase 12 | Pending |
-| HLCORE-04 | Phase 12 | Pending |
-| HLCORE-05 | Phase 12 | Pending |
-| HLCORE-06 | Phase 12 | Pending |
-| HLCORE-07 | Phase 12 | Pending |
+| HLCORE-01 | Phase 12 | Complete |
+| HLCORE-02 | Phase 12 | Complete |
+| HLCORE-03 | Phase 12 | Complete |
+| HLCORE-04 | Phase 12 | Complete |
+| HLCORE-05 | Phase 12 | Complete |
+| HLCORE-06 | Phase 12 | Complete |
+| HLCORE-07 | Phase 12 | Complete |
 | HLSTYL-01 | Phase 13 | Pending |
 | HLSTYL-02 | Phase 13 | Pending |
 | HLSTYL-03 | Phase 13 | Pending |
@@ -111,13 +111,13 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 | HLDOC-01 | Phase 14 | Pending |
 | HLDOC-02 | Phase 14 | Pending |
 | HLDOC-03 | Phase 14 | Pending |
-| HLTEST-01 | Phase 12 | Pending |
+| HLTEST-01 | Phase 12 | Complete |
 | HLTEST-02 | Phase 13 | Pending |
-| HLTEST-03 | Phase 12 | Pending |
+| HLTEST-03 | Phase 12 | Complete |
 | HLTEST-04 | Phase 13 | Pending |
-| HLTEST-05 | Phase 12 | Pending |
+| HLTEST-05 | Phase 12 | Complete |
 | HLTEST-06 | Phase 13 | Pending |
-| HLTEST-07 | Phase 12 | Pending |
+| HLTEST-07 | Phase 12 | Complete |
 | HLTEST-08 | Phase 13 | Pending |
 
 **Coverage:**
@@ -127,4 +127,4 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 
 ---
 *Requirements defined: 2026-02-02*
-*Last updated: 2026-02-02 after roadmap creation*
+*Last updated: 2026-02-06 after Phase 12 completion*

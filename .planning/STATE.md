@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** v2.0 Line Highlighting -- Phase 12 (Core Highlighting Infrastructure)
+**Current focus:** v2.0 Line Highlighting -- Phase 13 (Named Styles, Focus Mode & Gutter Indicators)
 
 ## Current Position
 
-Phase: 12 of 14 (Core Highlighting Infrastructure)
+Phase: 12 of 14 (Core Highlighting Infrastructure) -- COMPLETE
 Plan: 4 of 4 in current phase
-Status: Phase complete
-Last activity: 2026-02-06 -- Completed 12-04-PLAN.md (end-to-end highlight tests)
+Status: Phase verified and complete
+Last activity: 2026-02-06 -- Phase 12 complete (4 plans, verified)
 
-Progress: [##########] 4/4 plans in phase 12 (v2.0)
+Progress: [###.......] 1/3 phases in v2.0
 
 ## Performance Metrics
 
@@ -79,5 +79,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 12-04-PLAN.md (Phase 12 complete -- all 4 plans delivered)
+Stopped at: Phase 12 complete and verified. Ready to plan Phase 13.
 Resume file: None
