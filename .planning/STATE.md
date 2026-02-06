@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 12 of 14 (Core Highlighting Infrastructure)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-06 -- Completed 12-01-PLAN.md (line range parser + color resolver)
+Last activity: 2026-02-06 -- Completed 12-02-PLAN.md (highlight config and CLI flags)
 
-Progress: [###.......] 1/4 plans in phase 12 (v2.0)
+Progress: [#####.....] 2/4 plans in phase 12 (v2.0)
 
 ## Performance Metrics
 
@@ -38,6 +38,9 @@ Decisions are logged in PROJECT.md Key Decisions table (15 decisions total).
 - 12-01: DEFAULT_HIGHLIGHT_COLOR = Color(r=255, g=230, b=80, a=64) -- warm yellow #FFE65040 at ~25% opacity
 - 12-01: DEFAULT_HIGHLIGHT_ALPHA = 64 shared by default color and 6-char hex fallback
 - 12-01: HIGHLIGHT_CORNER_RADIUS = 0 (sharp rects now, constant exported for future phases)
+- 12-02: highlight_color rejects #RGB (3-char hex ambiguous for alpha); only #RRGGBB/#RRGGBBAA
+- 12-02: highlight_lines validator auto-converts integers to strings for TOML compatibility
+- 12-02: Format validation only in validators; range resolution deferred to render time
 
 ### Pending Todos
 
@@ -72,5 +75,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 12-01-PLAN.md (line range parser + color resolver)
+Stopped at: Completed 12-02-PLAN.md (highlight config and CLI flags)
 Resume file: None
