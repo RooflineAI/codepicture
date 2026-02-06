@@ -431,3 +431,157 @@ class TestCliIntegration:
 
         assert result.returncode == 0
         assert result.stdout == ""  # Silent on success
+
+
+# =============================================================================
+# Highlight Tests - CliRunner
+# =============================================================================
+
+
+@pytest.fixture
+def multiline_py(tmp_path: Path) -> Path:
+    """Create a multi-line Python file for highlight tests."""
+    sample = tmp_path / "multiline.py"
+    sample.write_text("# line 1\nx = 1\ny = 2\nz = x + y\nprint(z)\n")
+    return sample
+
+
+class TestCliHighlightLines:
+    """Tests for CLI --highlight-lines and --highlight-color flags."""
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_highlight_lines_single(self, multiline_py: Path, tmp_path: Path):
+        """--highlight-lines with single line produces highlighted output."""
+        output = tmp_path / "output.png"
+        result = runner.invoke(
+            app,
+            [str(multiline_py), "-o", str(output), "--highlight-lines", "2"],
+        )
+
+        assert result.exit_code == 0, f"CLI failed: {result.output}"
+        assert output.exists()
+        assert output.stat().st_size > 0
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_highlight_lines_multiple(self, multiline_py: Path, tmp_path: Path):
+        """--highlight-lines repeated with single and range specs."""
+        output = tmp_path / "output.png"
+        result = runner.invoke(
+            app,
+            [
+                str(multiline_py),
+                "-o",
+                str(output),
+                "--highlight-lines",
+                "1",
+                "--highlight-lines",
+                "3-5",
+            ],
+        )
+
+        assert result.exit_code == 0, f"CLI failed: {result.output}"
+        assert output.exists()
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_highlight_lines_with_color(self, multiline_py: Path, tmp_path: Path):
+        """--highlight-color with 8-char hex is accepted."""
+        output = tmp_path / "output.png"
+        result = runner.invoke(
+            app,
+            [
+                str(multiline_py),
+                "-o",
+                str(output),
+                "--highlight-lines",
+                "2",
+                "--highlight-color",
+                "#FF000040",
+            ],
+        )
+
+        assert result.exit_code == 0, f"CLI failed: {result.output}"
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_highlight_lines_6char_color(self, multiline_py: Path, tmp_path: Path):
+        """--highlight-color with 6-char hex (#RRGGBB) is accepted."""
+        output = tmp_path / "output.png"
+        result = runner.invoke(
+            app,
+            [
+                str(multiline_py),
+                "-o",
+                str(output),
+                "--highlight-lines",
+                "2",
+                "--highlight-color",
+                "#FF0000",
+            ],
+        )
+
+        assert result.exit_code == 0, f"CLI failed: {result.output}"
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_highlight_lines_out_of_bounds(self, multiline_py: Path, tmp_path: Path):
+        """--highlight-lines with out-of-bounds line exits non-zero."""
+        output = tmp_path / "output.png"
+        result = runner.invoke(
+            app,
+            [str(multiline_py), "-o", str(output), "--highlight-lines", "999"],
+        )
+
+        assert result.exit_code != 0
+        assert "out of range" in result.output.lower()
+
+    def test_highlight_lines_invalid_syntax(self, multiline_py: Path, tmp_path: Path):
+        """--highlight-lines with non-numeric value exits non-zero."""
+        output = tmp_path / "output.png"
+        result = runner.invoke(
+            app,
+            [str(multiline_py), "-o", str(output), "--highlight-lines", "abc"],
+        )
+
+        assert result.exit_code != 0
+
+    def test_highlight_color_invalid(self, multiline_py: Path, tmp_path: Path):
+        """--highlight-color with non-hex value exits non-zero."""
+        output = tmp_path / "output.png"
+        result = runner.invoke(
+            app,
+            [
+                str(multiline_py),
+                "-o",
+                str(output),
+                "--highlight-lines",
+                "2",
+                "--highlight-color",
+                "red",
+            ],
+        )
+
+        assert result.exit_code != 0
+
+    @pytest.mark.slow
+    @pytest.mark.timeout(15)
+    def test_highlight_lines_from_toml(self, multiline_py: Path, tmp_path: Path):
+        """TOML config with highlight_lines loads and renders correctly."""
+        config = tmp_path / "codepicture.toml"
+        config.write_text('highlight_lines = ["2"]\nhighlight_color = "#FF000040"\n')
+        output = tmp_path / "output.png"
+        result = runner.invoke(
+            app,
+            [
+                str(multiline_py),
+                "-o",
+                str(output),
+                "--config",
+                str(config),
+            ],
+        )
+
+        assert result.exit_code == 0, f"CLI failed: {result.output}"
+        assert output.exists()
