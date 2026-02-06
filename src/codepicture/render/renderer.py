@@ -20,6 +20,7 @@ from codepicture.render.canvas import CairoCanvas
 from codepicture.render.chrome import TITLE_BAR_HEIGHT, draw_title_bar
 from codepicture.render.highlights import (
     DEFAULT_HIGHLIGHT_COLOR,
+    HIGHLIGHT_CORNER_RADIUS,
     parse_line_ranges,
     resolve_highlight_color,
 )
@@ -198,6 +199,24 @@ class Renderer:
         """Render code using the original (non-wrapped) path."""
         config = self._config
 
+        # Draw highlight rectangles (behind all text)
+        if highlighted_lines:
+            for line_idx in range(len(lines)):
+                if line_idx in highlighted_lines:
+                    highlight_y = (
+                        metrics.content_y
+                        + code_y_offset
+                        + line_idx * metrics.line_height_px
+                    )
+                    canvas.draw_rectangle(
+                        x=metrics.content_x,
+                        y=highlight_y,
+                        width=metrics.content_width,
+                        height=metrics.line_height_px,
+                        color=highlight_color,
+                        corner_radius=HIGHLIGHT_CORNER_RADIUS,
+                    )
+
         # Draw line numbers if enabled
         if config.show_line_numbers:
             line_number_color = theme.line_number_fg
@@ -264,6 +283,24 @@ class Renderer:
     ) -> None:
         """Render code with word-wrap aware display lines."""
         config = self._config
+
+        # Draw highlight rectangles (behind all text)
+        if highlighted_lines:
+            for display_idx, dline in enumerate(metrics.display_lines):
+                if dline.source_line_idx in highlighted_lines:
+                    highlight_y = (
+                        metrics.content_y
+                        + code_y_offset
+                        + display_idx * metrics.line_height_px
+                    )
+                    canvas.draw_rectangle(
+                        x=metrics.content_x,
+                        y=highlight_y,
+                        width=metrics.content_width,
+                        height=metrics.line_height_px,
+                        color=highlight_color,
+                        corner_radius=HIGHLIGHT_CORNER_RADIUS,
+                    )
 
         # Pre-build flat char maps per source line for efficient slicing
         # Each entry: list of (char, token_type)
