@@ -207,7 +207,7 @@ brew install cairo pango
 **Ubuntu / Debian:**
 
 ```bash
-apt install libcairo2-dev libgirepository1.0-dev
+apt install libcairo2-dev libgirepository1.0-dev libpango1.0-dev
 ```
 
 Python 3.13 or later is required.
