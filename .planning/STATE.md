@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Line Highlighting
 status: verifying
 stopped_at: Phase 13 context gathered
-last_updated: "2026-03-30T17:05:53.235Z"
-last_activity: 2026-02-06 -- Phase 12 complete (4 plans, verified)
+last_updated: "2026-03-31T07:20:51.265Z"
+last_activity: 2026-03-31
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 7
+  completed_plans: 5
 ---
 
 # Project State
@@ -24,12 +24,12 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 
 ## Current Position
 
-Phase: 12 of 14 (Core Highlighting Infrastructure) -- COMPLETE
-Plan: 4 of 4 in current phase
-Status: Phase verified and complete
-Last activity: 2026-02-06 -- Phase 12 complete (4 plans, verified)
+Phase: 13 of 14 (Named Styles, Focus Mode & Gutter Indicators) -- IN PROGRESS
+Plan: 1 of 3 in current phase -- COMPLETE
+Status: Executing phase 13
+Last activity: 2026-03-31
 
-Progress: [###.......] 1/3 phases in v2.0
+Progress: [#####.....] 5/7 plans in v2.0
 
 ## Performance Metrics
 
@@ -63,6 +63,10 @@ Decisions are logged in PROJECT.md Key Decisions table (15 decisions total).
 - 12-03: Wrapped path uses dline.source_line_idx to highlight ALL display lines for a source line
 - 12-04: Cross-format highlight tests use highlight_lines=["3"] as canonical single-line test case
 - 12-04: Integration no-change tests compare raw PNG bytes for empty/None vs no highlights
+- 13-01: HighlightStyle is str+Enum for easy serialization and comparison
+- 13-01: Last-wins semantics for overlapping line specs (D-03)
+- 13-01: Legacy migration via model_validator(mode='before') preserves backward compat
+- 13-01: Removed --highlight-color CLI flag; per-style colors via TOML only
 
 ### Pending Todos
 
@@ -96,6 +100,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-30T17:05:53.233Z
-Stopped at: Phase 13 context gathered
-Resume file: .planning/phases/13-named-styles-focus-mode-gutter-indicators/13-CONTEXT.md
+Last session: 2026-03-31T07:20:04Z
+Stopped at: Completed 13-01-PLAN.md (Named Highlight Styles Data Model)
+Resume file: None

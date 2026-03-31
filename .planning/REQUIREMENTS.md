@@ -19,11 +19,11 @@ Requirements for the Line Highlighting milestone. Each maps to roadmap phases.
 
 ### Named Styles
 
-- [ ] **HLSTYL-01**: User can specify named highlight styles via `--highlight '3-5:add'` repeated flag syntax
-- [ ] **HLSTYL-02**: Built-in styles: `highlight` (default), `add` (green), `remove` (red), `focus` (yellow/blue)
-- [ ] **HLSTYL-03**: Each built-in style has a distinct default color
-- [ ] **HLSTYL-04**: User can customize style colors via TOML config (`[highlight_styles.add] color = "#RRGGBBAA"`)
-- [ ] **HLSTYL-05**: When no style specified (`--highlight '3-5'`), uses default `highlight` style
+- [x] **HLSTYL-01**: User can specify named highlight styles via `--highlight '3-5:add'` repeated flag syntax
+- [x] **HLSTYL-02**: Built-in styles: `highlight` (default), `add` (green), `remove` (red), `focus` (yellow/blue)
+- [x] **HLSTYL-03**: Each built-in style has a distinct default color
+- [x] **HLSTYL-04**: User can customize style colors via TOML config (`[highlight_styles.add] color = "#RRGGBBAA"`)
+- [x] **HLSTYL-05**: When no style specified (`--highlight '3-5'`), uses default `highlight` style
 
 ### Focus Mode
 
@@ -51,7 +51,7 @@ Requirements for the Line Highlighting milestone. Each maps to roadmap phases.
 ### Testing
 
 - [x] **HLTEST-01**: Unit tests for line range parser (individual lines, ranges, mixed, edge cases)
-- [ ] **HLTEST-02**: Unit tests for highlight resolution (style-to-color mapping, custom overrides, defaults)
+- [x] **HLTEST-02**: Unit tests for highlight resolution (style-to-color mapping, custom overrides, defaults)
 - [x] **HLTEST-03**: Visual regression tests for highlighted output across all 3 formats (PNG, SVG, PDF)
 - [ ] **HLTEST-04**: Visual regression tests for each named style (add, remove, focus, highlight)
 - [x] **HLTEST-05**: Integration tests for word-wrapped highlighted lines
@@ -95,11 +95,11 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 | HLCORE-05 | Phase 12 | Complete |
 | HLCORE-06 | Phase 12 | Complete |
 | HLCORE-07 | Phase 12 | Complete |
-| HLSTYL-01 | Phase 13 | Pending |
-| HLSTYL-02 | Phase 13 | Pending |
-| HLSTYL-03 | Phase 13 | Pending |
-| HLSTYL-04 | Phase 13 | Pending |
-| HLSTYL-05 | Phase 13 | Pending |
+| HLSTYL-01 | Phase 13 | Complete |
+| HLSTYL-02 | Phase 13 | Complete |
+| HLSTYL-03 | Phase 13 | Complete |
+| HLSTYL-04 | Phase 13 | Complete |
+| HLSTYL-05 | Phase 13 | Complete |
 | HLFOC-01 | Phase 13 | Pending |
 | HLFOC-02 | Phase 13 | Pending |
 | HLFOC-03 | Phase 13 | Pending |
@@ -112,7 +112,7 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 | HLDOC-02 | Phase 14 | Pending |
 | HLDOC-03 | Phase 14 | Pending |
 | HLTEST-01 | Phase 12 | Complete |
-| HLTEST-02 | Phase 13 | Pending |
+| HLTEST-02 | Phase 13 | Complete |
 | HLTEST-03 | Phase 12 | Complete |
 | HLTEST-04 | Phase 13 | Pending |
 | HLTEST-05 | Phase 12 | Complete |
