@@ -116,7 +116,7 @@ Phases execute in numeric order: 12 -> 13 -> 14
 | 10. Visual Regression & Reliability | v1.1 | 4/4 | Complete | 2026-01-31 |
 | 11. Performance Benchmarks | v1.1 | 3/3 | Complete | 2026-02-02 |
 | 12. Core Highlighting Infrastructure | v2.0 | 4/4 | Complete | 2026-02-06 |
-| 13. Named Styles, Focus & Gutter | v2.0 | 3/3 | Complete   | 2026-03-31 |
+| 13. Named Styles, Focus & Gutter | v2.0 | 3/3 | Complete    | 2026-03-31 |
 | 14. Theme Integration & Docs | v2.0 | 0/TBD | Not started | - |
 
 ---
