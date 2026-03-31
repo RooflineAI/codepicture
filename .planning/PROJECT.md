@@ -45,12 +45,12 @@ One command turns code into a slide-ready image: `codepicture snippet.py -o slid
 
 **Goal:** Add the ability to highlight specific lines with colored backgrounds, supporting multiple highlight styles (e.g., add/remove/focus) for presentation-ready code annotations.
 
-- [ ] Highlight specific lines with a background color via CLI flag
-- [ ] Support line number ranges (e.g., 3,7-12)
-- [ ] Multiple highlight styles with distinct colors (e.g., green for additions, red for removals, yellow for focus)
+- [x] Highlight specific lines with a background color via CLI flag — Phase 12
+- [x] Support line number ranges (e.g., 3,7-12) — Phase 12
+- [x] Multiple highlight styles with distinct colors (e.g., green for additions, red for removals, blue for focus) — Phase 13
 - [ ] Highlight styling integrates with existing theme system
-- [ ] Works across all output formats (PNG, SVG, PDF)
-- [ ] Configurable via TOML config file
+- [x] Works across all output formats (PNG, SVG, PDF) — Phase 12
+- [x] Configurable via TOML config file — Phase 13
 
 ### Out of Scope
 
@@ -102,4 +102,4 @@ Intended trajectory: personal use → startup internal tool → open source.
 | Atomic file writes | Prevents partial output on timeout/failure | ✓ Good — no corrupted files |
 
 ---
-*Last updated: 2026-02-02 after v2.0 milestone started*
+*Last updated: 2026-03-31 after Phase 13 completion (named styles, focus mode, gutter indicators)*
