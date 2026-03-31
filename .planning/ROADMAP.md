@@ -78,7 +78,7 @@ Plans:
 
 Plans:
 - [x] 13-01-PLAN.md -- Data model, parser, config schema, CLI flag, and unit tests
-- [ ] 13-02-PLAN.md -- Renderer integration (per-style highlights, focus dimming, gutter indicators)
+- [x] 13-02-PLAN.md -- Renderer integration (per-style highlights, focus dimming, gutter indicators)
 - [ ] 13-03-PLAN.md -- Visual regression and integration tests
 
 ### Phase 14: Theme Integration & Documentation
@@ -116,7 +116,7 @@ Phases execute in numeric order: 12 -> 13 -> 14
 | 10. Visual Regression & Reliability | v1.1 | 4/4 | Complete | 2026-01-31 |
 | 11. Performance Benchmarks | v1.1 | 3/3 | Complete | 2026-02-02 |
 | 12. Core Highlighting Infrastructure | v2.0 | 4/4 | Complete | 2026-02-06 |
-| 13. Named Styles, Focus & Gutter | v2.0 | 1/3 | In Progress|  |
+| 13. Named Styles, Focus & Gutter | v2.0 | 2/3 | In Progress|  |
 | 14. Theme Integration & Docs | v2.0 | 0/TBD | Not started | - |
 
 ---

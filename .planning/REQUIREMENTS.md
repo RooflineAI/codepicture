@@ -27,9 +27,9 @@ Requirements for the Line Highlighting milestone. Each maps to roadmap phases.
 
 ### Focus Mode
 
-- [ ] **HLFOC-01**: When `focus` style is used, all non-focused lines are dimmed (reduced opacity)
-- [ ] **HLFOC-02**: Focused lines remain at full brightness/opacity
-- [ ] **HLFOC-03**: Focus dimming level is visually effective without making unfocused lines unreadable
+- [x] **HLFOC-01**: When `focus` style is used, all non-focused lines are dimmed (reduced opacity)
+- [x] **HLFOC-02**: Focused lines remain at full brightness/opacity
+- [x] **HLFOC-03**: Focus dimming level is visually effective without making unfocused lines unreadable
 
 ### Theme Integration
 
@@ -39,8 +39,8 @@ Requirements for the Line Highlighting milestone. Each maps to roadmap phases.
 
 ### Gutter Indicators
 
-- [ ] **HLGUT-01**: Named styles display gutter indicators beside line numbers (`+` for add, `-` for remove, colored bar for focus/highlight)
-- [ ] **HLGUT-02**: Gutter indicators use the same color as the corresponding highlight style
+- [x] **HLGUT-01**: Named styles display gutter indicators beside line numbers (`+` for add, `-` for remove, colored bar for focus/highlight)
+- [x] **HLGUT-02**: Gutter indicators use the same color as the corresponding highlight style
 
 ### Documentation
 
@@ -100,14 +100,14 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 | HLSTYL-03 | Phase 13 | Complete |
 | HLSTYL-04 | Phase 13 | Complete |
 | HLSTYL-05 | Phase 13 | Complete |
-| HLFOC-01 | Phase 13 | Pending |
-| HLFOC-02 | Phase 13 | Pending |
-| HLFOC-03 | Phase 13 | Pending |
+| HLFOC-01 | Phase 13 | Complete |
+| HLFOC-02 | Phase 13 | Complete |
+| HLFOC-03 | Phase 13 | Complete |
 | HLTHEM-01 | Phase 14 | Pending |
 | HLTHEM-02 | Phase 14 | Pending |
 | HLTHEM-03 | Phase 14 | Pending |
-| HLGUT-01 | Phase 13 | Pending |
-| HLGUT-02 | Phase 13 | Pending |
+| HLGUT-01 | Phase 13 | Complete |
+| HLGUT-02 | Phase 13 | Complete |
 | HLDOC-01 | Phase 14 | Pending |
 | HLDOC-02 | Phase 14 | Pending |
 | HLDOC-03 | Phase 14 | Pending |
