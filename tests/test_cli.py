@@ -447,16 +447,16 @@ def multiline_py(tmp_path: Path) -> Path:
 
 
 class TestCliHighlightLines:
-    """Tests for CLI --highlight-lines and --highlight-color flags."""
+    """Tests for CLI --highlight flag (migrated from legacy --highlight-lines)."""
 
     @pytest.mark.slow
     @pytest.mark.timeout(15)
-    def test_highlight_lines_single(self, multiline_py: Path, tmp_path: Path):
-        """--highlight-lines with single line produces highlighted output."""
+    def test_highlight_single(self, multiline_py: Path, tmp_path: Path):
+        """--highlight with single line produces highlighted output."""
         output = tmp_path / "output.png"
         result = runner.invoke(
             app,
-            [str(multiline_py), "-o", str(output), "--highlight-lines", "2"],
+            [str(multiline_py), "-o", str(output), "--highlight", "2"],
         )
 
         assert result.exit_code == 0, f"CLI failed: {result.output}"
@@ -465,8 +465,8 @@ class TestCliHighlightLines:
 
     @pytest.mark.slow
     @pytest.mark.timeout(15)
-    def test_highlight_lines_multiple(self, multiline_py: Path, tmp_path: Path):
-        """--highlight-lines repeated with single and range specs."""
+    def test_highlight_multiple(self, multiline_py: Path, tmp_path: Path):
+        """--highlight repeated with single and range specs."""
         output = tmp_path / "output.png"
         result = runner.invoke(
             app,
@@ -474,9 +474,9 @@ class TestCliHighlightLines:
                 str(multiline_py),
                 "-o",
                 str(output),
-                "--highlight-lines",
+                "--highlight",
                 "1",
-                "--highlight-lines",
+                "--highlight",
                 "3-5",
             ],
         )
@@ -486,8 +486,8 @@ class TestCliHighlightLines:
 
     @pytest.mark.slow
     @pytest.mark.timeout(15)
-    def test_highlight_lines_with_color(self, multiline_py: Path, tmp_path: Path):
-        """--highlight-color with 8-char hex is accepted."""
+    def test_highlight_with_style(self, multiline_py: Path, tmp_path: Path):
+        """--highlight with named style (add) is accepted."""
         output = tmp_path / "output.png"
         result = runner.invoke(
             app,
@@ -495,10 +495,8 @@ class TestCliHighlightLines:
                 str(multiline_py),
                 "-o",
                 str(output),
-                "--highlight-lines",
-                "2",
-                "--highlight-color",
-                "#FF000040",
+                "--highlight",
+                "2:add",
             ],
         )
 
@@ -506,8 +504,8 @@ class TestCliHighlightLines:
 
     @pytest.mark.slow
     @pytest.mark.timeout(15)
-    def test_highlight_lines_6char_color(self, multiline_py: Path, tmp_path: Path):
-        """--highlight-color with 6-char hex (#RRGGBB) is accepted."""
+    def test_highlight_with_remove_style(self, multiline_py: Path, tmp_path: Path):
+        """--highlight with remove style is accepted."""
         output = tmp_path / "output.png"
         result = runner.invoke(
             app,
@@ -515,10 +513,8 @@ class TestCliHighlightLines:
                 str(multiline_py),
                 "-o",
                 str(output),
-                "--highlight-lines",
-                "2",
-                "--highlight-color",
-                "#FF0000",
+                "--highlight",
+                "2:remove",
             ],
         )
 
@@ -526,29 +522,29 @@ class TestCliHighlightLines:
 
     @pytest.mark.slow
     @pytest.mark.timeout(15)
-    def test_highlight_lines_out_of_bounds(self, multiline_py: Path, tmp_path: Path):
-        """--highlight-lines with out-of-bounds line exits non-zero."""
+    def test_highlight_out_of_bounds(self, multiline_py: Path, tmp_path: Path):
+        """--highlight with out-of-bounds line exits non-zero."""
         output = tmp_path / "output.png"
         result = runner.invoke(
             app,
-            [str(multiline_py), "-o", str(output), "--highlight-lines", "999"],
+            [str(multiline_py), "-o", str(output), "--highlight", "999"],
         )
 
         assert result.exit_code != 0
         assert "out of range" in result.output.lower()
 
-    def test_highlight_lines_invalid_syntax(self, multiline_py: Path, tmp_path: Path):
-        """--highlight-lines with non-numeric value exits non-zero."""
+    def test_highlight_invalid_syntax(self, multiline_py: Path, tmp_path: Path):
+        """--highlight with non-numeric value exits non-zero."""
         output = tmp_path / "output.png"
         result = runner.invoke(
             app,
-            [str(multiline_py), "-o", str(output), "--highlight-lines", "abc"],
+            [str(multiline_py), "-o", str(output), "--highlight", "abc"],
         )
 
         assert result.exit_code != 0
 
-    def test_highlight_color_invalid(self, multiline_py: Path, tmp_path: Path):
-        """--highlight-color with non-hex value exits non-zero."""
+    def test_highlight_invalid_style(self, multiline_py: Path, tmp_path: Path):
+        """--highlight with unknown style name exits non-zero."""
         output = tmp_path / "output.png"
         result = runner.invoke(
             app,
@@ -556,10 +552,8 @@ class TestCliHighlightLines:
                 str(multiline_py),
                 "-o",
                 str(output),
-                "--highlight-lines",
-                "2",
-                "--highlight-color",
-                "red",
+                "--highlight",
+                "2:bogus",
             ],
         )
 
@@ -567,8 +561,8 @@ class TestCliHighlightLines:
 
     @pytest.mark.slow
     @pytest.mark.timeout(15)
-    def test_highlight_lines_from_toml(self, multiline_py: Path, tmp_path: Path):
-        """TOML config with highlight_lines loads and renders correctly."""
+    def test_highlight_from_toml(self, multiline_py: Path, tmp_path: Path):
+        """TOML config with highlight_lines loads and renders correctly (legacy migration)."""
         config = tmp_path / "codepicture.toml"
         config.write_text('highlight_lines = ["2"]\nhighlight_color = "#FF000040"\n')
         output = tmp_path / "output.png"
