@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from codepicture.config.schema import RenderConfig
 from codepicture.core.types import (
+    Color,
     LayoutMetrics,
     OutputFormat,
     RenderResult,
@@ -19,19 +20,26 @@ from codepicture.core.types import (
 from codepicture.render.canvas import CairoCanvas
 from codepicture.render.chrome import TITLE_BAR_HEIGHT, draw_title_bar
 from codepicture.render.highlights import (
-    DEFAULT_HIGHLIGHT_COLOR,
+    FOCUS_DIM_OPACITY,
+    GUTTER_BAR_WIDTH,
+    GUTTER_INDICATORS,
     HIGHLIGHT_CORNER_RADIUS,
-    parse_line_ranges,
-    resolve_highlight_color,
+    HighlightStyle,
+    parse_highlight_specs,
+    resolve_style_color,
 )
 from codepicture.render.shadow import apply_shadow, calculate_shadow_margin
 
 if TYPE_CHECKING:
     from codepicture.core.protocols import Theme
-    from codepicture.core.types import Color
     from codepicture.highlight import TokenInfo
 
-__all__ = ["Renderer"]
+__all__ = ["Renderer", "_dim_color"]
+
+
+def _dim_color(color: Color, factor: float) -> Color:
+    """Reduce color opacity for focus mode dimming."""
+    return Color(r=color.r, g=color.g, b=color.b, a=int(color.a * factor))
 
 
 class Renderer:
@@ -70,16 +78,42 @@ class Renderer:
         config = self._config
         output_format = config.output_format
 
-        # Resolve line highlights
-        highlighted_lines: set[int] = set()
-        highlight_color: Color = DEFAULT_HIGHLIGHT_COLOR
-        if config.highlight_lines:
-            highlighted_lines = parse_line_ranges(
-                config.highlight_lines,
+        # Resolve named highlight styles
+        style_map: dict[int, HighlightStyle] = {}
+        style_colors: dict[HighlightStyle, Color] = {}
+        style_overrides: dict[str, str | None] | None = None
+
+        if config.highlight_styles:
+            style_overrides = {
+                name: sc.color for name, sc in config.highlight_styles.items()
+            }
+
+        if config.highlights:
+            style_map = parse_highlight_specs(
+                config.highlights,
                 total_lines=len(lines),
                 line_number_offset=config.line_number_offset,
             )
-            highlight_color = resolve_highlight_color(config.highlight_color)
+            # Pre-resolve colors for all styles in use
+            for style in set(style_map.values()):
+                style_colors[style] = resolve_style_color(style, style_overrides)
+
+        # Detect focus mode (per D-08)
+        focus_mode = any(s == HighlightStyle.FOCUS for s in style_map.values())
+
+        # Pre-compute gutter indicator colors (high opacity for small elements)
+        indicator_colors: dict[HighlightStyle, Color] = {}
+        if style_map and config.show_line_numbers:
+            for style in set(style_map.values()):
+                base = resolve_style_color(style, style_overrides)
+                indicator_colors[style] = Color(
+                    r=base.r,
+                    g=base.g,
+                    b=base.b,
+                    a=min(255, int(base.a * 255 / 64 * 0.9))
+                    if base.a < 255
+                    else 230,
+                )
 
         # Determine if chrome should be drawn
         has_chrome = config.window_controls and config.window_style != WindowStyle.NONE
@@ -143,8 +177,10 @@ class Renderer:
                 metrics,
                 theme,
                 code_y_offset,
-                highlighted_lines,
-                highlight_color,
+                style_map,
+                style_colors,
+                focus_mode,
+                indicator_colors,
             )
         else:
             # Legacy rendering path (no wrapping)
@@ -154,8 +190,10 @@ class Renderer:
                 metrics,
                 theme,
                 code_y_offset,
-                highlighted_lines,
-                highlight_color,
+                style_map,
+                style_colors,
+                focus_mode,
+                indicator_colors,
             )
 
         # --- end drawing code/line numbers ---
@@ -193,16 +231,19 @@ class Renderer:
         metrics: LayoutMetrics,
         theme: Theme,
         code_y_offset: float,
-        highlighted_lines: set[int],
-        highlight_color: Color,
+        style_map: dict[int, HighlightStyle],
+        style_colors: dict[HighlightStyle, Color],
+        focus_mode: bool,
+        indicator_colors: dict[HighlightStyle, Color],
     ) -> None:
         """Render code using the original (non-wrapped) path."""
         config = self._config
 
         # Draw highlight rectangles (behind all text)
-        if highlighted_lines:
+        if style_map:
             for line_idx in range(len(lines)):
-                if line_idx in highlighted_lines:
+                if line_idx in style_map:
+                    hl_style = style_map[line_idx]
                     highlight_y = (
                         metrics.content_y
                         + code_y_offset
@@ -213,15 +254,57 @@ class Renderer:
                         y=highlight_y,
                         width=metrics.content_width,
                         height=metrics.line_height_px,
-                        color=highlight_color,
+                        color=style_colors[hl_style],
                         corner_radius=HIGHLIGHT_CORNER_RADIUS,
                     )
 
+        # Draw gutter indicators (between line numbers and code)
+        if config.show_line_numbers and style_map:
+            for line_idx in range(len(lines)):
+                if line_idx in style_map:
+                    hl_style = style_map[line_idx]
+                    ind_color = indicator_colors[hl_style]
+
+                    baseline_y = (
+                        metrics.content_y
+                        + code_y_offset
+                        + line_idx * metrics.line_height_px
+                        + metrics.baseline_offset
+                    )
+                    symbol = GUTTER_INDICATORS.get(hl_style)
+                    if symbol:  # "+" or "-"
+                        canvas.draw_text(
+                            x=metrics.gutter_indicator_x,
+                            y=baseline_y,
+                            text=symbol,
+                            font_family=config.font_family,
+                            font_size=config.font_size,
+                            color=ind_color,
+                        )
+                    else:  # colored bar for highlight/focus
+                        bar_y = (
+                            metrics.content_y
+                            + code_y_offset
+                            + line_idx * metrics.line_height_px
+                        )
+                        canvas.draw_rectangle(
+                            x=metrics.gutter_indicator_x
+                            + (metrics.gutter_indicator_width - GUTTER_BAR_WIDTH) / 2,
+                            y=bar_y,
+                            width=GUTTER_BAR_WIDTH,
+                            height=metrics.line_height_px,
+                            color=ind_color,
+                        )
+
         # Draw line numbers if enabled
         if config.show_line_numbers:
-            line_number_color = theme.line_number_fg
-
             for line_idx, _line_tokens in enumerate(lines):
+                line_number_color = theme.line_number_fg
+                if focus_mode and line_idx not in style_map:
+                    line_number_color = _dim_color(
+                        line_number_color, FOCUS_DIM_OPACITY
+                    )
+
                 line_num = line_idx + config.line_number_offset
                 line_num_text = str(line_num)
 
@@ -258,7 +341,10 @@ class Renderer:
             current_x = metrics.code_x
 
             for token in line_tokens:
-                style = theme.get_style(token.token_type)
+                token_style = theme.get_style(token.token_type)
+                token_color = token_style.color
+                if focus_mode and line_idx not in style_map:
+                    token_color = _dim_color(token_color, FOCUS_DIM_OPACITY)
 
                 text_width = canvas.draw_text(
                     x=current_x,
@@ -266,7 +352,7 @@ class Renderer:
                     text=token.text,
                     font_family=config.font_family,
                     font_size=config.font_size,
-                    color=style.color,
+                    color=token_color,
                 )
 
                 current_x += text_width
@@ -278,16 +364,19 @@ class Renderer:
         metrics: LayoutMetrics,
         theme: Theme,
         code_y_offset: float,
-        highlighted_lines: set[int],
-        highlight_color: Color,
+        style_map: dict[int, HighlightStyle],
+        style_colors: dict[HighlightStyle, Color],
+        focus_mode: bool,
+        indicator_colors: dict[HighlightStyle, Color],
     ) -> None:
         """Render code with word-wrap aware display lines."""
         config = self._config
 
         # Draw highlight rectangles (behind all text)
-        if highlighted_lines:
+        if style_map:
             for display_idx, dline in enumerate(metrics.display_lines):
-                if dline.source_line_idx in highlighted_lines:
+                if dline.source_line_idx in style_map:
+                    hl_style = style_map[dline.source_line_idx]
                     highlight_y = (
                         metrics.content_y
                         + code_y_offset
@@ -298,9 +387,47 @@ class Renderer:
                         y=highlight_y,
                         width=metrics.content_width,
                         height=metrics.line_height_px,
-                        color=highlight_color,
+                        color=style_colors[hl_style],
                         corner_radius=HIGHLIGHT_CORNER_RADIUS,
                     )
+
+        # Draw gutter indicators (non-continuation lines only)
+        if config.show_line_numbers and style_map:
+            for display_idx, dline in enumerate(metrics.display_lines):
+                if not dline.is_continuation and dline.source_line_idx in style_map:
+                    hl_style = style_map[dline.source_line_idx]
+                    ind_color = indicator_colors[hl_style]
+
+                    baseline_y = (
+                        metrics.content_y
+                        + code_y_offset
+                        + display_idx * metrics.line_height_px
+                        + metrics.baseline_offset
+                    )
+                    symbol = GUTTER_INDICATORS.get(hl_style)
+                    if symbol:  # "+" or "-"
+                        canvas.draw_text(
+                            x=metrics.gutter_indicator_x,
+                            y=baseline_y,
+                            text=symbol,
+                            font_family=config.font_family,
+                            font_size=config.font_size,
+                            color=ind_color,
+                        )
+                    else:  # colored bar for highlight/focus
+                        bar_y = (
+                            metrics.content_y
+                            + code_y_offset
+                            + display_idx * metrics.line_height_px
+                        )
+                        canvas.draw_rectangle(
+                            x=metrics.gutter_indicator_x
+                            + (metrics.gutter_indicator_width - GUTTER_BAR_WIDTH) / 2,
+                            y=bar_y,
+                            width=GUTTER_BAR_WIDTH,
+                            height=metrics.line_height_px,
+                            color=ind_color,
+                        )
 
         # Pre-build flat char maps per source line for efficient slicing
         # Each entry: list of (char, token_type)
@@ -324,6 +451,12 @@ class Renderer:
 
             # Draw line number (only for non-continuation lines)
             if config.show_line_numbers and not dline.is_continuation:
+                line_number_color = theme.line_number_fg
+                if focus_mode and dline.source_line_idx not in style_map:
+                    line_number_color = _dim_color(
+                        line_number_color, FOCUS_DIM_OPACITY
+                    )
+
                 line_num = dline.source_line_idx + config.line_number_offset
                 line_num_text = str(line_num)
 
@@ -338,7 +471,7 @@ class Renderer:
                     text=line_num_text,
                     font_family=config.font_family,
                     font_size=config.font_size,
-                    color=theme.line_number_fg,
+                    color=line_number_color,
                 )
 
             # Determine X start (continuations are indented)
@@ -366,6 +499,9 @@ class Renderer:
             if not chunk_chars:
                 continue
 
+            # Determine if this line should be dimmed
+            is_dimmed = focus_mode and dline.source_line_idx not in style_map
+
             current_x = x_start
             span_start = 0
             for i in range(1, len(chunk_chars) + 1):
@@ -376,7 +512,10 @@ class Renderer:
                     # Emit span
                     span_text = "".join(c[0] for c in chunk_chars[span_start:i])
                     token_type = chunk_chars[span_start][1]
-                    style = theme.get_style(token_type)
+                    token_style = theme.get_style(token_type)
+                    token_color = token_style.color
+                    if is_dimmed:
+                        token_color = _dim_color(token_color, FOCUS_DIM_OPACITY)
 
                     text_width = canvas.draw_text(
                         x=current_x,
@@ -384,7 +523,7 @@ class Renderer:
                         text=span_text,
                         font_family=config.font_family,
                         font_size=config.font_size,
-                        color=style.color,
+                        color=token_color,
                     )
                     current_x += text_width
                     span_start = i
