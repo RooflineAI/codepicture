@@ -265,6 +265,163 @@ def test_visual_highlight_variant(
 
 
 # ---------------------------------------------------------------------------
+# Named highlight style tests (Python fixture, PNG format)
+# ---------------------------------------------------------------------------
+
+NAMED_STYLE_VARIANTS = [
+    ("highlight-style-add", {"highlights": ["2-3:add"], "show_line_numbers": True}),
+    ("highlight-style-remove", {"highlights": ["2:remove"], "show_line_numbers": True}),
+    ("highlight-style-focus", {"highlights": ["2:focus"], "show_line_numbers": True}),
+    (
+        "highlight-style-highlight",
+        {"highlights": ["2:highlight"], "show_line_numbers": True},
+    ),
+    (
+        "highlight-style-mixed",
+        {"highlights": ["1:add", "3:remove", "5:focus"], "show_line_numbers": True},
+    ),
+    (
+        "gutter-indicators-visible",
+        {
+            "highlights": ["1:add", "2:remove", "3:focus", "4:highlight"],
+            "show_line_numbers": True,
+        },
+    ),
+]
+
+
+@pytest.mark.timeout(30)
+@pytest.mark.parametrize(
+    "variant_name,overrides",
+    NAMED_STYLE_VARIANTS,
+    ids=[name for name, _ in NAMED_STYLE_VARIANTS],
+)
+def test_highlight_style_variant(
+    variant_name: str,
+    overrides: dict,
+    snapshot_update: bool,
+    visual_fixtures_dir: Path,
+    references_dir: Path,
+    diff_output_dir: Path,
+) -> None:
+    """Compare named highlight style rendering against reference snapshot.
+
+    Tests individual styles (add, remove, focus, highlight), mixed styles,
+    and gutter indicator visibility using the Python fixture in PNG format.
+    """
+    fixture_path = visual_fixtures_dir / "python_visual.py"
+    test_name = f"python_png_{variant_name}"
+    reference_path = references_dir / f"{test_name}.png"
+
+    config = RenderConfig(output_format="png", **overrides)
+    data, _ext = render_fixture(fixture_path, config, language="python")
+    actual = Image.open(BytesIO(data)).convert("RGBA")
+
+    if snapshot_update or not reference_path.exists():
+        actual.save(reference_path)
+        pytest.skip(
+            f"Reference image {'updated' if snapshot_update else 'created'}: "
+            f"{reference_path.name}"
+        )
+
+    passed, mismatch_pct = compare_images(
+        actual, reference_path, diff_output_dir, test_name
+    )
+    assert passed, (
+        f"Visual regression failed for {test_name}: "
+        f"{mismatch_pct:.4f}% pixels differ (threshold: 0.001%)"
+    )
+
+
+# Convenience aliases for individual named style tests (used in acceptance criteria)
+def test_highlight_style_add(
+    snapshot_update, visual_fixtures_dir, references_dir, diff_output_dir
+):
+    """Visual regression for add style."""
+    test_highlight_style_variant(
+        "highlight-style-add",
+        {"highlights": ["2-3:add"], "show_line_numbers": True},
+        snapshot_update,
+        visual_fixtures_dir,
+        references_dir,
+        diff_output_dir,
+    )
+
+
+def test_highlight_style_remove(
+    snapshot_update, visual_fixtures_dir, references_dir, diff_output_dir
+):
+    """Visual regression for remove style."""
+    test_highlight_style_variant(
+        "highlight-style-remove",
+        {"highlights": ["2:remove"], "show_line_numbers": True},
+        snapshot_update,
+        visual_fixtures_dir,
+        references_dir,
+        diff_output_dir,
+    )
+
+
+def test_highlight_style_focus(
+    snapshot_update, visual_fixtures_dir, references_dir, diff_output_dir
+):
+    """Visual regression for focus style."""
+    test_highlight_style_variant(
+        "highlight-style-focus",
+        {"highlights": ["2:focus"], "show_line_numbers": True},
+        snapshot_update,
+        visual_fixtures_dir,
+        references_dir,
+        diff_output_dir,
+    )
+
+
+def test_highlight_style_highlight(
+    snapshot_update, visual_fixtures_dir, references_dir, diff_output_dir
+):
+    """Visual regression for highlight (default) style."""
+    test_highlight_style_variant(
+        "highlight-style-highlight",
+        {"highlights": ["2:highlight"], "show_line_numbers": True},
+        snapshot_update,
+        visual_fixtures_dir,
+        references_dir,
+        diff_output_dir,
+    )
+
+
+def test_highlight_style_mixed(
+    snapshot_update, visual_fixtures_dir, references_dir, diff_output_dir
+):
+    """Visual regression for mixed styles in one image."""
+    test_highlight_style_variant(
+        "highlight-style-mixed",
+        {"highlights": ["1:add", "3:remove", "5:focus"], "show_line_numbers": True},
+        snapshot_update,
+        visual_fixtures_dir,
+        references_dir,
+        diff_output_dir,
+    )
+
+
+def test_gutter_indicators_visible(
+    snapshot_update, visual_fixtures_dir, references_dir, diff_output_dir
+):
+    """Visual regression for gutter indicators with all 4 styles."""
+    test_highlight_style_variant(
+        "gutter-indicators-visible",
+        {
+            "highlights": ["1:add", "2:remove", "3:focus", "4:highlight"],
+            "show_line_numbers": True,
+        },
+        snapshot_update,
+        visual_fixtures_dir,
+        references_dir,
+        diff_output_dir,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Cross-format highlight tests (Python fixture, PNG/SVG/PDF)
 # ---------------------------------------------------------------------------
 
