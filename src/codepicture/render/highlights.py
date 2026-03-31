@@ -1,38 +1,58 @@
-"""Line range parser and highlight color resolver.
+"""Line range parser, highlight color resolver, and named highlight styles.
 
 Pure functions for converting user-specified line ranges into 0-based
-source line indices and resolving highlight colors from hex strings.
+source line indices, resolving highlight colors from hex strings, and
+parsing named highlight style specifications.
 
-These are the core logic building blocks for line highlighting. The parser
-handles single lines (``"3"``), ranges (``"7-12"``), and mixed input.
-The color resolver handles ``#RRGGBB`` (adding default alpha) and
-``#RRGGBBAA`` formats.
+The parser handles single lines (``"3"``), ranges (``"7-12"``), and mixed
+input. The color resolver handles ``#RRGGBB`` (adding default alpha) and
+``#RRGGBBAA`` formats. Named styles support ``"3-5:add"`` syntax.
 
 Typical usage::
 
     from codepicture.render.highlights import (
         parse_line_ranges,
         resolve_highlight_color,
+        parse_highlight_specs,
+        HighlightStyle,
         DEFAULT_HIGHLIGHT_COLOR,
     )
 
     indices = parse_line_ranges(["3", "7-12"], total_lines=15)
     color = resolve_highlight_color("#FF000040")
+    styles = parse_highlight_specs(["3-5:add", "10:remove"], total_lines=15)
 """
 
 from __future__ import annotations
 
 import re
+from enum import Enum
 
 from codepicture.core.types import Color
 from codepicture.errors import InputError
 
 __all__ = [
     "DEFAULT_HIGHLIGHT_COLOR",
+    "DEFAULT_STYLE_COLORS",
+    "FOCUS_DIM_OPACITY",
+    "GUTTER_BAR_WIDTH",
+    "GUTTER_INDICATORS",
     "HIGHLIGHT_CORNER_RADIUS",
+    "HighlightStyle",
+    "parse_highlight_specs",
     "parse_line_ranges",
     "resolve_highlight_color",
+    "resolve_style_color",
 ]
+
+
+class HighlightStyle(str, Enum):
+    """Built-in highlight style names."""
+
+    HIGHLIGHT = "highlight"
+    ADD = "add"
+    REMOVE = "remove"
+    FOCUS = "focus"
 
 DEFAULT_HIGHLIGHT_ALPHA = 64
 """Default alpha for highlight colors (~25% opacity, 64/255)."""
@@ -47,7 +67,32 @@ Sharp rectangles for now; extracted as a constant so Phase 13/14 can
 switch to rounded/merged blocks without changing calling code.
 """
 
+DEFAULT_STYLE_COLORS: dict[HighlightStyle, Color] = {
+    HighlightStyle.HIGHLIGHT: Color(r=255, g=230, b=80, a=64),  # #FFE65040
+    HighlightStyle.ADD: Color(r=0, g=204, b=64, a=64),  # #00CC4040
+    HighlightStyle.REMOVE: Color(r=255, g=51, b=51, a=64),  # #FF333340
+    HighlightStyle.FOCUS: Color(r=51, g=153, b=255, a=64),  # #3399FF40
+}
+"""Default background colors for each highlight style (D-12 palette)."""
+
+GUTTER_INDICATORS: dict[HighlightStyle, str | None] = {
+    HighlightStyle.HIGHLIGHT: None,  # colored bar (drawn as rect)
+    HighlightStyle.ADD: "+",
+    HighlightStyle.REMOVE: "-",
+    HighlightStyle.FOCUS: None,  # colored bar (drawn as rect)
+}
+"""Gutter indicator characters for each highlight style (D-10)."""
+
+FOCUS_DIM_OPACITY = 0.35
+"""Opacity for non-focused lines when focus mode is active."""
+
+GUTTER_BAR_WIDTH = 3
+"""Width in pixels for gutter indicator bars (D-10)."""
+
 _LINE_SPEC_RE = re.compile(r"^\d+(-\d+)?$")
+
+_HIGHLIGHT_SPEC_RE = re.compile(r"^(\d+(?:-\d+)?)(?::(\w+))?$")
+VALID_STYLES = frozenset(s.value for s in HighlightStyle)
 
 
 def parse_line_ranges(
@@ -142,3 +187,76 @@ def resolve_highlight_color(color_str: str | None) -> Color:
         color = Color(r=color.r, g=color.g, b=color.b, a=DEFAULT_HIGHLIGHT_ALPHA)
 
     return color
+
+
+def parse_highlight_specs(
+    specs: list[str],
+    total_lines: int,
+    line_number_offset: int = 1,
+) -> dict[int, HighlightStyle]:
+    """Parse highlight specs into per-line style map.
+
+    Each spec is 'N', 'N-M', 'N:style', or 'N-M:style'.
+    Last spec wins for overlapping lines (per D-03).
+    Returns dict mapping 0-based line index to HighlightStyle.
+
+    Args:
+        specs: Highlight spec strings, e.g. ``["3-5:add", "10:remove"]``.
+        total_lines: Number of source lines in the code.
+        line_number_offset: Starting line number shown in the gutter.
+
+    Returns:
+        Dict mapping 0-based line indices to their highlight style.
+
+    Raises:
+        InputError: If any spec has invalid syntax or unknown style name.
+    """
+    result: dict[int, HighlightStyle] = {}
+    for spec in specs:
+        spec = spec.strip()
+        match = _HIGHLIGHT_SPEC_RE.match(spec)
+        if not match:
+            raise InputError(
+                f"Invalid highlight spec '{spec}'. "
+                "Use N, N-M, N:style, or N-M:style format"
+            )
+        line_part = match.group(1)
+        style_name = match.group(2) or "highlight"
+        if style_name not in VALID_STYLES:
+            raise InputError(
+                f"Unknown highlight style '{style_name}'. "
+                f"Valid styles: {', '.join(sorted(VALID_STYLES))}"
+            )
+        style = HighlightStyle(style_name)
+        indices = parse_line_ranges([line_part], total_lines, line_number_offset)
+        for idx in indices:
+            result[idx] = style
+    return result
+
+
+def resolve_style_color(
+    style: HighlightStyle,
+    style_overrides: dict[str, str | None] | None = None,
+) -> Color:
+    """Resolve the color for a highlight style.
+
+    Uses per-style override from TOML config if available,
+    otherwise falls back to DEFAULT_STYLE_COLORS.
+
+    Args:
+        style: The highlight style to resolve color for.
+        style_overrides: Dict mapping style name to hex color string.
+            Comes from config highlight_styles section.
+
+    Returns:
+        Resolved Color for the style.
+    """
+    if style_overrides:
+        override = style_overrides.get(style.value)
+        if override:
+            color = Color.from_hex(override)
+            # 6-char hex: apply default alpha
+            if len(override.lstrip("#")) == 6:
+                color = Color(r=color.r, g=color.g, b=color.b, a=DEFAULT_HIGHLIGHT_ALPHA)
+            return color
+    return DEFAULT_STYLE_COLORS[style]
