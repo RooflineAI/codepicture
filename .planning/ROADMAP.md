@@ -41,7 +41,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 **Milestone Goal:** Add the ability to highlight specific lines with colored backgrounds, supporting multiple named styles (add/remove/focus) for presentation-ready code annotations.
 
 - [x] **Phase 12: Core Highlighting Infrastructure** - Single-style line highlighting with configurable color across all formats -- completed 2026-02-06
-- [ ] **Phase 13: Named Styles, Focus Mode & Gutter Indicators** - Multiple highlight styles with focus dimming and diff-style gutter markers
+- [x] **Phase 13: Named Styles, Focus Mode & Gutter Indicators** - Multiple highlight styles with focus dimming and diff-style gutter markers (completed 2026-03-31)
 - [ ] **Phase 14: Theme Integration & Documentation** - Theme-aware default colors and complete documentation
 
 ## Phase Details
@@ -79,7 +79,7 @@ Plans:
 Plans:
 - [x] 13-01-PLAN.md -- Data model, parser, config schema, CLI flag, and unit tests
 - [x] 13-02-PLAN.md -- Renderer integration (per-style highlights, focus dimming, gutter indicators)
-- [ ] 13-03-PLAN.md -- Visual regression and integration tests
+- [x] 13-03-PLAN.md -- Visual regression and integration tests
 
 ### Phase 14: Theme Integration & Documentation
 **Goal**: Highlight colors automatically adapt to the active theme for readable contrast, and all features are documented with examples
@@ -116,7 +116,7 @@ Phases execute in numeric order: 12 -> 13 -> 14
 | 10. Visual Regression & Reliability | v1.1 | 4/4 | Complete | 2026-01-31 |
 | 11. Performance Benchmarks | v1.1 | 3/3 | Complete | 2026-02-02 |
 | 12. Core Highlighting Infrastructure | v2.0 | 4/4 | Complete | 2026-02-06 |
-| 13. Named Styles, Focus & Gutter | v2.0 | 2/3 | In Progress|  |
+| 13. Named Styles, Focus & Gutter | v2.0 | 3/3 | Complete   | 2026-03-31 |
 | 14. Theme Integration & Docs | v2.0 | 0/TBD | Not started | - |
 
 ---

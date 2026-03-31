@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Line Highlighting
 status: executing
-stopped_at: Completed 13-02-PLAN.md
-last_updated: "2026-03-31T08:04:08.921Z"
+stopped_at: Completed 13-03-PLAN.md
+last_updated: "2026-03-31T08:11:14.406Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 13 of 14 (Named Styles, Focus Mode & Gutter Indicators) -- IN PROGRESS
-Plan: 2 of 3 in current phase -- COMPLETE
+Plan: 3 of 3 in current phase -- COMPLETE
 Status: Ready to execute
 Last activity: 2026-03-31
 
@@ -69,6 +69,8 @@ Decisions are logged in PROJECT.md Key Decisions table (15 decisions total).
 - 13-01: Removed --highlight-color CLI flag; per-style colors via TOML only
 - [Phase 13]: GUTTER_INDICATOR_WIDTH = 14px; indicator colors at ~90% opacity for visibility
 - [Phase 13]: Focus dimming via _dim_color(color, 0.35) applied to unfocused line numbers and tokens
+- [Phase 13]: Visual regression uses parametrized variants + individual aliases for acceptance criteria traceability
+- [Phase 13]: Legacy --highlight-lines CLI tests migrated to --highlight flag (deviation Rule 1)
 
 ### Pending Todos
 
@@ -94,6 +96,7 @@ None.
 | 012 | Set up linting and formatting via ruff | 2026-02-02 | 70c4606 | [012](./quick/012-set-up-linting-and-formatting-via-ruff/) |
 | 013 | Add pre-commit and linting to README | 2026-02-02 | cdc30a4 | [013](./quick/013-add-pre-commit-and-linting-to-readme/) |
 | Phase 13 P02 | 3min | 2 tasks | 3 files |
+| Phase 13 P03 | 4m 9s | 2 tasks | 9 files |
 
 ### Roadmap Evolution
 
@@ -103,6 +106,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-31T08:04:08.919Z
-Stopped at: Completed 13-02-PLAN.md
+Last session: 2026-03-31T08:11:14.403Z
+Stopped at: Completed 13-03-PLAN.md
 Resume file: None

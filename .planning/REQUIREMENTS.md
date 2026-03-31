@@ -53,11 +53,11 @@ Requirements for the Line Highlighting milestone. Each maps to roadmap phases.
 - [x] **HLTEST-01**: Unit tests for line range parser (individual lines, ranges, mixed, edge cases)
 - [x] **HLTEST-02**: Unit tests for highlight resolution (style-to-color mapping, custom overrides, defaults)
 - [x] **HLTEST-03**: Visual regression tests for highlighted output across all 3 formats (PNG, SVG, PDF)
-- [ ] **HLTEST-04**: Visual regression tests for each named style (add, remove, focus, highlight)
+- [x] **HLTEST-04**: Visual regression tests for each named style (add, remove, focus, highlight)
 - [x] **HLTEST-05**: Integration tests for word-wrapped highlighted lines
-- [ ] **HLTEST-06**: Integration tests for focus mode dimming
+- [x] **HLTEST-06**: Integration tests for focus mode dimming
 - [x] **HLTEST-07**: Tests for CLI flag parsing and TOML config loading of highlight options
-- [ ] **HLTEST-08**: Tests for gutter indicators with named styles
+- [x] **HLTEST-08**: Tests for gutter indicators with named styles
 
 ## Future Requirements
 
@@ -114,11 +114,11 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 | HLTEST-01 | Phase 12 | Complete |
 | HLTEST-02 | Phase 13 | Complete |
 | HLTEST-03 | Phase 12 | Complete |
-| HLTEST-04 | Phase 13 | Pending |
+| HLTEST-04 | Phase 13 | Complete |
 | HLTEST-05 | Phase 12 | Complete |
-| HLTEST-06 | Phase 13 | Pending |
+| HLTEST-06 | Phase 13 | Complete |
 | HLTEST-07 | Phase 12 | Complete |
-| HLTEST-08 | Phase 13 | Pending |
+| HLTEST-08 | Phase 13 | Complete |
 
 **Coverage:**
 - v2.0 requirements: 31 total
