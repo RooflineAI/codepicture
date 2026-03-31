@@ -182,6 +182,10 @@ class LayoutMetrics:
     char_width: float
     baseline_offset: float
 
+    # Gutter indicator column (between line numbers and code)
+    gutter_indicator_x: float = 0.0
+    gutter_indicator_width: float = 0.0
+
     # Word wrap
     display_lines: tuple[DisplayLine, ...] = ()
     wrap_indent_chars: int = 2

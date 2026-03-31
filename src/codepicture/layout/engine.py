@@ -15,6 +15,9 @@ from codepicture.core.types import DisplayLine, LayoutMetrics
 from codepicture.errors import LayoutError
 
 
+GUTTER_INDICATOR_WIDTH = 14  # px -- space for +/- char or colored bar
+
+
 class LayoutEngine:
     """Calculates positions and sizes for rendering.
 
@@ -79,6 +82,11 @@ class LayoutEngine:
         else:
             gutter_width = 0.0
 
+        # Determine if gutter indicator column is needed
+        has_highlights = bool(self._config.highlights)
+        has_indicator_column = has_highlights and self._config.show_line_numbers
+        indicator_width = GUTTER_INDICATOR_WIDTH if has_indicator_column else 0
+
         gap = self.LINE_NUMBER_GAP if self._config.show_line_numbers else 0
         padding = self._config.padding
         wrap_indent_chars = 2
@@ -88,7 +96,9 @@ class LayoutEngine:
 
         if window_width is not None:
             # Compute available code area within the fixed window width
-            available_code_width = window_width - 2 * padding - gutter_width - gap
+            available_code_width = (
+                window_width - 2 * padding - gutter_width - indicator_width - gap
+            )
             max_code_chars = max(1, math.floor(available_code_width / char_width))
 
             # Build display_lines by splitting source lines that exceed max_code_chars
@@ -146,9 +156,11 @@ class LayoutEngine:
             display_lines_tuple = ()
             num_visual_lines = len(lines)
             code_width = max_chars * char_width
-            canvas_width = int(gutter_width + gap + code_width + 2 * padding)
+            canvas_width = int(
+                gutter_width + indicator_width + gap + code_width + 2 * padding
+            )
 
-        content_width = gutter_width + gap + code_width
+        content_width = gutter_width + indicator_width + gap + code_width
         content_height = num_visual_lines * line_height_px
 
         if window_height is not None:
@@ -165,12 +177,16 @@ class LayoutEngine:
             content_height=content_height,
             gutter_width=gutter_width,
             gutter_x=float(padding),
-            code_x=float(padding) + gutter_width + gap,
+            code_x=float(padding) + gutter_width + indicator_width + gap,
             code_y=float(padding),
             code_width=code_width,
             line_height_px=line_height_px,
             char_width=char_width,
             baseline_offset=char_height * 0.8,  # Approximate baseline
+            gutter_indicator_x=(
+                float(padding) + gutter_width if has_indicator_column else 0.0
+            ),
+            gutter_indicator_width=float(indicator_width),
             display_lines=display_lines_tuple,
             wrap_indent_chars=wrap_indent_chars,
         )
