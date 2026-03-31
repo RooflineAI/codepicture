@@ -7,9 +7,27 @@ It validates configuration values at load time with clear error messages.
 import re
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from ..core.types import OutputFormat, WindowStyle
+
+
+class HighlightStyleConfig(BaseModel):
+    """Per-style color override from TOML config."""
+
+    model_config = ConfigDict(extra="forbid")
+    color: str | None = None
+
+    @field_validator("color", mode="before")
+    @classmethod
+    def validate_style_color(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        if not isinstance(v, str):
+            raise ValueError(f"color must be a string, got {type(v).__name__}")
+        if not re.match(r"^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$", v):
+            raise ValueError(f"Invalid color '{v}'. Use #RRGGBB or #RRGGBBAA")
+        return v
 
 
 class RenderConfig(BaseModel):
@@ -60,9 +78,13 @@ class RenderConfig(BaseModel):
     # Background
     background_color: str | None = None  # hex color or None (use theme background)
 
-    # Highlighting
+    # Highlighting (legacy fields kept for backward compatibility)
     highlight_lines: list[str] | None = None  # e.g. ["3", "7-12", "15"]
     highlight_color: str | None = None  # e.g. "#FFE65040"
+
+    # Named highlight styles (replaces highlight_lines for new usage)
+    highlights: list[str] | None = None  # ["3-5:add", "10:remove"]
+    highlight_styles: dict[str, HighlightStyleConfig] | None = None
 
     @field_validator("output_format", mode="before")
     @classmethod
@@ -145,3 +167,54 @@ class RenderConfig(BaseModel):
                     f"Invalid line spec '{s}'. Use N or N-M format (e.g. '3' or '7-12')"
                 )
         return [str(s) for s in v]
+
+    @field_validator("highlights", mode="before")
+    @classmethod
+    def validate_highlights(cls, v: list[str] | None) -> list[str] | None:
+        """Validate highlight specs (N, N-M, N:style, or N-M:style format)."""
+        if v is None:
+            return None
+        if not isinstance(v, list):
+            raise ValueError("highlights must be a list of strings")
+        spec_re = re.compile(r"^\d+(?:-\d+)?(?::\w+)?$")
+        for spec in v:
+            s = str(spec).strip()
+            if not spec_re.match(s):
+                raise ValueError(
+                    f"Invalid highlight spec '{s}'. "
+                    "Use N, N-M, N:style, or N-M:style format"
+                )
+        return [str(s) for s in v]
+
+    @field_validator("highlight_styles", mode="before")
+    @classmethod
+    def validate_highlight_styles(cls, v: dict | None) -> dict | None:
+        """Validate highlight_styles keys are valid style names."""
+        if v is None:
+            return None
+        valid_names = {"highlight", "add", "remove", "focus"}
+        for key in v:
+            if key not in valid_names:
+                raise ValueError(
+                    f"Unknown style '{key}'. "
+                    f"Valid styles: {', '.join(sorted(valid_names))}"
+                )
+        return v
+
+    @model_validator(mode="before")
+    @classmethod
+    def migrate_legacy_highlights(cls, data: dict) -> dict:
+        """Auto-migrate highlight_lines/highlight_color to new format."""
+        if not isinstance(data, dict):
+            return data
+        # Only migrate if new field not already set
+        if data.get("highlights") is None and data.get("highlight_lines") is not None:
+            data["highlights"] = [str(s) for s in data["highlight_lines"]]
+        if (
+            data.get("highlight_styles") is None
+            and data.get("highlight_color") is not None
+        ):
+            data["highlight_styles"] = {
+                "highlight": {"color": data["highlight_color"]}
+            }
+        return data
