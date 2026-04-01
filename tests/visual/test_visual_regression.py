@@ -425,6 +425,70 @@ def test_gutter_indicators_visible(
 # Cross-format highlight tests (Python fixture, PNG/SVG/PDF)
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Theme-aware highlight visual regression (Phase 14, D-12)
+# ---------------------------------------------------------------------------
+
+
+def _render_theme_highlights(
+    visual_fixtures_dir: Path,
+    theme_name: str,
+    output_format: str = "png",
+) -> Image.Image:
+    """Render Python fixture with all 4 highlight styles on given theme."""
+    config = RenderConfig(
+        output_format=output_format,
+        theme=theme_name,
+        highlights=["1:highlight", "3-4:add", "6-7:remove", "9:focus"],
+        show_line_numbers=True,
+    )
+    fixture_path = visual_fixtures_dir / "python_visual.py"
+    data, _ext = render_fixture(fixture_path, config, language="python")
+    return Image.open(BytesIO(data)).convert("RGBA")
+
+
+@pytest.mark.timeout(30)
+def test_highlight_dark_catppuccin_mocha(
+    visual_fixtures_dir, references_dir, diff_output_dir, snapshot_update
+):
+    """Visual regression: all 4 highlight styles on catppuccin-mocha (dark)."""
+    test_name = "highlight_dark_catppuccin_mocha"
+    ref_path = references_dir / f"{test_name}.png"
+
+    actual = _render_theme_highlights(visual_fixtures_dir, "catppuccin-mocha")
+
+    if snapshot_update:
+        actual.save(ref_path)
+        pytest.skip(f"Snapshot updated: {ref_path}")
+
+    assert ref_path.exists(), f"Reference missing: {ref_path}. Run with --snapshot-update"
+    passed, pct = compare_images(actual, ref_path, diff_output_dir, test_name)
+    assert passed, f"{test_name}: {pct:.4f}% pixels differ"
+
+
+@pytest.mark.timeout(30)
+def test_highlight_light_catppuccin_latte(
+    visual_fixtures_dir, references_dir, diff_output_dir, snapshot_update
+):
+    """Visual regression: all 4 highlight styles on catppuccin-latte (light)."""
+    test_name = "highlight_light_catppuccin_latte"
+    ref_path = references_dir / f"{test_name}.png"
+
+    actual = _render_theme_highlights(visual_fixtures_dir, "catppuccin-latte")
+
+    if snapshot_update:
+        actual.save(ref_path)
+        pytest.skip(f"Snapshot updated: {ref_path}")
+
+    assert ref_path.exists(), f"Reference missing: {ref_path}. Run with --snapshot-update"
+    passed, pct = compare_images(actual, ref_path, diff_output_dir, test_name)
+    assert passed, f"{test_name}: {pct:.4f}% pixels differ"
+
+
+# ---------------------------------------------------------------------------
+# Cross-format highlight tests (Python fixture, PNG/SVG/PDF)
+# ---------------------------------------------------------------------------
+
 HIGHLIGHT_FORMATS = ["png", "svg", "pdf"]
 
 
