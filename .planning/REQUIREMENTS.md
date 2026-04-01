@@ -33,9 +33,9 @@ Requirements for the Line Highlighting milestone. Each maps to roadmap phases.
 
 ### Theme Integration
 
-- [ ] **HLTHEM-01**: Default highlight colors are derived from the active theme's background color
-- [ ] **HLTHEM-02**: Theme-aware colors maintain readable contrast for syntax tokens on highlighted lines
-- [ ] **HLTHEM-03**: User-specified `--highlight-color` and TOML style colors override theme-derived defaults
+- [x] **HLTHEM-01**: Default highlight colors are derived from the active theme's background color
+- [x] **HLTHEM-02**: Theme-aware colors maintain readable contrast for syntax tokens on highlighted lines
+- [x] **HLTHEM-03**: User-specified `--highlight-color` and TOML style colors override theme-derived defaults
 
 ### Gutter Indicators
 
@@ -103,9 +103,9 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 | HLFOC-01 | Phase 13 | Complete |
 | HLFOC-02 | Phase 13 | Complete |
 | HLFOC-03 | Phase 13 | Complete |
-| HLTHEM-01 | Phase 14 | Pending |
-| HLTHEM-02 | Phase 14 | Pending |
-| HLTHEM-03 | Phase 14 | Pending |
+| HLTHEM-01 | Phase 14 | Complete |
+| HLTHEM-02 | Phase 14 | Complete |
+| HLTHEM-03 | Phase 14 | Complete |
 | HLGUT-01 | Phase 13 | Complete |
 | HLGUT-02 | Phase 13 | Complete |
 | HLDOC-01 | Phase 14 | Pending |
