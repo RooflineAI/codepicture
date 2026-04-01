@@ -392,3 +392,105 @@ class TestFocusDimOpacity:
 
     def test_focus_dim_opacity_in_range(self):
         assert 0.3 <= FOCUS_DIM_OPACITY <= 0.4
+
+
+# --- Phase 14 tests: Theme-aware highlight colors ---
+
+from codepicture.render.highlights import (
+    DARK_THEME_COLORS,
+    LIGHT_THEME_COLORS,
+    LUMINANCE_THRESHOLD,
+    get_theme_style_colors,
+)
+
+
+class TestRelativeLuminance:
+    """Tests for _relative_luminance helper."""
+
+    def test_black_is_zero(self):
+        from codepicture.render.highlights import _relative_luminance
+
+        assert _relative_luminance(Color(0, 0, 0)) == 0.0
+
+    def test_white_is_one(self):
+        from codepicture.render.highlights import _relative_luminance
+
+        assert _relative_luminance(Color(255, 255, 255)) == 1.0
+
+    def test_catppuccin_mocha_bg(self):
+        """catppuccin-mocha background (30, 30, 46) has low luminance."""
+        from codepicture.render.highlights import _relative_luminance
+
+        lum = _relative_luminance(Color(30, 30, 46))
+        assert lum == pytest.approx(0.122, abs=0.002)
+
+
+class TestGetThemeStyleColors:
+    """Tests for get_theme_style_colors palette selection."""
+
+    def test_dark_bg_returns_dark_palette(self):
+        """Dark background (catppuccin-mocha) returns DARK_THEME_COLORS."""
+        palette = get_theme_style_colors(Color(30, 30, 46))
+        assert palette == dict(DARK_THEME_COLORS)
+
+    def test_light_bg_returns_light_palette(self):
+        """Light background (catppuccin-latte) returns LIGHT_THEME_COLORS."""
+        palette = get_theme_style_colors(Color(239, 241, 245))
+        assert palette == dict(LIGHT_THEME_COLORS)
+
+    def test_dark_palette_matches_default_style_colors(self):
+        """DARK_THEME_COLORS is identical to DEFAULT_STYLE_COLORS (backward compat)."""
+        for style in HighlightStyle:
+            assert DARK_THEME_COLORS[style] == DEFAULT_STYLE_COLORS[style]
+
+    def test_luminance_threshold_value(self):
+        assert LUMINANCE_THRESHOLD == 0.5
+
+
+class TestResolveStyleColorWithThemeDefaults:
+    """Tests for resolve_style_color with theme_defaults parameter."""
+
+    def test_theme_defaults_used_when_no_override(self):
+        """theme_defaults are used when no TOML override exists."""
+        color = resolve_style_color(
+            HighlightStyle.ADD, None, theme_defaults=dict(LIGHT_THEME_COLORS)
+        )
+        assert color == LIGHT_THEME_COLORS[HighlightStyle.ADD]
+
+    def test_toml_override_wins_over_theme_defaults(self):
+        """TOML override takes precedence over theme_defaults."""
+        color = resolve_style_color(
+            HighlightStyle.ADD,
+            {"add": "#00FF0080"},
+            theme_defaults=dict(LIGHT_THEME_COLORS),
+        )
+        assert color == Color(0, 255, 0, 128)
+
+    def test_none_theme_defaults_falls_back_to_hardcoded(self):
+        """None theme_defaults falls back to DEFAULT_STYLE_COLORS."""
+        color = resolve_style_color(HighlightStyle.ADD, None, theme_defaults=None)
+        assert color == DEFAULT_STYLE_COLORS[HighlightStyle.ADD]
+
+
+class TestLightThemePalette:
+    """Tests for LIGHT_THEME_COLORS exact D-03 values."""
+
+    def test_highlight_color(self):
+        assert LIGHT_THEME_COLORS[HighlightStyle.HIGHLIGHT] == Color(
+            r=184, g=150, b=0, a=64
+        )
+
+    def test_add_color(self):
+        assert LIGHT_THEME_COLORS[HighlightStyle.ADD] == Color(
+            r=0, g=136, b=34, a=64
+        )
+
+    def test_remove_color(self):
+        assert LIGHT_THEME_COLORS[HighlightStyle.REMOVE] == Color(
+            r=204, g=0, b=0, a=64
+        )
+
+    def test_focus_color(self):
+        assert LIGHT_THEME_COLORS[HighlightStyle.FOCUS] == Color(
+            r=0, g=102, b=204, a=64
+        )

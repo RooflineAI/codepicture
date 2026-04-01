@@ -25,6 +25,7 @@ from codepicture.render.highlights import (
     GUTTER_INDICATORS,
     HIGHLIGHT_CORNER_RADIUS,
     HighlightStyle,
+    get_theme_style_colors,
     parse_highlight_specs,
     resolve_style_color,
 )
@@ -88,6 +89,9 @@ class Renderer:
                 name: sc.color for name, sc in config.highlight_styles.items()
             }
 
+        # Derive theme-aware highlight palette (per D-01, D-05)
+        theme_defaults = get_theme_style_colors(theme.background)
+
         if config.highlights:
             style_map = parse_highlight_specs(
                 config.highlights,
@@ -96,7 +100,7 @@ class Renderer:
             )
             # Pre-resolve colors for all styles in use
             for style in set(style_map.values()):
-                style_colors[style] = resolve_style_color(style, style_overrides)
+                style_colors[style] = resolve_style_color(style, style_overrides, theme_defaults)
 
         # Detect focus mode (per D-08)
         focus_mode = any(s == HighlightStyle.FOCUS for s in style_map.values())
@@ -105,7 +109,7 @@ class Renderer:
         indicator_colors: dict[HighlightStyle, Color] = {}
         if style_map and config.show_line_numbers:
             for style in set(style_map.values()):
-                base = resolve_style_color(style, style_overrides)
+                base = resolve_style_color(style, style_overrides, theme_defaults)
                 indicator_colors[style] = Color(
                     r=base.r,
                     g=base.g,
