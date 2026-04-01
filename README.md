@@ -193,6 +193,86 @@ background_color = "#1e1e2e"
 
 CLI flags always override config file values.
 
+## Line Highlighting
+
+Highlight specific lines with colored backgrounds to draw attention to code
+in presentations, documentation, and code reviews.
+
+### Quick Start
+
+```bash
+# Highlight lines 3-5 with default style
+codepicture code.py -o output.png --highlight '3-5'
+
+# Highlight with named styles
+codepicture code.py -o output.png \
+  --highlight '3-5:add' \
+  --highlight '10:remove'
+```
+
+### Highlight Styles
+
+Four built-in styles are available:
+
+| Style | Usage | Effect |
+|-------|-------|--------|
+| `highlight` | `--highlight '3-5'` or `--highlight '3-5:highlight'` | Yellow background (default style) |
+| `add` | `--highlight '3-5:add'` | Green background with `+` gutter indicator |
+| `remove` | `--highlight '3-5:remove'` | Red background with `-` gutter indicator |
+| `focus` | `--highlight '3-5:focus'` | Blue background; all other lines are dimmed |
+
+Repeat `--highlight` for multiple groups:
+
+```bash
+codepicture diff.py -o diff.png \
+  --highlight '1-3:add' \
+  --highlight '7-9:remove' \
+  --highlight '12:highlight'
+```
+
+**Dark theme (Catppuccin Mocha):**
+
+![Highlight styles on dark theme](docs/examples/highlight-dark.png)
+
+**Light theme (Catppuccin Latte):**
+
+![Highlight styles on light theme](docs/examples/highlight-light.png)
+
+**Focus mode** dims unfocused lines for emphasis:
+
+![Focus mode example](docs/examples/highlight-focus.png)
+
+### Configuration (TOML)
+
+Highlights can also be configured in your TOML config file:
+
+```toml
+# Highlight specific lines (equivalent to --highlight CLI flags)
+highlights = ["3-5:add", "10:remove", "15-20:focus"]
+
+# Customize highlight style colors (optional)
+# Colors use #RRGGBB (25% opacity applied) or #RRGGBBAA format
+[highlight_styles.add]
+color = "#00CC4040"       # green at 25% opacity
+
+[highlight_styles.remove]
+color = "#FF333340"       # red at 25% opacity
+
+[highlight_styles.focus]
+color = "#3399FF40"       # blue at 25% opacity
+
+[highlight_styles.highlight]
+color = "#FFE65040"       # yellow at 25% opacity
+```
+
+### Theme Integration
+
+codepicture detects whether the active theme has a light or dark background
+and selects an appropriate highlight color palette. Dark themes use bright,
+vivid overlay colors; light themes use darker, muted overlays for better
+contrast. User-specified colors in TOML config always override the
+theme-derived defaults.
+
 ## System Dependencies
 
 codepicture uses Cairo and Pango for rendering. Install the system libraries
