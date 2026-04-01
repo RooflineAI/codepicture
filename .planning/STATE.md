@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Line Highlighting
 status: executing
-stopped_at: Completed 14-01-PLAN.md
-last_updated: "2026-04-01T07:51:04.232Z"
+stopped_at: Completed 14-02-PLAN.md
+last_updated: "2026-04-01T08:26:07.480Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 3
@@ -71,9 +71,7 @@ Decisions are logged in PROJECT.md Key Decisions table (15 decisions total).
 - [Phase 13]: Focus dimming via _dim_color(color, 0.35) applied to unfocused line numbers and tokens
 - [Phase 13]: Visual regression uses parametrized variants + individual aliases for acceptance criteria traceability
 - [Phase 13]: Legacy --highlight-lines CLI tests migrated to --highlight flag (deviation Rule 1)
-- [Phase 14]: BT.709 luminance with 0.5 threshold for dark/light theme detection
-- [Phase 14]: DARK_THEME_COLORS identical to DEFAULT_STYLE_COLORS for backward compat
-- [Phase 14]: Contrast test: overlay visibility + readability preservation (not absolute ratio)
+- [Phase 14]: Used catppuccin-latte as light theme representative (GitHub Light not in Pygments)
 
 ### Pending Todos
 
@@ -100,7 +98,7 @@ None.
 | 013 | Add pre-commit and linting to README | 2026-02-02 | cdc30a4 | [013](./quick/013-add-pre-commit-and-linting-to-readme/) |
 | Phase 13 P02 | 3min | 2 tasks | 3 files |
 | Phase 13 P03 | 4m 9s | 2 tasks | 9 files |
-| Phase 14 P01 | 26min | 2 tasks | 4 files |
+| Phase 14 P02 | 2min | 1 tasks | 3 files |
 
 ### Roadmap Evolution
 
@@ -110,6 +108,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-01T07:51:04.230Z
-Stopped at: Completed 14-01-PLAN.md
+Last session: 2026-04-01T08:26:07.478Z
+Stopped at: Completed 14-02-PLAN.md
 Resume file: None
