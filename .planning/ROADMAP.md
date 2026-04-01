@@ -90,11 +90,12 @@ Plans:
   2. Syntax tokens remain readable on highlighted lines across all 55+ themes
   3. User-specified colors via CLI flags or TOML config override theme-derived defaults
   4. README documents all highlight CLI flags, TOML config options, and includes visual examples of each style
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 14-01: TBD
-- [ ] 14-02: TBD
+- [ ] 14-01-PLAN.md -- Theme-aware color derivation logic and unit/contrast tests
+- [ ] 14-02-PLAN.md -- Visual regression snapshots for dark and light themes
+- [ ] 14-03-PLAN.md -- README documentation with auto-generated example images
 
 ## Progress
 
@@ -117,7 +118,7 @@ Phases execute in numeric order: 12 -> 13 -> 14
 | 11. Performance Benchmarks | v1.1 | 3/3 | Complete | 2026-02-02 |
 | 12. Core Highlighting Infrastructure | v2.0 | 4/4 | Complete | 2026-02-06 |
 | 13. Named Styles, Focus & Gutter | v2.0 | 3/3 | Complete    | 2026-03-31 |
-| 14. Theme Integration & Docs | v2.0 | 0/TBD | Not started | - |
+| 14. Theme Integration & Docs | v2.0 | 0/3 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-28*
