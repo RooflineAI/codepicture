@@ -42,7 +42,7 @@ codepicture transforms code snippets into polished, presentation-ready images vi
 
 - [x] **Phase 12: Core Highlighting Infrastructure** - Single-style line highlighting with configurable color across all formats -- completed 2026-02-06
 - [x] **Phase 13: Named Styles, Focus Mode & Gutter Indicators** - Multiple highlight styles with focus dimming and diff-style gutter markers (completed 2026-03-31)
-- [ ] **Phase 14: Theme Integration & Documentation** - Theme-aware default colors and complete documentation
+- [x] **Phase 14: Theme Integration & Documentation** - Theme-aware default colors and complete documentation (completed 2026-04-02)
 
 ## Phase Details
 
@@ -93,9 +93,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 14-01-PLAN.md -- Theme-aware color derivation logic and unit/contrast tests
-- [ ] 14-02-PLAN.md -- Visual regression snapshots for dark and light themes
-- [ ] 14-03-PLAN.md -- README documentation with auto-generated example images
+- [x] 14-01-PLAN.md -- Theme-aware color derivation logic and unit/contrast tests
+- [x] 14-02-PLAN.md -- Visual regression snapshots for dark and light themes
+- [x] 14-03-PLAN.md -- README documentation with auto-generated example images
 
 ## Progress
 
@@ -118,7 +118,7 @@ Phases execute in numeric order: 12 -> 13 -> 14
 | 11. Performance Benchmarks | v1.1 | 3/3 | Complete | 2026-02-02 |
 | 12. Core Highlighting Infrastructure | v2.0 | 4/4 | Complete | 2026-02-06 |
 | 13. Named Styles, Focus & Gutter | v2.0 | 3/3 | Complete    | 2026-03-31 |
-| 14. Theme Integration & Docs | v2.0 | 0/3 | Not started | - |
+| 14. Theme Integration & Docs | v2.0 | 3/3 | Complete   | 2026-04-02 |
 
 ---
 *Roadmap created: 2026-01-28*

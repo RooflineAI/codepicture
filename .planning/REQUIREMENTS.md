@@ -44,9 +44,9 @@ Requirements for the Line Highlighting milestone. Each maps to roadmap phases.
 
 ### Documentation
 
-- [ ] **HLDOC-01**: README documents all highlight CLI flags with usage examples
-- [ ] **HLDOC-02**: README documents TOML config options for highlight styles and colors
-- [ ] **HLDOC-03**: README includes visual examples showing highlight styles (add/remove/focus)
+- [x] **HLDOC-01**: README documents all highlight CLI flags with usage examples
+- [x] **HLDOC-02**: README documents TOML config options for highlight styles and colors
+- [x] **HLDOC-03**: README includes visual examples showing highlight styles (add/remove/focus)
 
 ### Testing
 
@@ -108,9 +108,9 @@ Deferred to post-v2.0. Tracked but not in current roadmap.
 | HLTHEM-03 | Phase 14 | Pending |
 | HLGUT-01 | Phase 13 | Complete |
 | HLGUT-02 | Phase 13 | Complete |
-| HLDOC-01 | Phase 14 | Pending |
-| HLDOC-02 | Phase 14 | Pending |
-| HLDOC-03 | Phase 14 | Pending |
+| HLDOC-01 | Phase 14 | Complete |
+| HLDOC-02 | Phase 14 | Complete |
+| HLDOC-03 | Phase 14 | Complete |
 | HLTEST-01 | Phase 12 | Complete |
 | HLTEST-02 | Phase 13 | Complete |
 | HLTEST-03 | Phase 12 | Complete |

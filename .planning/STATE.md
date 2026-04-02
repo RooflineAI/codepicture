@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Line Highlighting
 status: executing
-stopped_at: Completed 14-02-PLAN.md
-last_updated: "2026-04-01T08:26:07.480Z"
-last_activity: 2026-03-31
+stopped_at: Completed 14-03-PLAN.md
+last_updated: "2026-04-02T11:04:57.120Z"
+last_activity: 2026-04-02
 progress:
   total_phases: 3
-  completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  completed_phases: 3
+  total_plans: 10
+  completed_plans: 10
 ---
 
 # Project State
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** One command turns code into a slide-ready image
-**Current focus:** v2.0 Line Highlighting -- Phase 13 (Named Styles, Focus Mode & Gutter Indicators)
+**Current focus:** Phase 14 — theme-integration-documentation
 
 ## Current Position
 
-Phase: 14 of 14 (theme integration & documentation)
-Plan: Not started
+Phase: 14 (theme-integration-documentation) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-03-31
+Last activity: 2026-04-02
 
 Progress: [#####.....] 5/7 plans in v2.0
 
@@ -71,7 +71,7 @@ Decisions are logged in PROJECT.md Key Decisions table (15 decisions total).
 - [Phase 13]: Focus dimming via _dim_color(color, 0.35) applied to unfocused line numbers and tokens
 - [Phase 13]: Visual regression uses parametrized variants + individual aliases for acceptance criteria traceability
 - [Phase 13]: Legacy --highlight-lines CLI tests migrated to --highlight flag (deviation Rule 1)
-- [Phase 14]: Used catppuccin-latte as light theme representative (GitHub Light not in Pygments)
+- [Phase 14]: Example images use catppuccin-mocha (dark) and catppuccin-latte (light) as canonical themes
 
 ### Pending Todos
 
@@ -98,7 +98,7 @@ None.
 | 013 | Add pre-commit and linting to README | 2026-02-02 | cdc30a4 | [013](./quick/013-add-pre-commit-and-linting-to-readme/) |
 | Phase 13 P02 | 3min | 2 tasks | 3 files |
 | Phase 13 P03 | 4m 9s | 2 tasks | 9 files |
-| Phase 14 P02 | 2min | 1 tasks | 3 files |
+| Phase 14 P03 | 2min | 3 tasks | 6 files |
 
 ### Roadmap Evolution
 
@@ -108,6 +108,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-01T08:26:07.478Z
-Stopped at: Completed 14-02-PLAN.md
+Last session: 2026-04-02T11:04:57.118Z
+Stopped at: Completed 14-03-PLAN.md
 Resume file: None
