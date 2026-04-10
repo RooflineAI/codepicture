@@ -1,5 +1,23 @@
 # Project Milestones: codepicture
 
+## v2.0 Line Highlighting (Shipped: 2026-04-10)
+
+**Phases completed:** 3 phases, 10 plans, 18 tasks
+
+**Key accomplishments:**
+
+- Pure-function line range parser and highlight color resolver via TDD with 31 tests covering singles, ranges, offsets, error cases, and color resolution
+- RenderConfig highlight_lines/highlight_color fields with Pydantic validators, plus --highlight-lines/--highlight-color CLI flags wired through cli_overrides
+- Highlight rectangle drawing in both legacy and wrapped render paths using CairoCanvas.draw_rectangle with correct z-order, full-width spans, and word-wrap awareness
+- CLI integration tests for highlight flags, visual regression baselines across PNG/SVG/PDF, and pipeline integration tests for word-wrap + highlight interactions
+- HighlightStyle enum with 4 named styles, spec parser with last-wins semantics, config schema with legacy migration, and CLI --highlight flag
+- Per-style highlight rendering with focus dimming at 35% opacity and +/-/bar gutter indicators in both legacy and wrapped render paths
+- 1. [Rule 1 - Bug] Migrated legacy --highlight-lines CLI tests to --highlight
+- Luminance-based highlight color derivation with dark/light palette selection and parametric contrast validation across 53 themes
+- Visual regression snapshots for dark (catppuccin-mocha) and light (catppuccin-latte) theme highlights covering all 4 styles
+
+---
+
 ## v1.1 Reliability & Testing (Shipped: 2026-02-02)
 
 **Delivered:** Hardened codepicture for real-world usage with MLIR hang fix (186x speedup), timeout protection, visual regression testing (58 tests, 20 reference images), and performance benchmarks (21 benchmarks with CI tracking).
