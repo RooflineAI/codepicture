@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 Phase: 14
 Plan: Not started
 Status: Ready to execute
-Last activity: 2026-04-10
+Last activity: 2026-05-07 - Completed quick task 014: focus mode cleanup (remove blue overlay/bar, FOCUS becomes dim-only marker)
 
 Progress: [#####.....] 5/7 plans in v2.0
 
@@ -96,6 +96,7 @@ None.
 | 011 | Move MLIR lexer to custom_lexers subfolder | 2026-02-02 | 90706e9 | [011](./quick/011-move-mlir-lexer-to-custom-lexers-subfold/) |
 | 012 | Set up linting and formatting via ruff | 2026-02-02 | 70c4606 | [012](./quick/012-set-up-linting-and-formatting-via-ruff/) |
 | 013 | Add pre-commit and linting to README | 2026-02-02 | cdc30a4 | [013](./quick/013-add-pre-commit-and-linting-to-readme/) |
+| 014 | Focus mode cleanup — remove blue overlay/bar, FOCUS becomes dim-only marker | 2026-05-07 | 75d0a01 | [014](./quick/014-focus-mode-clean-no-blue-overlay/) |
 | Phase 13 P02 | 3min | 2 tasks | 3 files |
 | Phase 13 P03 | 4m 9s | 2 tasks | 9 files |
 | Phase 14 P03 | 2min | 3 tasks | 6 files |
