@@ -71,6 +71,8 @@ def test_highlight_contrast_against_theme(theme_name: str):
         )
 
     for style in HighlightStyle:
+        if style == HighlightStyle.FOCUS:
+            continue  # FOCUS is a dim-only marker — no overlay rectangle.
         overlay = palette[style]
         composited = _composite(theme.background, overlay)
         comp_lum = _luminance(composited)
@@ -101,6 +103,8 @@ def test_highlight_readability_on_high_contrast_themes(theme_name: str):
         pytest.skip(f"Theme has moderate base contrast ({original_ratio:.2f}:1)")
 
     for style in HighlightStyle:
+        if style == HighlightStyle.FOCUS:
+            continue  # FOCUS is a dim-only marker — no overlay rectangle.
         overlay = palette[style]
         composited = _composite(theme.background, overlay)
         comp_lum = _luminance(composited)

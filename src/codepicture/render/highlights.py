@@ -39,9 +39,9 @@ __all__ = [
     "GUTTER_BAR_WIDTH",
     "GUTTER_INDICATORS",
     "HIGHLIGHT_CORNER_RADIUS",
-    "HighlightStyle",
     "LIGHT_THEME_COLORS",
     "LUMINANCE_THRESHOLD",
+    "HighlightStyle",
     "_relative_luminance",
     "get_theme_style_colors",
     "parse_highlight_specs",
@@ -52,12 +52,20 @@ __all__ = [
 
 
 class HighlightStyle(str, Enum):
-    """Built-in highlight style names."""
+    """Built-in highlight style names.
+
+    HIGHLIGHT/ADD/REMOVE are decoration styles: each draws a colored
+    background plus a gutter indicator. FOCUS is a dim-only marker — it
+    triggers focus mode (dimming every other line) but draws no rectangle
+    and no gutter indicator. Per-style color overrides therefore do not
+    apply to FOCUS.
+    """
 
     HIGHLIGHT = "highlight"
     ADD = "add"
     REMOVE = "remove"
     FOCUS = "focus"
+
 
 DEFAULT_HIGHLIGHT_ALPHA = 64
 """Default alpha for highlight colors (~25% opacity, 64/255)."""
@@ -76,9 +84,11 @@ DEFAULT_STYLE_COLORS: dict[HighlightStyle, Color] = {
     HighlightStyle.HIGHLIGHT: Color(r=255, g=230, b=80, a=64),  # #FFE65040
     HighlightStyle.ADD: Color(r=0, g=204, b=64, a=64),  # #00CC4040
     HighlightStyle.REMOVE: Color(r=255, g=51, b=51, a=64),  # #FF333340
-    HighlightStyle.FOCUS: Color(r=51, g=153, b=255, a=64),  # #3399FF40
 }
-"""Default background colors for each highlight style (D-12 palette)."""
+"""Default background colors for decoration styles (D-12 palette).
+
+FOCUS is intentionally absent — it draws no background.
+"""
 
 LUMINANCE_THRESHOLD = 0.5
 """Luminance threshold for dark/light theme detection (BT.709)."""
@@ -87,7 +97,6 @@ DARK_THEME_COLORS: dict[HighlightStyle, Color] = {
     HighlightStyle.HIGHLIGHT: Color(r=255, g=230, b=80, a=64),  # #FFE65040
     HighlightStyle.ADD: Color(r=0, g=204, b=64, a=64),  # #00CC4040
     HighlightStyle.REMOVE: Color(r=255, g=51, b=51, a=64),  # #FF333340
-    HighlightStyle.FOCUS: Color(r=51, g=153, b=255, a=64),  # #3399FF40
 }
 """Vivid highlight colors for dark themes (matches DEFAULT_STYLE_COLORS)."""
 
@@ -95,7 +104,6 @@ LIGHT_THEME_COLORS: dict[HighlightStyle, Color] = {
     HighlightStyle.HIGHLIGHT: Color(r=184, g=150, b=0, a=64),  # #B8960040
     HighlightStyle.ADD: Color(r=0, g=136, b=34, a=64),  # #00882240
     HighlightStyle.REMOVE: Color(r=204, g=0, b=0, a=64),  # #CC000040
-    HighlightStyle.FOCUS: Color(r=0, g=102, b=204, a=64),  # #0066CC40
 }
 """Muted highlight colors for light themes (D-03)."""
 
@@ -103,9 +111,11 @@ GUTTER_INDICATORS: dict[HighlightStyle, str | None] = {
     HighlightStyle.HIGHLIGHT: None,  # colored bar (drawn as rect)
     HighlightStyle.ADD: "+",
     HighlightStyle.REMOVE: "-",
-    HighlightStyle.FOCUS: None,  # colored bar (drawn as rect)
 }
-"""Gutter indicator characters for each highlight style (D-10)."""
+"""Gutter indicator characters for each decoration style (D-10).
+
+FOCUS is intentionally absent — it draws no gutter mark.
+"""
 
 FOCUS_DIM_OPACITY = 0.35
 """Opacity for non-focused lines when focus mode is active."""
@@ -113,9 +123,12 @@ FOCUS_DIM_OPACITY = 0.35
 GUTTER_BAR_WIDTH = 3
 """Width in pixels for gutter indicator bars (D-10)."""
 
+
 def _relative_luminance(color: Color) -> float:
     """Relative luminance (BT.709) from an RGB Color."""
-    return 0.2126 * (color.r / 255) + 0.7152 * (color.g / 255) + 0.0722 * (color.b / 255)
+    return (
+        0.2126 * (color.r / 255) + 0.7152 * (color.g / 255) + 0.0722 * (color.b / 255)
+    )
 
 
 def get_theme_style_colors(background: Color) -> dict[HighlightStyle, Color]:
@@ -303,7 +316,9 @@ def resolve_style_color(
             color = Color.from_hex(override)
             # 6-char hex: apply default alpha
             if len(override.lstrip("#")) == 6:
-                color = Color(r=color.r, g=color.g, b=color.b, a=DEFAULT_HIGHLIGHT_ALPHA)
+                color = Color(
+                    r=color.r, g=color.g, b=color.b, a=DEFAULT_HIGHLIGHT_ALPHA
+                )
             return color
     if theme_defaults:
         return theme_defaults[style]

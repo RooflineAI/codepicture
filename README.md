@@ -219,7 +219,7 @@ Four built-in styles are available:
 | `highlight` | `--highlight '3-5'` or `--highlight '3-5:highlight'` | Yellow background (default style) |
 | `add` | `--highlight '3-5:add'` | Green background with `+` gutter indicator |
 | `remove` | `--highlight '3-5:remove'` | Red background with `-` gutter indicator |
-| `focus` | `--highlight '3-5:focus'` | Blue background; all other lines are dimmed |
+| `focus` | `--highlight '3-5:focus'` | All other lines are dimmed (focused lines render normally — no background or gutter mark) |
 
 Repeat `--highlight` for multiple groups:
 
@@ -258,12 +258,12 @@ color = "#00CC4040"       # green at 25% opacity
 [highlight_styles.remove]
 color = "#FF333340"       # red at 25% opacity
 
-[highlight_styles.focus]
-color = "#3399FF40"       # blue at 25% opacity
-
 [highlight_styles.highlight]
 color = "#FFE65040"       # yellow at 25% opacity
 ```
+
+`focus` is a dim-only marker — it has no background or gutter mark, so it
+does not accept a color override.
 
 ### Theme Integration
 

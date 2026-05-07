@@ -18,13 +18,16 @@ import pytest
 from codepicture.core.types import Color
 from codepicture.errors import InputError
 from codepicture.render.highlights import (
+    DARK_THEME_COLORS,
     DEFAULT_HIGHLIGHT_COLOR,
     DEFAULT_STYLE_COLORS,
     FOCUS_DIM_OPACITY,
-    GUTTER_BAR_WIDTH,
     GUTTER_INDICATORS,
     HIGHLIGHT_CORNER_RADIUS,
+    LIGHT_THEME_COLORS,
+    LUMINANCE_THRESHOLD,
     HighlightStyle,
+    get_theme_style_colors,
     parse_highlight_specs,
     parse_line_ranges,
     resolve_highlight_color,
@@ -259,7 +262,10 @@ class TestHighlightStyleEnum:
 
 
 class TestDefaultStyleColors:
-    """Tests for DEFAULT_STYLE_COLORS (D-12 palette)."""
+    """Tests for DEFAULT_STYLE_COLORS (D-12 palette).
+
+    FOCUS is a dim-only marker — intentionally absent from the palette.
+    """
 
     def test_highlight_color(self):
         assert DEFAULT_STYLE_COLORS[HighlightStyle.HIGHLIGHT] == Color(255, 230, 80, 64)
@@ -270,12 +276,16 @@ class TestDefaultStyleColors:
     def test_remove_color(self):
         assert DEFAULT_STYLE_COLORS[HighlightStyle.REMOVE] == Color(255, 51, 51, 64)
 
-    def test_focus_color(self):
-        assert DEFAULT_STYLE_COLORS[HighlightStyle.FOCUS] == Color(51, 153, 255, 64)
+    def test_focus_has_no_default_color(self):
+        """FOCUS draws nothing, so it has no entry in the palette."""
+        assert HighlightStyle.FOCUS not in DEFAULT_STYLE_COLORS
 
 
 class TestGutterIndicators:
-    """Tests for GUTTER_INDICATORS (D-10)."""
+    """Tests for GUTTER_INDICATORS (D-10).
+
+    FOCUS draws no gutter mark and is intentionally absent.
+    """
 
     def test_add_shows_plus(self):
         assert GUTTER_INDICATORS[HighlightStyle.ADD] == "+"
@@ -286,8 +296,9 @@ class TestGutterIndicators:
     def test_highlight_shows_bar(self):
         assert GUTTER_INDICATORS[HighlightStyle.HIGHLIGHT] is None
 
-    def test_focus_shows_bar(self):
-        assert GUTTER_INDICATORS[HighlightStyle.FOCUS] is None
+    def test_focus_has_no_indicator(self):
+        """FOCUS is a dim-only marker — no gutter indicator entry."""
+        assert HighlightStyle.FOCUS not in GUTTER_INDICATORS
 
 
 class TestParseHighlightSpecs:
@@ -358,9 +369,15 @@ class TestParseHighlightSpecs:
 class TestResolveStyleColor:
     """Tests for resolve_style_color."""
 
-    def test_default_color_for_each_style(self):
-        """No overrides returns DEFAULT_STYLE_COLORS for each style."""
+    def test_default_color_for_each_decoration_style(self):
+        """No overrides returns DEFAULT_STYLE_COLORS for each decoration style.
+
+        FOCUS is excluded — it draws no background and is filtered out before
+        ever reaching resolve_style_color.
+        """
         for style in HighlightStyle:
+            if style == HighlightStyle.FOCUS:
+                continue
             assert resolve_style_color(style, None) == DEFAULT_STYLE_COLORS[style]
 
     def test_override_color_8char_hex(self):
@@ -395,13 +412,6 @@ class TestFocusDimOpacity:
 
 
 # --- Phase 14 tests: Theme-aware highlight colors ---
-
-from codepicture.render.highlights import (
-    DARK_THEME_COLORS,
-    LIGHT_THEME_COLORS,
-    LUMINANCE_THRESHOLD,
-    get_theme_style_colors,
-)
 
 
 class TestRelativeLuminance:
@@ -440,8 +450,7 @@ class TestGetThemeStyleColors:
 
     def test_dark_palette_matches_default_style_colors(self):
         """DARK_THEME_COLORS is identical to DEFAULT_STYLE_COLORS (backward compat)."""
-        for style in HighlightStyle:
-            assert DARK_THEME_COLORS[style] == DEFAULT_STYLE_COLORS[style]
+        assert dict(DARK_THEME_COLORS) == dict(DEFAULT_STYLE_COLORS)
 
     def test_luminance_threshold_value(self):
         assert LUMINANCE_THRESHOLD == 0.5
@@ -481,16 +490,11 @@ class TestLightThemePalette:
         )
 
     def test_add_color(self):
-        assert LIGHT_THEME_COLORS[HighlightStyle.ADD] == Color(
-            r=0, g=136, b=34, a=64
-        )
+        assert LIGHT_THEME_COLORS[HighlightStyle.ADD] == Color(r=0, g=136, b=34, a=64)
 
     def test_remove_color(self):
-        assert LIGHT_THEME_COLORS[HighlightStyle.REMOVE] == Color(
-            r=204, g=0, b=0, a=64
-        )
+        assert LIGHT_THEME_COLORS[HighlightStyle.REMOVE] == Color(r=204, g=0, b=0, a=64)
 
-    def test_focus_color(self):
-        assert LIGHT_THEME_COLORS[HighlightStyle.FOCUS] == Color(
-            r=0, g=102, b=204, a=64
-        )
+    def test_focus_has_no_light_color(self):
+        """FOCUS draws nothing — no light-theme palette entry."""
+        assert HighlightStyle.FOCUS not in LIGHT_THEME_COLORS

@@ -189,10 +189,14 @@ class RenderConfig(BaseModel):
     @field_validator("highlight_styles", mode="before")
     @classmethod
     def validate_highlight_styles(cls, v: dict | None) -> dict | None:
-        """Validate highlight_styles keys are valid style names."""
+        """Validate highlight_styles keys are configurable style names.
+
+        FOCUS is excluded — it is a dim-only marker that draws no
+        background, so per-style color overrides are meaningless for it.
+        """
         if v is None:
             return None
-        valid_names = {"highlight", "add", "remove", "focus"}
+        valid_names = {"highlight", "add", "remove"}
         for key in v:
             if key not in valid_names:
                 raise ValueError(
@@ -214,7 +218,5 @@ class RenderConfig(BaseModel):
             data.get("highlight_styles") is None
             and data.get("highlight_color") is not None
         ):
-            data["highlight_styles"] = {
-                "highlight": {"color": data["highlight_color"]}
-            }
+            data["highlight_styles"] = {"highlight": {"color": data["highlight_color"]}}
         return data
