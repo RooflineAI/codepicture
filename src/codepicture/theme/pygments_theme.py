@@ -107,8 +107,8 @@ class PygmentsTheme:
     def get_style(self, token_type: Any) -> TextStyle:
         """Get text style for a syntax token type.
 
-        Uses Pygments style_for_token() which handles token type inheritance.
-        Falls back to foreground color if token has no color defined.
+        Walks the token hierarchy when a lexer-defined subtype is absent from
+        the Pygments style map. Falls back to the foreground color if needed.
 
         Args:
             token_type: Pygments token type (e.g., Token.Keyword)
@@ -116,7 +116,15 @@ class PygmentsTheme:
         Returns:
             TextStyle with color and formatting
         """
-        style_dict = self._style.style_for_token(token_type)
+        current_token = token_type
+        while current_token is not None:
+            try:
+                style_dict = self._style.style_for_token(current_token)
+                break
+            except KeyError:
+                current_token = getattr(current_token, "parent", None)
+        else:
+            style_dict = {}
 
         # Color is hex string without # or None
         color_hex = style_dict.get("color")

@@ -63,6 +63,14 @@ class TestPygmentsTheme:
         assert isinstance(escape_style.color, Color)
         assert isinstance(string_style.color, Color)
 
+    def test_late_created_token_inherits_parent_style(
+        self, theme: PygmentsTheme
+    ) -> None:
+        """Lexer-defined token subtypes inherit when absent from a style map."""
+        assert theme.get_style(Token.Comment.SingleLine) == theme.get_style(
+            Token.Comment
+        )
+
     def test_unknown_token_falls_back_to_default(self, theme: PygmentsTheme) -> None:
         """Verify fallback to foreground for unknown tokens."""
         # Token.Text typically doesn't have special styling

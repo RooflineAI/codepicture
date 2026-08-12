@@ -5,6 +5,7 @@ import pathlib
 import pytest
 from pygments.token import (
     Comment,
+    Error,
     Keyword,
     Name,
     Number,
@@ -79,7 +80,7 @@ class TestMlirLexerTokens:
 
     def test_attribute_alias(self, lexer):
         tokens = self._get_tokens(lexer, "#map0")
-        assert any(t[0] == Name.Constant for t in tokens)
+        assert any(t[0] == Name.Tag for t in tokens)
 
     def test_type_alias(self, lexer):
         tokens = self._get_tokens(lexer, "!my_type")
@@ -113,11 +114,42 @@ class TestMlirLexerTokens:
 
     def test_operation_dialect_format(self, lexer):
         tokens = self._get_tokens(lexer, "arith.addf")
-        assert any(t[0] == Name.Builtin for t in tokens)
+        assert tokens == [(Name.Builtin, "arith.addf")]
 
     def test_operation_with_dots(self, lexer):
         tokens = self._get_tokens(lexer, "llvm.mlir.constant")
-        assert any(t[0] == Name.Builtin for t in tokens)
+        assert tokens == [(Name.Builtin, "llvm.mlir.constant")]
+
+    def test_linalg_operand_keywords(self, lexer):
+        tokens = self._get_tokens(lexer, "ins outs")
+        assert [t for t in tokens if t[0] != Text.Whitespace] == [
+            (Keyword.Namespace, "ins"),
+            (Keyword.Namespace, "outs"),
+        ]
+
+    def test_attribute_key(self, lexer):
+        tokens = self._get_tokens(lexer, "iterator_types = []")
+        assert tokens[0] == (Name.Attribute, "iterator_types")
+
+    def test_shaped_tensor_type(self, lexer):
+        tokens = self._get_tokens(lexer, "tensor<?x?xf32>")
+        assert all(t[0] is not Error for t in tokens)
+        assert (Keyword.Type, "tensor") in tokens
+        assert (Number.Integer, "?") in tokens
+        assert (Operator, "x") in tokens
+        assert (Keyword.Type, "f32") in tokens
+
+    def test_ranked_tensor_static_dynamic_dims(self, lexer):
+        tokens = self._get_tokens(lexer, "tensor<2x?x4xi32>")
+        assert all(t[0] is not Error for t in tokens)
+        assert tokens.count((Operator, "x")) == 3
+        assert (Number.Integer, "2") in tokens
+        assert (Number.Integer, "4") in tokens
+        assert (Keyword.Type, "i32") in tokens
+
+    def test_quoted_operation_name(self, lexer):
+        tokens = self._get_tokens(lexer, '"dialect.custom_op"()')
+        assert tokens[0] == (Name.Builtin, '"dialect.custom_op"')
 
     def test_reserved_keyword_func(self, lexer):
         tokens = self._get_tokens(lexer, "func")
@@ -138,6 +170,12 @@ class TestMlirLexerTokens:
     def test_affine_operator(self, lexer):
         tokens = self._get_tokens(lexer, "floordiv")
         assert any(t[0] == Operator.Word for t in tokens)
+
+    def test_affine_dimension_and_symbol_ids(self, lexer):
+        tokens = self._get_tokens(lexer, "(d0, d1)[s0]")
+        assert (Name.Variable, "d0") in tokens
+        assert (Name.Variable, "d1") in tokens
+        assert (Name.Variable, "s0") in tokens
 
     def test_hex_number(self, lexer):
         tokens = self._get_tokens(lexer, "0xDEADBEEF")
